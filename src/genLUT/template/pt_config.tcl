@@ -1,11 +1,11 @@
 set designName "_DESIGN_"
 
-set dbPath <path> 
+set dbPath "/HOME/XXX/YYY/db" 
 
-set dbFiles <path>
+set dbFiles [list * mydb1.db mydb2.db]
 
 set unit 1000
-set bufTypes "<names>"
+set bufTypes "BUF_X20 BUF_X10"
    
 set maxSlew [expr 0.060 * $unit]
 set inputSlew [expr 0.005 * $unit]
