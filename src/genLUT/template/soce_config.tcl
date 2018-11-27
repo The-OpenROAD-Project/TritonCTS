@@ -3,17 +3,17 @@ set width _WIDTH_
 set height _HEIGHT_ 
 set nondr _NONDR_
 
-set libdir <path>
+set libdir "/home/XXX/YYY"
 
-set lef <path>
+set lef "/HOME/XXX/YYY/ZZZ-tech.lef /HOME/XXX/YYY/ZZZ-cells.lef"
 
 set VDD "VDD"
 set GND "VSS"
 
-set bestLib <path>
+set bestLib "XXX/YYY/ZZZ-best.lib"
 
-set worstLib <path>
+set worstLib "XXX/YYY/ZZZ-worst.lib"
 
-set qrcFile <path>
+set qrcFile "XXX/YYY/qrcTechFile"
 
 
