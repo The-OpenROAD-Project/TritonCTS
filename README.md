@@ -34,6 +34,8 @@ $ cd ../genLUT
  
  - Edit run_all.tcl to specify wire sizes and NDRs (non-default routing rules).
  
+ - Edit template/genTest.tcl to specify a buffer cell (variable bufName), a flip-flop cell (variable FFName) and their respective cell heights (variable cellHeight) and footprints (variable path).
+ 
  - Run the characterization script, run_all.tcl (valid Cadence Innovus and Synopsys PrimeTime licenses are required)
 
 ```
