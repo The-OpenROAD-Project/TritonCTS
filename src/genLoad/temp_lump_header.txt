@@ -82,7 +82,7 @@ library(load__VOLT_V__LTEMP_C) {
     fanout_length (X, X);
   }
   default_wire_load : "Small";
-  default_operating_conditions : _CORNER__VOLT_v__LTEMP_c;
+  default_operating_conditions : _CORNER___VOLT_v__LTEMP_c;
   lu_table_template (constraint_template) {
     variable_X : constrained_pin_transition;
     variable_X : related_pin_transition;

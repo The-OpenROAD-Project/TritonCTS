@@ -8,7 +8,7 @@ foreach lib $libList {
     set volt [lindex [split $lib {-}] 1]
     set ltemp [lindex [split $lib {-}] 2]
     regsub {m} $ltemp "-" temp
-    set outFile [open load_${volt}_${ltemp}.lib w]
+    set outFile [open load_${volt}V_${ltemp}C.lib w]
     set inFile  [open temp_lump_header.txt]
     while {[gets $inFile line]>=0} {
         regsub _CORNER_ $line $corner line
