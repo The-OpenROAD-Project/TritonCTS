@@ -1506,7 +1506,7 @@ void design::cluster(vector<pin*> in_pins, vector<vector<pin*>>& out_pins, vecto
         pin * p = in_pins[i];
         vector<float> temp_dist;
         for (unsigned j = 0; j < in_locs.size(); ++j) {
-            float t_dist = abs(in_locs[j].first - p->x) + abs(in_locs[j].second - p->y);
+            float t_dist = fabs(in_locs[j].first - p->x) + fabs(in_locs[j].second - p->y);
             temp_dist.push_back(t_dist); 
         }
         dist.push_back(temp_dist);
@@ -1722,7 +1722,7 @@ void design::cluster(vector<pin*> in_pins, vector<vector<pin*>>& out_pins, vecto
         
         for (unsigned i = 0; i < out_pins[j].size(); ++i) {
             pin * p = out_pins[j][i];
-            float tmp_dist = abs(in_locs[j].first - p->x) + abs(in_locs[j].second - p->y);
+            float tmp_dist = fabs(in_locs[j].first - p->x) + fabs(in_locs[j].second - p->y);
             if (tmp_dist > max_dist) max_dist = tmp_dist;
         }
         cout << "CHK " << j << "th cluster max_dist: " <<  max_dist << endl;
@@ -1793,8 +1793,8 @@ void design::printSol(vector<solution*> &all_sols) {
 
     map <int, pair<float, float> > idx2Loc;
     pair <float, float> center;
-    center.first = 9.0;
-    center.second = 9.0;
+    center.first = 4.69;
+    center.second = 4.69;
     idx2Loc[0] = center;
     for (int j = 0; j < all_sols.size(); ++j) {
       solution * sol = all_sols[j];
@@ -2899,5 +2899,5 @@ float round(float val, float step) {
 }
 
 float design::calcDist(pair<float,float> loc1, pair<float,float> loc2) {
-    return abs(loc1.first - loc2.first) + abs(loc1.second - loc2.second);
+    return fabs(loc1.first - loc2.first) + fabs(loc1.second - loc2.second);
 }

@@ -77,7 +77,7 @@ close $inFile
 set inFile    [open sol.txt]
 set outFile_1 [open netlist.txt   w]
 set outFile_2 [open locations.txt w]
-puts $outFile_1 "tree_0 _ROOT_BUFF_ clk ck_net_1_0_0"
+puts $outFile_1 "tree_0 _ROOT_BUFF_ _CK_PORT_ ck_net_1_0_0"
 puts $outFile_2 "tree_0 [roundH [lindex $loc(0) 0]] [roundV [lindex $loc(0) 1]]"
 set max_level 0
 while {[gets $inFile line]>=0} {

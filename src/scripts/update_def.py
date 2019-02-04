@@ -64,7 +64,7 @@ def readNetlistFile():
 				nets[inNet].append([node, "A"])
 				nets[outNet].append([node, "_BUFF_OUT_PIN_"])
 				mapping[node] = libCell
-		nets["clk"].append(["PIN", "clk"])		
+		nets["_CK_PORT_"].append(["PIN", "_CK_PORT_"])		
 
 #------------------------------------------------------------------------------
 # Read placement from locations file (CT file)
@@ -204,7 +204,7 @@ with open(defFile) as fp:
 				numNets = int(terms[1]) + len(nets) - 1
 				print("NETS " + str(numNets) + " ;")
 				writeNets()
-			elif "- clk" in line and not "NET" in line: # Skip the original clock net
+			elif "- _CK_PORT_" in line and not "NET" in line: # Skip the original clock net
 				while ";" not in line:
 					line = fp.readline()
 			else: 

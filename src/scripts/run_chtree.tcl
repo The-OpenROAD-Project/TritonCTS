@@ -91,6 +91,14 @@ set tech [dict get $parms "tech"]
 puts [concat "tech : " $tech]
 set enable_pd [dict get $parms "enable_pd"]
 puts [concat "enable_pd : " $enable_pd]
+set ck_port [dict get $parms "ck_port"]
+puts [concat "ck_port : " $ck_port]
+set db_units [dict get $parms "db_units"]
+puts [concat "db_units : " $db_units]
+set root_buf [dict get $parms "root_buf"]
+puts [concat "root_buf : " $root_buf]
+
+set db_ratio [expr $db_units/1000.0]
 
 set dir "$design\_$target_skew\_$tech"
 
@@ -108,19 +116,48 @@ exec cp ../src/tech/lut-$tech.txt lut.txt
 exec cp ../src/tech/sol_list-$tech.txt sol_list.txt
 
 if {$tech==28} {
-    catch {exec ../third_party/lefdef2cts -lef $lef -def $path -cpin CP > sinks.txt}
+	set buf_regex "BFX"
+	set ck_pin "CP"
+	set buf_out_pin "Z"
 } elseif {$tech==16} {
-    catch {exec ../third_party/lefdef2cts -lef $lef -def $path -cpin CK > sinks.txt}
+	set buf_regex "BUF"
+	set ck_pin "CK"
+	set buf_out_pin "Y"
 }
 
-exec tail -n+3 sinks.txt > sink_cap_tmp.txt
-exec awk {NF{print $1 " " $2 " " $3 " 1.0"}} sink_cap_tmp.txt > sink_cap.txt
-#exec awk {NF{print $0 " 1.0"}} sink_cap_tmp.txt > sink_cap.txt
+catch {exec ../third_party/lefdef2cts -lef $lef -def $path -cpin $ck_pin -cts sinks.txt -blk blks_tmp.txt}
+
+set blkFileIn [open blks_tmp.txt r]              
+set blkFileOut [open blks_tmp2.txt w]              
+while {[gets $blkFileIn line]>=0} {
+	set xmin [lindex $line 0]
+	set ymin [lindex $line 1]
+	set w [lindex $line 2]
+	set h [lindex $line 3]
+	puts $blkFileOut "[expr $xmin/15.0] [expr $ymin/15.0] [expr ($xmin+$w)/15.0] [expr ($ymin+$h)/15.0]"
+}
+close $blkFileIn
+close $blkFileOut
+exec tail -n+1 sinks.txt > sink_cap_tmp.txt
+exec awk {{print $1,$2,$3,1.0}} sink_cap_tmp.txt > sink_cap.txt
+
+exec cp ../src/scripts/die-area-hack.py .
+exec python die-area-hack.py 
+
+set hackDieFile [open die-size.txt r]              
+while {[gets $hackDieFile line]>=0} {
+	set hackWidth [lindex $line 0]
+	set hackHeight [lindex $line 1]
+	set hackOffsetX [lindex $line 2] 
+	set hackOffsetY [lindex $line 3] 
+}
+close $hackDieFile
+exec echo "" > blks.txt 
 
 # run DP-based clock tree topology and buffering / ILP-based clustering
 puts "\nRunning GH-tree (should take a while...)"
-puts "genHtree -w [expr $width/15] -h [expr $height/15] -n $number -s $target_skew -tech $tech"
-catch {exec ../bin/genHtree -w [expr $width/15] -h [expr $height/15] -n $number -s $target_skew -tech $tech | tee rpt}
+puts "genHtree -w [expr $hackWidth] -h [expr $hackHeight] -n $number -s $target_skew -tech $tech"
+catch {exec ../bin/genHtree -w [expr $hackWidth] -h [expr $hackHeight] -n $number -s $target_skew -tech $tech | tee rpt}
 
 exec cp sol_0.txt sol.txt
 
@@ -128,26 +165,34 @@ exec cp sol_0.txt sol.txt
 exec cp -rf ../src/scripts/parse_sol.tcl parse_sol.tcl
 exec sed -i s/_WIDTH_/$width/g parse_sol.tcl
 exec sed -i s/_HEIGHT_/$height/g parse_sol.tcl
-
-if {$tech==28} {
-	set root_buff "C12T32_LR_BFX67"
-	set buf_regex "BFX"
-	set ck_pin "CP"
-	set buf_out_pin "Z"
-} elseif {$tech==16} {
-	set root_buff "BUF_X32N_A9PP96CTS_C16"
-	set buf_regex "BUF"
-	set ck_pin "CK"
-	set buf_out_pin "Y"
-}
+exec sed -i s/_CK_PORT_/$ck_port/g parse_sol.tcl
 exec sed -i s/_ROOT_BUFF_/$root_buff/g parse_sol.tcl
 exec sed -i s/_BUFF_REGEX_/$buf_regex/g parse_sol.tcl
 exec ./parse_sol.tcl
 
+set solFileIn [open locations.txt r]              
+set solFileOut [open locations_final.txt w]              
+while {[gets $solFileIn line]>=0} {
+	set name [lindex $line 0]
+	set x 	 [lindex $line 1]
+	set y	 [lindex $line 2]
+	puts $solFileOut "$name [expr ($x+15*$hackOffsetX)*$db_ratio] [expr ($y+15*$hackOffsetY)*$db_ratio]"
+}
+close $solFileIn
+close $solFileOut
+
+exec mv locations_final.txt locations.txt
+
 exec cp -rf ../src/scripts/update_def.py update_def.py
 exec sed -i s/_CK_PIN_/$ck_pin/g update_def.py
+exec sed -i s/_CK_PORT_/$ck_port/g update_def.py
 exec sed -i s/_BUFF_OUT_PIN_/$buf_out_pin/g update_def.py
 exec python update_def.py > cts.def 
+
+set width  [expr $width*$db_ratio]
+set height [expr $height*$db_ratio]
+set clkx   [expr $clkx*$db_ratio]
+set clky   [expr $clky*$db_ratio]
 
 # Remove previous replace run
 set replace_dir "leg"
@@ -156,14 +201,14 @@ if {[file exists $replace_dir]} {
 }
 
 puts "Running legalization..."
-catch {exec ../third_party/RePlAce -bmflag etc -lef $lef -def cts.def -output leg -t 1 -dpflag NTU3 -dploc ../third_party/ntuplace3 -onlyLG -onlyDP -denDP 0.6 > leg_rpt} 
-exec cp leg/etc/cts/experiment0/cts_final.def post_leg.def
+catch {exec ../third_party/RePlAce -bmflag etc -lef $lef -def cts.def -output leg -t 1 -dpflag NTU3 -dploc ../third_party/ntuplace3 -onlyLG -onlyDP -fragmentedRow -denDP 0.9 -plot > leg_rpt} 
+exec cp leg/etc/cts/experiment000/cts_final.def post_leg.def
 #exec cp cts.def post_leg.def
 
 # Update cell locations
 exec python ../src/scripts/extract_locations.py post_leg.def > cell_locs_final.txt
 
-exec echo "clk" > clockNet.txt
+exec echo "$ck_port" > clockNet.txt
 exec grep ck_net* post_leg.def | awk {{print $2}} >> clockNet.txt
 
 # Dump GCELLs for clock pins
@@ -177,12 +222,14 @@ exec ../third_party/FlexRoute router.param
 # Build guides 
 exec cp -rf ../src/scripts/build_guides.py build_guides.py
 exec sed -i s/_CK_PIN_/$ck_pin/g build_guides.py
+exec sed -i s/_CK_PORT_/$ck_port/g build_guides.py
 exec sed -i s/_BUFF_OUT_PIN_/$buf_out_pin/g build_guides.py
 exec python build_guides.py $clkx $clky $gcellw $gcellh $width $height $enable_pd > guides.log
 
 # Merge guides
 exec cp -rf ../src/scripts/merge_guides.py merge_guides.py
 exec sed -i s/_CK_PIN_/$ck_pin/g merge_guides.py
+exec sed -i s/_CK_PORT_/$ck_port/g merge_guides.py
 exec sed -i s/_BUFF_OUT_PIN_/$buf_out_pin/g merge_guides.py
 exec python merge_guides.py > cts.guides
 
@@ -190,6 +237,7 @@ exec python merge_guides.py > cts.guides
 exec python ../src/scripts/verilog_preprocess.py
 exec cp -rf ../src/scripts/remove_dummies.py remove_dummies.py
 exec sed -i s/_CK_PIN_/$ck_pin/g remove_dummies.py
+exec sed -i s/_CK_PORT_/$ck_port/g remove_dummies.py
 exec sed -i s/_BUFF_OUT_PIN_/$buf_out_pin/g remove_dummies.py
 exec python remove_dummies.py > cts_final.def
 
