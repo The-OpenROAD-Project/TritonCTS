@@ -56,6 +56,8 @@ class design {
         unsigned verbose;
         unsigned opt_t_idx;
         int toler;
+		float xoffset;
+		float yoffset;
 
         unsigned max_delay;
         unsigned max_solnum;
@@ -82,7 +84,7 @@ class design {
         map<int, LUT*> lut_map;
 
         // functions
-        bool parseDesignInfo(float, float, float, float, float, float, unsigned, unsigned, int, unsigned, unsigned, bool, string);
+        bool parseDesignInfo(float, float, float, float, float, float, unsigned, unsigned, int, unsigned, unsigned, bool, string, bool);
         void parseLUT();
         void parseSinkCap();
         void parseBlks();
@@ -100,5 +102,8 @@ class design {
         int idenLoc(pair<float, float>, pair<float, float>);
         float calcDist(pair<float, float>, pair<float, float>);
         void printSol(vector<solution*> &all_sols);
+
+		// MF @ 180206: hacking sink region
+		void computeSinkRegion(const float);
 };
 

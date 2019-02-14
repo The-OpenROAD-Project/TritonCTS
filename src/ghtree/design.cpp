@@ -75,11 +75,19 @@ ostream& operator<< (ostream& os, pair<float,float> b) {
     return os ;
 }
 
+
+bool sortByX(pin *p1, pin *p2) {
+	return p1->x < p2->x;
+}
+
+bool sortByY(pin* p1, pin* p2) {
+	return p1->y < p2->y;
+}
+
+
 /*** Parse the input file **************************************************/
-bool design::parseDesignInfo(float _W, float _H, float dist_i, float cap_i, float _skew, float time_i, unsigned _n, unsigned _v, int _toler, unsigned _max_delay, unsigned _max_solnum, bool _cluster_only, string _sol_file) {
+bool design::parseDesignInfo(float _W, float _H, float dist_i, float cap_i, float _skew, float time_i, unsigned _n, unsigned _v, int _toler, unsigned _max_delay, unsigned _max_solnum, bool _cluster_only, string _sol_file, bool computeSinkRegionMode) {
     
-    W               = (unsigned)ceil(_W / (dist_i*2))*2;
-    H               = (unsigned)ceil(_H / (dist_i*2))*2;
     max_skew        = (unsigned)floor(_skew / time_i);
     num_sinks       = _n;
     verbose         = _v;
@@ -89,8 +97,20 @@ bool design::parseDesignInfo(float _W, float _H, float dist_i, float cap_i, floa
     max_solnum      = _max_solnum;
     cluster_only    = _cluster_only;
     sol_file        = _sol_file;
+	xoffset			= 0.0f;
+	yoffset			= 0.0f;
 
     parseSinkCap();
+
+	// MF @ 180206: hacking sink region
+	if (computeSinkRegionMode) {
+		computeSinkRegion(dist_i);		
+	} else {
+		W = (unsigned)ceil(_W / (dist_i*2))*2;
+    	H = (unsigned)ceil(_H / (dist_i*2))*2;
+	}
+	// end 
+
     parseLUT();
 	
 	cout << "min_slew_idx: " << min_slew_idx << " out_slew_idx: " << out_slew_idx << "\n";
@@ -98,6 +118,41 @@ bool design::parseDesignInfo(float _W, float _H, float dist_i, float cap_i, floa
     avg_cap = total_cap / num_sinks;
 
     return true;
+}
+
+// MF @ 180206: hacking sink region
+void design::computeSinkRegion(const float dist_i) {
+	std::cout << " TritonCTS is running on 'computing sink region mode'\n";
+	std::cout << " Computing sink region now...\n";
+
+	std::sort(pins.begin(), pins.end(), sortByX);
+	float minx = pins.front()->x;
+	float maxx = pins.back()->x;
+
+	std::sort(pins.begin(), pins.end(), sortByY);
+	float miny = pins.front()->y;
+	float maxy = pins.back()->y;
+	
+	std::cout << "\tminx =\t" << minx << "\n";	
+	std::cout << "\tminy =\t" << miny << "\n";	
+	std::cout << "\tmaxx =\t" << maxx << "\n";	
+	std::cout << "\tmaxy =\t" << maxy << "\n";
+
+	W = (unsigned)ceil((maxx-minx) / (dist_i*2))*2;
+    H = (unsigned)ceil((maxy-miny) / (dist_i*2))*2;
+	
+	xoffset = minx;
+	yoffset = miny;
+
+	std::cout << "\txoffset =\t" << xoffset << "\n";
+	std::cout << "\tyoffset =\t" << yoffset << "\n";
+	std::cout << "\twidth =\t" << W << "\n";
+	std::cout << "\theight =\t" << H << "\n";
+
+	for (unsigned i = 0; i < pins.size(); ++i) {
+		pins[i]->x -= xoffset;
+		pins[i]->y -= yoffset;
+	}
 }
 
 void design::parseSinkCap() {
@@ -200,7 +255,11 @@ void design::parseBlks() {
     while (getline(inFile, str)) {
         stringstream ss(str);
         ss >> x1 >> y1 >> x2 >> y2;
-        blockage * blk = new blockage(atof(x1.c_str()), atof(y1.c_str()), atof(x2.c_str()), atof(y2.c_str()));
+        blockage * blk = new blockage(
+						atof(x1.c_str())-xoffset, 
+						atof(y1.c_str())-yoffset, 
+						atof(x2.c_str())-xoffset,
+					   	atof(y2.c_str())-yoffset);
         blks.push_back(blk);
     }
     inFile.close();
@@ -1793,8 +1852,8 @@ void design::printSol(vector<solution*> &all_sols) {
 
     map <int, pair<float, float> > idx2Loc;
     pair <float, float> center;
-    center.first = 4.69;
-    center.second = 4.69;
+    center.first = W/2.0;
+    center.second = H/2.0;
     idx2Loc[0] = center;
     for (int j = 0; j < all_sols.size(); ++j) {
       solution * sol = all_sols[j];
@@ -2319,6 +2378,29 @@ void design::placeTree() {
             }
         }
     }
+
+	// MF @ 180207: Fixing blockages, branching points and buffer locations
+	for (unsigned i = 0; i < blks.size(); i++) {
+		blockage* blk = blks[i];
+		blk->x1 += xoffset;
+		blk->x2 += xoffset;
+		blk->y1 += yoffset;
+		blk->y2 += yoffset;
+	}
+	
+	for (unsigned j = 0; j < all_sols.size(); ++j) {
+		solution * sol = all_sols[j];
+		for (unsigned i = 0; i < sol->locs.size(); ++i) {
+			sol->locs[i].first += xoffset;
+			sol->locs[i].second += yoffset;
+        }
+		
+		for (unsigned i = 0; i < sol->buf_locs.size(); ++i) {
+			sol->buf_locs[i].first += xoffset;
+			sol->buf_locs[i].second += yoffset;
+		}
+	}
+	// end 
 
     cout << "Start writing sol.txt" << endl;
     ofstream outFile;

@@ -39,7 +39,7 @@ SRCDIR = src/ghtree
 
 BINDIR = bin
 
-OBJs = $(BINDIR)/argument.o $(BINDIR)/tree.o $(BINDIR)/design.o $(BINDIR)/main.o $(BINDIR)/mymeasure.o $(BINDIR)/mystring.o
+OBJs = $(BINDIR)/argument.o $(BINDIR)/tree.o $(BINDIR)/design.o $(BINDIR)/main.o $(BINDIR)/mymeasure.o $(BINDIR)/mystring.o $(BINDIR)/clustering.o
 
 PROG =  $(BINDIR)/genHtree
 
@@ -88,6 +88,10 @@ $(BINDIR)/mymeasure.o : $(SRCDIR)/mymeasure.cpp $(SRCDIR)/mymeasure.h
 $(BINDIR)/mystring.o : $(SRCDIR)/mystring.cpp $(SRCDIR)/mystring.h 
 	$(CCPATH) $(CCFLAG) $(DEBUG) -o $(BINDIR)/mystring.o \
 	 -c $(SRCDIR)/mystring.cpp 
+
+$(BINDIR)/clustering.o : $(SRCDIR)/clustering.cpp $(SRCDIR)/clustering.h 
+	$(CCPATH) $(CCFLAG) $(DEBUG) -o $(BINDIR)/clustering.o \
+	 -c $(SRCDIR)/clustering.cpp 
 
 # Link the executable
 $(PROG): $(OBJs) 

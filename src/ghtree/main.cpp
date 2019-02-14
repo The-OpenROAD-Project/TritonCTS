@@ -83,7 +83,7 @@ int     main(int argc, char* argv[]){
     measure.start_clock();
     float startTime = omp_get_wtime();
 
-    my_design->parseDesignInfo(argument.W, argument.H, argument.dist_i, argument.cap_i, argument.max_skew, argument.time_i, argument.num_sinks, argument.verbose, argument.toler, argument.max_delay, argument.max_solnum, argument.cluster_only, argument.sol_file);
+    my_design->parseDesignInfo(argument.W, argument.H, argument.dist_i, argument.cap_i, argument.max_skew, argument.time_i, argument.num_sinks, argument.verbose, argument.toler, argument.max_delay, argument.max_solnum, argument.cluster_only, argument.sol_file, argument.compute_sink_region_mode);
     //my_design->parseBlks();
     if (!my_design->cluster_only) {
         my_design->optTree();

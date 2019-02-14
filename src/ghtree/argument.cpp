@@ -58,6 +58,7 @@ CArgument::CArgument(){
     max_delay           = 10000;
     max_solnum          = 1;
     cluster_only        = false;
+	compute_sink_region_mode = false;
 }
 
 /*** Command Line Analyzer ***********************************************/
@@ -282,7 +283,11 @@ bool    CArgument::argument(int argc, char* argv[]){
                 return  false;
             }
         }
-        
+		
+		else if(arg == "-compute_sink_region_mode") {
+            compute_sink_region_mode = true;
+        }
+ 
 		else {
             cout << "*** Error :: Option(s) is(are) NOT applicable.." << endl;
             return  false;
@@ -290,7 +295,9 @@ bool    CArgument::argument(int argc, char* argv[]){
     }
 
     cout << "*** Input parameters ***" << endl;
-    cout << "Area side:\t" << W << "x" << H << endl;
+	if (compute_sink_region_mode) {
+    	cout << "Area side:\t" << W << "x" << H << endl;
+	}
     cout << "Max. skew:\t" << max_skew << endl;
     cout << "Max. latency:\t" << max_delay << endl;
     cout << "#Leaf regions:\t" << num_sinks << endl;
@@ -302,6 +309,7 @@ bool    CArgument::argument(int argc, char* argv[]){
     if (verbose > 0) {
         cout << "Verbose mode:\t" << verbose << endl;
     }
+	cout << "Compute sink region mode\t" << compute_sink_region_mode << endl;
     cout << endl;
     return  true;
 }
