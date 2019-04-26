@@ -9,7 +9,7 @@ Many subsequent changes for open-sourcing were made by [Mateus Fogaça](https://
 TritonTCS requires 5 input files and produces 3 output files. Refer to [OpenROAD Flow and Notes](https://theopenroadproject.org/wp-content/uploads/2018/12/OpenROAD_Flow_and_Notes_Nov2018-v1p0-1.pdf) for more information.
 
 Inputs:
-- 2 [Library characterization files](doc/Technology_characterization.md)
+- [Library characterization file] (doc/Technology_characterization.md)
 - Verilog with gate-level netlist
 - Placed DEF with netlist
 - [Configuration file](doc/Run_TritonCTS.md#example-of-a-config-file)
