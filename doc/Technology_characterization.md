@@ -69,15 +69,15 @@ $ cp lut.txt ../../src/tech/lut-16.txt
     * The current version (alpha) uses OpenSTA to obtain delay and power, and the scripts we made generate spef files from given R and C per unit distance.
     * No need to have the liberty template.
 
-| <img src="doc/error_dist_1.png" width=550px> |
+| <img src="error_dist_1.png" width=550px> |
 |:--:|
 | *Error distributions between the previous version vs alpha using in test_20_20_W2X with 16nm* |
 
-| <img src="doc/28nm_error_dist.png" width=550px> |
+| <img src="28nm_error_dist.png" width=550px> |
 |:--:|
 | *Error distributions between the previous version vs alpha using in test_20_20_W2X with 28nm* |
 
-| <img src="doc/65nm_error_dist.png" width=550px> |
+| <img src="65nm_error_dist.png" width=550px> |
 |:--:|
 | *Error distributions between the previous version vs alpha using in test_20_20_W2X with 65nm* |
 
