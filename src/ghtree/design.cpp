@@ -37,6 +37,7 @@
 
 #include "design.h"
 #include "mymeasure.h"
+#include "clustering.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
@@ -56,7 +57,8 @@
 #include <cstdlib>
 #include <omp.h>
 #include <sys/timeb.h>
-#include <ilcplex/ilocplex.h>
+//#include <ilcplex/ilocplex.h>
+#include <numeric>
 
 using   namespace   std;
 
@@ -124,14 +126,15 @@ bool design::parseDesignInfo(float _W, float _H, float dist_i, float cap_i, floa
 void design::computeSinkRegion(const float dist_i) {
 	std::cout << " TritonCTS is running on 'computing sink region mode'\n";
 	std::cout << " Computing sink region now...\n";
-
+	
+	int percentile = (int) std::round(0.00 * pins.size());
 	std::sort(pins.begin(), pins.end(), sortByX);
-	float minx = pins.front()->x;
-	float maxx = pins.back()->x;
+	float minx = pins[percentile]->x;
+	float maxx = pins[pins.size() - 1 - percentile]->x;
 
 	std::sort(pins.begin(), pins.end(), sortByY);
-	float miny = pins.front()->y;
-	float maxy = pins.back()->y;
+	float miny = pins[percentile]->y;
+	float maxy = pins[pins.size()- 1 -percentile]->y;
 	
 	std::cout << "\tminx =\t" << minx << "\n";	
 	std::cout << "\tminy =\t" << miny << "\n";	
@@ -283,6 +286,9 @@ void design::optTree () {
         n *= 2;
         ++max_d;
     }
+    
+    // JL: additional layer to ensure valid solution
+    ++max_d;
 
     // initialization of solution space
     unsigned num_max, num_min;
@@ -320,14 +326,14 @@ void design::optTree () {
             unsigned h = (j+1)*2; 
             if (i >= num_min && j >= num_min) 
                 continue;
-            if ((float)w/h >= 20 || (float)w/h <= 0.05) 
+            if ((float)w/h >= 30 || (float)w/h <= 0.03) 
             //if ((float)w/h >= 10 || (float)w/h <= 0.1) 
                 continue; 
            // if ((float)w/h <= 0.025) 
 
             // number of sinks is an even number
             //unsigned m = (int)ceil(num_sinks*1.5/((W*H)/(w*h))/2) - (int)floor(num_sinks*0.6/((W*H)/(w*h))/2) + 1; 
-            unsigned m = (int)ceil(num_sinks*3.0/((W*H)/(w*h))/2); 
+            unsigned m = (int)ceil(num_sinks*10.0/((W*H)/(w*h))/2); 
             prep_sol[i][j].resize(m, dummy2);
         }
     }
@@ -356,11 +362,15 @@ void design::optTree () {
             //unsigned baseM = (unsigned)floor(num_sinks*0.6/((W*H)/(w*h))/2);
             //for (unsigned m = 0; m < sols[0][i][j].size(); ++m)
             for (unsigned m = 0; m < sols[0][i][j].size(); ++m) {
-                if (m < (int)floor(num_sinks*0.6/((W*H)/(w*h))/2)) {
-                    continue;
-                }
+                // JL: skip the following to ensure valid solution
+                //if (m < (int)floor(num_sinks*0.6/((W*H)/(w*h))/2)) {
+                //    continue;
+                //}
                 //unsigned n = (baseM+m+1)*2;
                 unsigned n = (m+1)*2;
+                // JL: restrict branching factor to be less than 10
+                if (n > 10)
+                  continue;
 
                 vector<unsigned> dists;
                 vector<float> loads;
@@ -639,14 +649,18 @@ void design::optTree () {
 
                 //unsigned baseM = (unsigned)floor(num_sinks*0.6/((W*H)/(w*h))/2);
                 for (unsigned m = 0; m < sols[k][i][j].size(); ++m) {  // SINK NUMBER
-                    if (m < (int)floor(num_sinks*0.6/((W*H)/(w*h))/2)) {
-                        continue;
-                    }
+                    // JL: skip the following to ensure valid solution
+                    //if (m < (int)floor(num_sinks*0.6/((W*H)/(w*h))/2)) {
+                    //    continue;
+                    //}
                     //unsigned n = (baseM+m+1)*2;
                     unsigned n = (m+1)*2;
-
+					
                     for (unsigned m_t = 0; m_t < m; ++m_t) {
                         unsigned n_t = (m_t+1)*2;
+                        // JL: restrict branching factor to be less than 10
+                        if (n_t > 10)
+                         continue;
                         float  tmp_n = float(n)/n_t;
                         if (fmod(tmp_n,2) != 0)          // multiplication does not lead to desired sink number
                             continue;
@@ -1523,6 +1537,9 @@ void design::reconstructTree() {
     outFile.close();
 }
 
+//#define CPLEX_CLUSTERING
+#ifdef CPLEX_CLUSTERING
+
 /*** Random walk-based clustering to balance load ************************************/
 void design::cluster(vector<pin*> in_pins, vector<vector<pin*>>& out_pins, vector<pair<float, float>> in_locs, vector<pair<float, float>>& out_locs, float num_regions) {
 
@@ -1801,7 +1818,7 @@ void design::cluster(vector<pin*> in_pins, vector<vector<pin*>>& out_pins, vecto
         out_locs.push_back(make_pair(tmp_x, tmp_y));
     }
 
-    if (verbose > 1) {
+    //if (verbose > 1) {
     cout << "OUT_PINS ";
     for (unsigned i = 0; i < out_pins.size(); ++i) {
         cout <<  out_pins[i].size() << " ";
@@ -1812,9 +1829,39 @@ void design::cluster(vector<pin*> in_pins, vector<vector<pin*>>& out_pins, vecto
         cout << "(" << out_locs[i].first << ", " << out_locs[i].second << ") ";
     }
     cout  << endl;
-    }
+    //}
 
 }
+
+#else
+
+void design::cluster(vector<pin*> in_pins, vector<vector<pin*>>& out_pins, 
+	vector<pair<float, float>> in_locs, vector<pair<float, float>>& out_locs, float num_regions,
+	float xBranch, float yBranch) {
+	
+	static int i = 0;
+	
+	CKMeans::clustering c(in_pins, xBranch, yBranch);
+	c.setPlotFileName("cluster-" + std::to_string(i++) + ".py");
+	out_locs = in_locs;
+	c.iterKmeans(1, in_locs.size(), in_pins.size()/in_locs.size(), 0, out_locs, 5);
+	c.getClusters(out_pins);
+
+	cout << "OUT_PINS (size " << out_pins.size() << ")\n";
+    for (unsigned i = 0; i < out_pins.size(); ++i) {
+        cout <<  out_pins[i].size() << " ";
+    }
+    cout << endl;
+    cout << "OUT_LOCS " ;
+    for (unsigned i = 0; i < out_locs.size(); ++i) {
+        cout << "(" << out_locs[i].first << ", " << out_locs[i].second << ") ";
+    }
+    cout  << endl;
+	
+	//std::exit(1);
+}
+	
+#endif
 
 void design::printSol(vector<solution*> &all_sols) {
 
@@ -1852,8 +1899,8 @@ void design::printSol(vector<solution*> &all_sols) {
 
     map <int, pair<float, float> > idx2Loc;
     pair <float, float> center;
-    center.first = W/2.0;
-    center.second = H/2.0;
+    center.first = W/2.0 + xoffset;
+    center.second = H/2.0 + yoffset;
     idx2Loc[0] = center;
     for (int j = 0; j < all_sols.size(); ++j) {
       solution * sol = all_sols[j];
@@ -1861,15 +1908,21 @@ void design::printSol(vector<solution*> &all_sols) {
       //    break;
       //}
       
+	  //cout << "j: "<< j << " lvl of j:" << sol->lvl << " parent" << idx2Loc[sol->idx].first << " " << idx2Loc[sol->idx].second << "\n";
+	  
       for (int i = 0; i < sol->locs.size(); ++i) {
         idx2Loc[sol->subtrees[i]] = sol->locs[i];
+		//cout << " subtree" << sol->subtrees[i] << " loc " << sol->locs[i] << "\n";
       }  
     }
 
+	std::array<char, 8> colors = {'b', 'r', 'g', 'm', 'c', 'y', 'b', 'r'};
     for (int j = 0; j < all_sols.size(); ++j) {
       solution * sol = all_sols[j];
+	  //cout << "j = " << j << " idx = " << sol->idx << "\n";
+	  
       //if (all_sols[all_sols.size()-1]->lvl == sol->lvl) {
-      //    break;
+      //    continue;
       //}
       
       for (int i = 0; i < sol->locs.size(); ++i) {
@@ -1879,34 +1932,43 @@ void design::printSol(vector<solution*> &all_sols) {
           nIdx1 = sol->subtrees[i];
           nIdx2 = sol->subtrees[i + 1];
         } else if (i < sol->locs.size()/2) {
-          nIdx1 = j;
+          nIdx1 = sol->idx;
           nIdx2 = sol->subtrees[i];
         } else if (i >= sol->locs.size()/2 + 1) {
           nIdx1 = sol->subtrees[i];
           nIdx2 = sol->subtrees[i - 1];
         } else if (i >= sol->locs.size()/2 ) {
-          nIdx1 = j;
+          nIdx1 = sol->idx;
           nIdx2 = sol->subtrees[i];
         }
      
-        cout << "Loc pair " << nIdx1 << " " << nIdx2 << endl;
-        cout << "Loc pair " << idx2Loc[nIdx1] << " " << idx2Loc[nIdx2] << endl;
-
+        //cout << "Loc pair " << nIdx1 << " " << nIdx2 << endl;
+        //cout << "Loc pair " << idx2Loc[nIdx1] << " " << idx2Loc[nIdx2] << endl;
+		
+		char colorIdx = std::min(sol->lvl, (int)colors.size()-1);
         fout << "plt.plot((" << idx2Loc[nIdx1].first << ", "
              << idx2Loc[nIdx2].first << "), ("
              << idx2Loc[nIdx1].second << ", "
-             << idx2Loc[nIdx2].second << "), color='b')"
+             << idx2Loc[nIdx2].second << "), color='" << (char)colors[colorIdx] << "')"
              << endl;
       }
     }
 
 
+	// MF @ 190214: ploting sinks
+	fout << "\n\n";
+	for (unsigned i = 0; i < pins.size(); i++) {
+		fout << "plt.scatter(" << pins[i]->x+xoffset << ", " << pins[i]->y+yoffset << ", color='k', s=2)\n";  
+	}
 
+	fout << "plt.plot((" << xoffset << ", " << xoffset+W << ", " << xoffset+W << ", " << xoffset << ", " << xoffset <<
+			"), (" << yoffset << ", " << yoffset << ", " << yoffset+H << ", " << yoffset+H << ", " << yoffset << "), color='g')\n";  
+	
+	fout << "plt.axis('equal')\n";
+	// ---
 
     fout << "plt.show()" << endl;
     fout.close();
-
-
 }
 
 void design::placeTree() {
@@ -2176,7 +2238,7 @@ void design::placeTree() {
 
             // merge 
             bufLocs.insert(bufLocs.begin(), m_bufLocs.begin(), m_bufLocs.end());
-            
+             
             tot_len *= 2;
 
             sort(bufLocs.begin(), bufLocs.end());
@@ -2186,9 +2248,15 @@ void design::placeTree() {
                 cout << bufLocs[i] << " ";
             }
             cout << endl;
-
+			
             float num = (num_sinks*_w*_h)/(W*H);
-            cluster(r->pins, out_pins, in_locs, out_locs, num); 
+			
+			cout << "r_loc (" << r->r_x << ", " << r->r_y << ")\n";
+			for (unsigned i = 0; i < in_locs.size(); ++i) {
+				std::cout << "\t(" << in_locs[i].first << ", " << in_locs[i].second << ")\n";
+			}
+			
+            cluster(r->pins, out_pins, in_locs, out_locs, num, r->r_x, r->r_y); 
             if (verbose > 1) {
             for (unsigned i = 0; i < in_locs.size(); ++i) {
                 cout << endl;
@@ -2312,8 +2380,23 @@ void design::placeTree() {
             }
             cout << endl;
 
-            findLocs(in_locs, opt_locs, opt_buf_locs, isBuffer, rel_dist, blks_in_sinks);
-
+			cout << "In_locs size = " << in_locs.size() << "\n";
+			cout << "opt_locs size = " << opt_locs.size() << "\n";
+			cout << "opt_buf_locs size = " << opt_buf_locs.size() << "\n";
+			cout << "isBuffer size = " << isBuffer.size() << "\n";
+			cout << "rel_dist size = " << rel_dist.size() << "\n";
+			cout << "blks_in_sinks size = " << blks_in_sinks.size() << "\n";
+//#ifdef CPLEX_CLUSTERING
+			findLocsGreedy(in_locs, opt_locs, opt_buf_locs, isBuffer, rel_dist, blks_in_sinks);
+            //findLocs(in_locs, opt_locs, opt_buf_locs, isBuffer, rel_dist, blks_in_sinks);
+//#endif			
+			cout << "In_locs size = " << in_locs.size() << "\n";
+			cout << "opt_locs size = " << opt_locs.size() << "\n";
+			cout << "opt_buf_locs size = " << opt_buf_locs.size() << "\n";
+			cout << "isBuffer size = " << isBuffer.size() << "\n";
+			cout << "rel_dist size = " << rel_dist.size() << "\n";
+			cout << "blks_in_sinks size = " << blks_in_sinks.size() << "\n";
+				
             if (verbose > 1) {
             cout << "OPT_LOCS " ;
             for (unsigned i = 0; i < opt_locs.size(); ++i) {
@@ -2443,272 +2526,438 @@ void design::placeTree() {
     cout << "Finished writing sol.txt" << endl;
 }
 
-/*** Find the optimal branching location **************************************/
-float design::findLocs(const vector<pair<float, float>>&in_locs, vector<pair<float, float>>&out_locs, vector<pair<float, float>>&opt_buf_locs, const vector<bool>& isBuffer, const vector <float>& dist, const vector < vector <blockage*> > &blks) {
-
-    float max_dist = -1;
-
-    IloEnv env;
-    try {
-        IloExpr objective(env);
-
-        IloRangeArray Consts(env);
-       
-        // buffer and branching points 
-        vector < pair <IloNumVar, IloNumVar> > var; 
-        vector < pair <IloNumVar, IloNumVar> > delta;
-        pair <IloNumVar, IloNumVar> max_delta;
-        
-        char buffer [50];
-        sprintf(buffer, "max_delta_x");
-        max_delta.first = IloNumVar(env, 0, 1000000, ILOFLOAT, buffer);
-        sprintf(buffer, "max_delta_y");
-        max_delta.second = IloNumVar(env, 0, 1000000, ILOFLOAT, buffer);
-
-        objective = max_delta.first + max_delta.second;
-
-        int cIdx = (in_locs.size() - 1)/2;
-        int cIdx_in_var;
-        int cnt = 0;
-        vector<int> branching_idxes;
-
-      
-        for (unsigned i = 0; i < isBuffer.size(); ++i) {
-          pair <IloNumVar, IloNumVar> temp;
-          
-          if (!isBuffer[i]) {
-            sprintf(buffer, "x_%d_branch_loc", i);
-            temp.first = IloNumVar(env, 0, 1000000, ILOFLOAT, buffer);
-            sprintf(buffer, "y_%d_branch_loc", i);
-            temp.second = IloNumVar(env, 0, 1000000, ILOFLOAT, buffer);
-
-            pair <IloNumVar, IloNumVar> d_temp;
-            
-            sprintf(buffer, "delta_x_%d", i);
-            d_temp.first = IloNumVar(env, 0, 1000000, ILOFLOAT, buffer);
-            sprintf(buffer, "delta_y_%d", i);
-            d_temp.second = IloNumVar(env, 0, 1000000, ILOFLOAT, buffer);
-            
-            delta.push_back(d_temp);
-
-            branching_idxes.push_back(i);
-            if (cnt == cIdx) cIdx_in_var = i;
-            cnt++;
-          } else {
-            sprintf(buffer, "x_%d_buffer_loc", i);
-            temp.first = IloNumVar(env, 0, 1000000, ILOFLOAT, buffer);
-            sprintf(buffer, "y_%d_buffer_loc", i);
-            temp.second = IloNumVar(env, 0, 1000000, ILOFLOAT, buffer);
-          }
-          var.push_back(temp);
-        }
-        
-        cout << "aaa" << endl;
-        cnt = 0;
-        for (unsigned i = 0; i < isBuffer.size() - 1; ++i) {
-            int idx;
-            IloExpr ex(env);
-
-            idx = idenLoc(in_locs[cnt], in_locs[cnt+1]);
-
-            if (idx == 1) {
-                ex = var[i].first - var[i+1].first + var[i].second - var[i+1].second;
-                Consts.add(ex == dist[i]);
-                ex = var[i].first - var[i+1].first;
-                Consts.add(ex >= 0);
-                ex = var[i].second - var[i+1].second;
-                Consts.add(ex >= 0);
-            } else if (idx == 2) {
-                ex = var[i].first - var[i+1].first + var[i+1].second - var[i].second;
-                Consts.add(ex == dist[i]);
-                ex = var[i].first - var[i+1].first;
-                Consts.add(ex >= 0);
-                ex = var[i+1].second - var[i].second;
-                Consts.add(ex >= 0);
-            } else if (idx == 3) {
-                ex = var[i+1].first - var[i].first + var[i].second - var[i+1].second;
-                Consts.add(ex == dist[i]);
-                ex = var[i+1].first - var[i].first;
-                Consts.add(ex >= 0);
-                ex = var[i].second - var[i+1].second;
-                Consts.add(ex >= 0);
-            } else if (idx == 4) {
-                ex = var[i+1].first - var[i].first + var[i+1].second - var[i].second;
-                Consts.add(ex == dist[i]);
-                ex = var[i+1].first - var[i].first;
-                Consts.add(ex >= 0);
-                ex = var[i+1].second - var[i].second;
-                Consts.add(ex >= 0);
-            }
-
-            if (!isBuffer[i+1]) ++cnt; 
-
-            // fix center location of current region
-            if (i == cIdx_in_var) {
-              ex = var[i].first - in_locs[cIdx].first;
-              Consts.add(ex == 0);
-              ex = var[i].second - in_locs[cIdx].second;
-              Consts.add(ex == 0);
-            }
-        }
-        
-        cout << "bbb" << endl;
-        // Blockage constraint
-        if (blks.size() != 0) {
-          cnt = 0;
-          IloNum BigConst = 10000000;
-          for (unsigned i = 0; i < isBuffer.size(); ++i) {
-            cout << "i = " << i << " buffer_size: " << isBuffer.size() << endl;
-            if (!isBuffer[i]) {
-              if (i != cIdx_in_var) {
-                ++cnt; 
-              }
-              continue;
-            } else {
-              //buffer
-              for (unsigned k = 0; k <= 1; ++k) {
-                cout << "cnt: " << cnt << " current_index: " << cnt - k 
-                     << " blks_size: " << blks.size() << endl;
-                const vector <blockage*> cBlks = blks[cnt - k];
-                for (unsigned j = 0; j < cBlks.size(); ++j) {
-                  cout << "  j = " << j << endl;
-                  IloNumVar var_x1, var_x2, var_y1, var_y2;
-                  sprintf(buffer, "xl_buf_%d_blk_%d", i, j);
-                  var_x1 = IloNumVar(env, 0, 1, ILOBOOL, buffer);
-                  sprintf(buffer, "xr_buf_%d_blk_%d", i, j);
-                  var_x2 = IloNumVar(env, 0, 1, ILOBOOL, buffer);
-                  sprintf(buffer, "yl_buf_%d_blk_%d", i, j);
-                  var_y1 = IloNumVar(env, 0, 1, ILOBOOL, buffer);
-                  sprintf(buffer, "yr_buf_%d_blk_%d", i, j);
-                  var_y2 = IloNumVar(env, 0, 1, ILOBOOL, buffer);
-                  
-                  IloExpr ex(env);
-                  // var_x1 = 1 if buf_x <= blk_x1
-                  // blk_xl - buf_x <= BigConstant * var_x1 - 1
-                  ex = BigConst * var_x1 + var[i].first;
-                  Consts.add(ex >= 0.000001 + cBlks[j]->x1);
-                   
-                  // var_x1 = 0 if buf_x > blk_x1
-                  // buf_x - blk_x1 <= BigConstant * (1 - var_x1)
-                  Consts.add(ex <= BigConst + cBlks[j]->x1);
-
-                  // var_x2 = 1 if buf_x >= blk_x2
-                  // buf_x - blk_x2 <= BigConstant * var_x2 - 1
-                  ex = BigConst * var_x2 - var[i].first;
-                  Consts.add(ex >= 0.000001 - cBlks[j]->x2);
-
-                  // var_x2 = 0 if buf_x < blk_x2
-                  // blk_x2 - buf_x <= BigConstant * (1 - var_x2)
-                  Consts.add(ex <= BigConst - cBlks[j]->x2);
-
-                  // var_y1 = 1 if buf_y <= blk_y1
-                  // blk_yl - buf_y <= BigConstant * var_y1 - 1
-                  ex = BigConst * var_y1 + var[i].second;
-                  Consts.add(ex >= 0.000001 + cBlks[j]->y1);
-
-                  // var_y1 = 0 if buf_y > blk_y1
-                  // buf_y - blk_y1 <= BigConstant * (1 - var_y1)
-                  Consts.add(ex <= BigConst + cBlks[j]->y1);
-
-                  // var_y2 = 1 if buf_y >= blk_y2
-                  // buf_y - blk_y2 <= BigConstant * var_y2 - 1
-                  ex = BigConst * var_y2 - var[i].second;
-                  Consts.add(ex >= 0.000001 - cBlks[j]->y2);
-                  
-                  // var_y2 = 0 if buf_y < blk_y2
-                  // blk_y2 - buf_y <= BigConstant * (1 - var_y2)
-                  Consts.add(ex <= BigConst - cBlks[j]->y2);
-                  
-                  ex = var_x1 + var_x2 + var_y1 + var_y2;
-                  Consts.add(ex >= 1);
-                }
-              }
-            }
-          } 
-        } 
-        cout << "ccc" << endl;
-        for (unsigned i = 0; i < in_locs.size(); ++i) {
-            IloExpr ex1(env), ex2(env);
-           
-            ex1 = delta[i].first + var[branching_idxes[i]].first - in_locs[i].first;
-            ex2 = delta[i].first - var[branching_idxes[i]].first + in_locs[i].first;
-            Consts.add(ex1 >= 0);
-            Consts.add(ex2 >= 0);
-            ex1 = delta[i].second + var[branching_idxes[i]].second - in_locs[i].second;
-            ex2 = delta[i].second - var[branching_idxes[i]].second + in_locs[i].second;
-            Consts.add(ex1 >= 0);
-            Consts.add(ex2 >= 0);
-
-            ex1 = max_delta.first - delta[i].first;
-            ex2 = max_delta.second - delta[i].second;
-            Consts.add(ex1 >= 0);
-            Consts.add(ex2 >= 0);
-        }
-
-        cout << "ddd" << endl;
-        IloModel model(env);
-        model.add(IloMinimize(env, objective));
-        model.add(Consts);
-
-        IloCplex cplex(model);
-
-        cplex.setParam(IloCplex::Threads, 1);
-        //cplex.setOut(env.getNullStream());
-
-        string lpFile = "dist.lp";
-        string solFile = "dist.sol";
-        //cplex.exportModel(lpFile.c_str());
-
-        out_locs.clear();
-        if (cplex.solve()) {
-            if (verbose > 2) {
-                env.out() << "Feasible " << cplex.getStatus() << endl;
-                env.out() << "Solution value = " << cplex.getObjValue() << endl;
-            }
-            max_dist = cplex.getObjValue();
-
-            //cplex.writeSolution(solFile.c_str());
-            //for (unsigned i = 0; i < in_locs.size() - 1; ++i) {
-            int cnt = 0;
-            for (unsigned i = 0; i < isBuffer.size(); ++i) {
-                IloNum x = cplex.getValue(var[i].first);
-                IloNum y = cplex.getValue(var[i].second);
-
-                if (isBuffer[i]) {
-                    opt_buf_locs.push_back(make_pair(x, y));
-
-                    if (verbose > 2) {
-                        cout << i << "th buffer location: (" 
-                            << x << ", " << y << ")" << endl;
-                    }
-                } else if (cIdx_in_var != i) {
-                    IloNum del_x = cplex.getValue(delta[cnt].first);
-                    IloNum del_y = cplex.getValue(delta[cnt].second);
-                    out_locs.push_back(make_pair(x, y));
-                    cnt++;
-                    if (verbose > 2) {
-                        cout << i << "th branching location: (" 
-                            << x << ", " << y << ")   delta: ("
-                            << del_x << ", " << del_y << ")" << endl;
-                    }
-                }
-            }
-
-
-        } else {
-            env.out() << "Infeasible!!!" << endl;
-            cplex.exportModel(lpFile.c_str());
-        }
-
-        cplex.end();
-    } catch (IloException& ex){
-	      cerr << "Error: " << ex << endl;
-        cerr << ex.getMessage() << endl;
-    }
-    env.end();
-
-    return max_dist;
+float design::findLocsGreedy( const vector<pair<float, float>>&in_locs, 
+					    vector<pair<float, float>>&out_locs, 
+					    vector<pair<float, float>>&opt_buf_locs, 
+					    const vector<bool>& isBuffer, 
+						const vector <float>& dist, 
+						const vector < vector <blockage*> > &blks) {
+	
+	out_locs.reserve(in_locs.size() - 1);
+	for (unsigned i = 0; i < in_locs.size(); ++i) {
+		if (i != (in_locs.size() / 2)) {
+			out_locs.push_back(in_locs[i]);
+		}
+	}
+	
+	/*------------*/
+//	cout << "in_locs:\n"; 
+//	for (unsigned  i = 0; i < in_locs.size(); ++i) {
+//		cout << "(" << in_locs[i].first << ", " << in_locs[i].second << ")\n";
+//	}
+	
+	float targetTotalDistance = std::accumulate(dist.begin(), dist.end(), 0.0);
+	float realTotalDistance = 0;
+	
+	for (unsigned  i = 0; i < in_locs.size() - 1; ++i) {
+		realTotalDistance += calcDist(in_locs[i], in_locs[i + 1]);
+	}
+	//std::cout << "targetTotalDistance = " << targetTotalDistance << " vs ";
+	//std::cout << "realTotalDistance = " << realTotalDistance << "\n";
+	/*------------*/
+	
+	std::vector<float> accumulatedDistance;
+	accumulatedDistance.reserve(isBuffer.size());
+	float currDist = 0;
+	for (unsigned i = 0; i < isBuffer.size(); ++i) {
+		accumulatedDistance.push_back(currDist);
+		if (i < dist.size()) {
+			currDist += dist[i];
+		}
+	}
+	
+	//vector<BufferSolution> bufferSols(in_locs.size() - 1);
+	unsigned nextBuffer = 0;
+	float startPos = 0;
+	for (unsigned i = 0; i < in_locs.size() - 1; ++i) {
+		//cout << "[BufferSplit] Segment [" << i << "] --> ";
+		BufferSolution bufferingSolutions[2];
+		bufferingSolutions[0]._originLoc = in_locs[i];
+		bufferingSolutions[0]._targetLoc = in_locs[i+1];
+		
+		float segmentLength = calcDist(in_locs[i], in_locs[i+1]);
+		
+		//cout << "buffers = ";
+		while(accumulatedDistance[nextBuffer] - startPos <= segmentLength + 0.0001) {
+			bufferingSolutions[0]._isRealBuffer.push_back(isBuffer[nextBuffer]);
+			bufferingSolutions[0]._relDist.push_back(accumulatedDistance[nextBuffer] - startPos);
+			//cout << "(" << (accumulatedDistance[nextBuffer] - startPos) << ") ";
+			++nextBuffer;
+			if (nextBuffer == isBuffer.size()) {
+				break;
+			}
+		}
+		//cout << "\n";
+		
+		bufferingSolutions[1] = bufferingSolutions[0];
+		createLShapeConnection(bufferingSolutions[0], blks, true);
+		createLShapeConnection(bufferingSolutions[1], blks, false);
+		
+		int bestSol = 0;
+		if (bufferingSolutions[1]._cost < bufferingSolutions[0]._cost) {
+			bestSol = 1;
+		}
+		
+		//pt_buf_locs.insert(opt_buf_locs.end(),
+	//		bufferingSolutions[bestSol]._bufferLocs.begin(),
+	//		bufferingSolutions[bestSol]._bufferLocs.end());
+			
+		startPos += segmentLength;
+	}
 }
+
+void design::createLShapeConnection(BufferSolution& bufferSolution, 
+									const vector<vector<blockage*>>& blks, 
+									bool horFirst) {
+	pair<float, float>& originLoc = bufferSolution._originLoc;
+	pair<float, float>& targetLoc = bufferSolution._targetLoc;
+	vector<float>& relDist = bufferSolution._relDist;
+	vector<bool>& isBuffer = bufferSolution._isRealBuffer;
+	vector<pair<float, float>>& bufferLocs = bufferSolution._bufferLocs;
+	int& cost = bufferSolution._cost;
+	
+	cost = 0;
+	
+	float segmentMediumPoint = calcDist(originLoc, targetLoc) / 2.0;
+	
+	for (unsigned i = 0; i < relDist.size(); ++i) {
+		if (!isBuffer[i]) {
+			continue;
+		}
+		
+		pair<float, float> bufferPos;
+		if (horFirst) {
+			if(relDist[i] < segmentMediumPoint) {
+				if (originLoc.first < targetLoc.first) {
+					bufferPos.first = originLoc.first + relDist[i];
+				} else {
+					bufferPos.first = originLoc.first - relDist[i];
+				}
+				bufferPos.second = originLoc.second;
+			} else {
+				if (originLoc.first < targetLoc.first) {
+					bufferPos.first + segmentMediumPoint;
+				} else {
+					bufferPos.first - segmentMediumPoint;
+				}
+				
+				if (originLoc.second < targetLoc.second) {
+					bufferPos.second = originLoc.second + (relDist[i] - segmentMediumPoint);
+				} else {
+					bufferPos.second = originLoc.second - (relDist[i] - segmentMediumPoint);
+				}
+			}
+		} else {
+			if(relDist[i] < segmentMediumPoint) {
+				if (originLoc.second < targetLoc.second) {
+					bufferPos.second = originLoc.second + relDist[i];
+				} else {
+					bufferPos.second = originLoc.second - relDist[i];
+				}
+				bufferPos.first = originLoc.first;
+			} else {
+				if (originLoc.second < targetLoc.second) {
+					bufferPos.second + segmentMediumPoint;
+				} else {
+					bufferPos.second - segmentMediumPoint;
+				}
+				
+				if (originLoc.first < targetLoc.first) {
+					bufferPos.first = originLoc.first + (relDist[i] - segmentMediumPoint);
+				} else {
+					bufferPos.first = originLoc.first - (relDist[i] - segmentMediumPoint);
+				}
+			}
+		}
+		
+		cost += computeCost(bufferPos, blks);
+		bufferLocs.push_back(bufferPos);
+	}
+}
+
+int design::computeCost(const pair<float, float>& pos, const vector<vector<blockage*> >& blks) {
+	for (unsigned i = 0; i < blks.size(); ++i) {
+		for (unsigned j = 0; j < blks[i].size(); ++j) {
+			blockage* blk = blks[i][j];
+			if (pos.first > blk->x1 && 
+				pos.first < blk->x2 && 
+				pos.second > blk->y1 &&
+				pos.second < blk->y2) {
+				return 1;
+			}
+		}
+	}
+	
+	return 0;
+}
+
+
+/*** Find the optimal branching location **************************************/
+//float design::findLocs(const vector<pair<float, float>>&in_locs, vector<pair<float, float>>&out_locs, vector<pair<float, float>>&opt_buf_locs, const vector<bool>& isBuffer, const vector <float>& dist, const vector < vector <blockage*> > &blks) {
+//
+//    float max_dist = -1;
+//
+//    IloEnv env;
+//    try {
+//        IloExpr objective(env);
+//
+//        IloRangeArray Consts(env);
+//       
+//        // buffer and branching points 
+//        vector < pair <IloNumVar, IloNumVar> > var; 
+//        vector < pair <IloNumVar, IloNumVar> > delta;
+//        pair <IloNumVar, IloNumVar> max_delta;
+//        
+//        char buffer [50];
+//        sprintf(buffer, "max_delta_x");
+//        max_delta.first = IloNumVar(env, 0, 1000000, ILOFLOAT, buffer);
+//        sprintf(buffer, "max_delta_y");
+//        max_delta.second = IloNumVar(env, 0, 1000000, ILOFLOAT, buffer);
+//
+//        objective = max_delta.first + max_delta.second;
+//
+//        int cIdx = (in_locs.size() - 1)/2;
+//        int cIdx_in_var;
+//        int cnt = 0;
+//        vector<int> branching_idxes;
+//
+//      
+//        for (unsigned i = 0; i < isBuffer.size(); ++i) {
+//          pair <IloNumVar, IloNumVar> temp;
+//          
+//          if (!isBuffer[i]) {
+//            sprintf(buffer, "x_%d_branch_loc", i);
+//            temp.first = IloNumVar(env, 0, 1000000, ILOFLOAT, buffer);
+//            sprintf(buffer, "y_%d_branch_loc", i);
+//            temp.second = IloNumVar(env, 0, 1000000, ILOFLOAT, buffer);
+//
+//            pair <IloNumVar, IloNumVar> d_temp;
+//            
+//            sprintf(buffer, "delta_x_%d", i);
+//            d_temp.first = IloNumVar(env, 0, 1000000, ILOFLOAT, buffer);
+//            sprintf(buffer, "delta_y_%d", i);
+//            d_temp.second = IloNumVar(env, 0, 1000000, ILOFLOAT, buffer);
+//            
+//            delta.push_back(d_temp);
+//
+//            branching_idxes.push_back(i);
+//            if (cnt == cIdx) cIdx_in_var = i;
+//            cnt++;
+//          } else {
+//            sprintf(buffer, "x_%d_buffer_loc", i);
+//            temp.first = IloNumVar(env, 0, 1000000, ILOFLOAT, buffer);
+//            sprintf(buffer, "y_%d_buffer_loc", i);
+//            temp.second = IloNumVar(env, 0, 1000000, ILOFLOAT, buffer);
+//          }
+//          var.push_back(temp);
+//        }
+//        
+//        cout << "aaa" << endl;
+//        cnt = 0;
+//        for (unsigned i = 0; i < isBuffer.size() - 1; ++i) {
+//            int idx;
+//            IloExpr ex(env);
+//
+//            idx = idenLoc(in_locs[cnt], in_locs[cnt+1]);
+//
+//            if (idx == 1) {
+//                ex = var[i].first - var[i+1].first + var[i].second - var[i+1].second;
+//                Consts.add(ex == dist[i]);
+//                ex = var[i].first - var[i+1].first;
+//                Consts.add(ex >= 0);
+//                ex = var[i].second - var[i+1].second;
+//                Consts.add(ex >= 0);
+//            } else if (idx == 2) {
+//                ex = var[i].first - var[i+1].first + var[i+1].second - var[i].second;
+//                Consts.add(ex == dist[i]);
+//                ex = var[i].first - var[i+1].first;
+//                Consts.add(ex >= 0);
+//                ex = var[i+1].second - var[i].second;
+//                Consts.add(ex >= 0);
+//            } else if (idx == 3) {
+//                ex = var[i+1].first - var[i].first + var[i].second - var[i+1].second;
+//                Consts.add(ex == dist[i]);
+//                ex = var[i+1].first - var[i].first;
+//                Consts.add(ex >= 0);
+//                ex = var[i].second - var[i+1].second;
+//                Consts.add(ex >= 0);
+//            } else if (idx == 4) {
+//                ex = var[i+1].first - var[i].first + var[i+1].second - var[i].second;
+//                Consts.add(ex == dist[i]);
+//                ex = var[i+1].first - var[i].first;
+//                Consts.add(ex >= 0);
+//                ex = var[i+1].second - var[i].second;
+//                Consts.add(ex >= 0);
+//            }
+//
+//            if (!isBuffer[i+1]) ++cnt; 
+//
+//            // fix center location of current region
+//            if (i == cIdx_in_var) {
+//              ex = var[i].first - in_locs[cIdx].first;
+//              Consts.add(ex == 0);
+//              ex = var[i].second - in_locs[cIdx].second;
+//              Consts.add(ex == 0);
+//            }
+//        }
+//        
+//        cout << "bbb" << endl;
+//        // Blockage constraint
+//        if (blks.size() != 0) {
+//          cnt = 0;
+//          IloNum BigConst = 10000000;
+//          for (unsigned i = 0; i < isBuffer.size(); ++i) {
+//            cout << "i = " << i << " buffer_size: " << isBuffer.size() << endl;
+//            if (!isBuffer[i]) {
+//              if (i != cIdx_in_var) {
+//                ++cnt; 
+//              }
+//              continue;
+//            } else {
+//              //buffer
+//              for (unsigned k = 0; k <= 1; ++k) {
+//                cout << "cnt: " << cnt << " current_index: " << cnt - k 
+//                     << " blks_size: " << blks.size() << endl;
+//                const vector <blockage*> cBlks = blks[cnt - k];
+//                for (unsigned j = 0; j < cBlks.size(); ++j) {
+//                  cout << "  j = " << j << endl;
+//                  IloNumVar var_x1, var_x2, var_y1, var_y2;
+//                  sprintf(buffer, "xl_buf_%d_blk_%d", i, j);
+//                  var_x1 = IloNumVar(env, 0, 1, ILOBOOL, buffer);
+//                  sprintf(buffer, "xr_buf_%d_blk_%d", i, j);
+//                  var_x2 = IloNumVar(env, 0, 1, ILOBOOL, buffer);
+//                  sprintf(buffer, "yl_buf_%d_blk_%d", i, j);
+//                  var_y1 = IloNumVar(env, 0, 1, ILOBOOL, buffer);
+//                  sprintf(buffer, "yr_buf_%d_blk_%d", i, j);
+//                  var_y2 = IloNumVar(env, 0, 1, ILOBOOL, buffer);
+//                  
+//                  IloExpr ex(env);
+//                  // var_x1 = 1 if buf_x <= blk_x1
+//                  // blk_xl - buf_x <= BigConstant * var_x1 - 1
+//                  ex = BigConst * var_x1 + var[i].first;
+//                  Consts.add(ex >= 0.000001 + cBlks[j]->x1);
+//                   
+//                  // var_x1 = 0 if buf_x > blk_x1
+//                  // buf_x - blk_x1 <= BigConstant * (1 - var_x1)
+//                  Consts.add(ex <= BigConst + cBlks[j]->x1);
+//
+//                  // var_x2 = 1 if buf_x >= blk_x2
+//                  // buf_x - blk_x2 <= BigConstant * var_x2 - 1
+//                  ex = BigConst * var_x2 - var[i].first;
+//                  Consts.add(ex >= 0.000001 - cBlks[j]->x2);
+//
+//                  // var_x2 = 0 if buf_x < blk_x2
+//                  // blk_x2 - buf_x <= BigConstant * (1 - var_x2)
+//                  Consts.add(ex <= BigConst - cBlks[j]->x2);
+//
+//                  // var_y1 = 1 if buf_y <= blk_y1
+//                  // blk_yl - buf_y <= BigConstant * var_y1 - 1
+//                  ex = BigConst * var_y1 + var[i].second;
+//                  Consts.add(ex >= 0.000001 + cBlks[j]->y1);
+//
+//                  // var_y1 = 0 if buf_y > blk_y1
+//                  // buf_y - blk_y1 <= BigConstant * (1 - var_y1)
+//                  Consts.add(ex <= BigConst + cBlks[j]->y1);
+//
+//                  // var_y2 = 1 if buf_y >= blk_y2
+//                  // buf_y - blk_y2 <= BigConstant * var_y2 - 1
+//                  ex = BigConst * var_y2 - var[i].second;
+//                  Consts.add(ex >= 0.000001 - cBlks[j]->y2);
+//                  
+//                  // var_y2 = 0 if buf_y < blk_y2
+//                  // blk_y2 - buf_y <= BigConstant * (1 - var_y2)
+//                  Consts.add(ex <= BigConst - cBlks[j]->y2);
+//                  
+//                  ex = var_x1 + var_x2 + var_y1 + var_y2;
+//                  Consts.add(ex >= 1);
+//                }
+//              }
+//            }
+//          } 
+//        } 
+//        cout << "ccc" << endl;
+//        for (unsigned i = 0; i < in_locs.size(); ++i) {
+//            IloExpr ex1(env), ex2(env);
+//           
+//            ex1 = delta[i].first + var[branching_idxes[i]].first - in_locs[i].first;
+//            ex2 = delta[i].first - var[branching_idxes[i]].first + in_locs[i].first;
+//            Consts.add(ex1 >= 0);
+//            Consts.add(ex2 >= 0);
+//            ex1 = delta[i].second + var[branching_idxes[i]].second - in_locs[i].second;
+//            ex2 = delta[i].second - var[branching_idxes[i]].second + in_locs[i].second;
+//            Consts.add(ex1 >= 0);
+//            Consts.add(ex2 >= 0);
+//
+//            ex1 = max_delta.first - delta[i].first;
+//            ex2 = max_delta.second - delta[i].second;
+//            Consts.add(ex1 >= 0);
+//            Consts.add(ex2 >= 0);
+//        }
+//
+//        cout << "ddd" << endl;
+//        IloModel model(env);
+//        model.add(IloMinimize(env, objective));
+//        model.add(Consts);
+//
+//        IloCplex cplex(model);
+//
+//        cplex.setParam(IloCplex::Threads, 1);
+//        //cplex.setOut(env.getNullStream());
+//
+//        string lpFile = "dist.lp";
+//        string solFile = "dist.sol";
+//        //cplex.exportModel(lpFile.c_str());
+//
+//        out_locs.clear();
+//        if (cplex.solve()) {
+//            if (verbose > 2) {
+//                env.out() << "Feasible " << cplex.getStatus() << endl;
+//                env.out() << "Solution value = " << cplex.getObjValue() << endl;
+//            }
+//            max_dist = cplex.getObjValue();
+//
+//            //cplex.writeSolution(solFile.c_str());
+//            //for (unsigned i = 0; i < in_locs.size() - 1; ++i) {
+//            int cnt = 0;
+//            for (unsigned i = 0; i < isBuffer.size(); ++i) {
+//                IloNum x = cplex.getValue(var[i].first);
+//                IloNum y = cplex.getValue(var[i].second);
+//
+//                if (isBuffer[i]) {
+//                    opt_buf_locs.push_back(make_pair(x, y));
+//
+//                    if (verbose > 2) {
+//                        cout << i << "th buffer location: (" 
+//                            << x << ", " << y << ")" << endl;
+//                    }
+//                } else if (cIdx_in_var != i) {
+//                    IloNum del_x = cplex.getValue(delta[cnt].first);
+//                    IloNum del_y = cplex.getValue(delta[cnt].second);
+//                    out_locs.push_back(make_pair(x, y));
+//                    cnt++;
+//                    if (verbose > 2) {
+//                        cout << i << "th branching location: (" 
+//                            << x << ", " << y << ")   delta: ("
+//                            << del_x << ", " << del_y << ")" << endl;
+//                    }
+//                }
+//            }
+//
+//
+//        } else {
+//            env.out() << "Infeasible!!!" << endl;
+//            cplex.exportModel(lpFile.c_str());
+//        }
+//
+//        cplex.end();
+//    } catch (IloException& ex){
+//	      cerr << "Error: " << ex << endl;
+//        cerr << ex.getMessage() << endl;
+//    }
+//    env.end();
+//
+//    return max_dist;
+//}
 
 /*** Find the optimal branching location **************************************/
 /*
@@ -2983,3 +3232,67 @@ float round(float val, float step) {
 float design::calcDist(pair<float,float> loc1, pair<float,float> loc2) {
     return fabs(loc1.first - loc2.first) + fabs(loc1.second - loc2.second);
 }
+
+void design::runKMeansClustering() {
+	std::cout << "Running CK-Means....\n";
+
+//	{ // 1x2
+//		CKMeans::clustering c(pins);
+//
+//		vector<pair<float, float>> means; 
+//		means.push_back(make_pair(W/4.0, H/2.0));
+//		means.push_back(make_pair(3.0*W/4.0, H/2.0));
+//
+//		c.setPlotFileName("cluster-1x2");
+//		c.iterKmeans(1, 2, (unsigned)ceil(pins.size()/2.0), 0, means, 1);
+//	}
+//	
+//	{ // 2x1
+//		CKMeans::clustering c(pins);
+//
+//		vector<pair<float, float>> means; 
+//		means.push_back(make_pair(W/2.0, H/2.0));
+//		means.push_back(make_pair(W/2.0, 3.0*H/2.0));
+//
+//		c.setPlotFileName("cluster-2x1");
+//		c.iterKmeans(1, 2, (unsigned)ceil(pins.size()/2.0), 0, means, 1);
+//	}
+//	
+//	{ // 3x1
+//		CKMeans::clustering c(pins);
+//
+//		vector<pair<float, float>> means; 
+//		means.push_back(make_pair(0.3*W, H/2.0));
+//		means.push_back(make_pair(0.6*W, H/2.0));
+//		means.push_back(make_pair(0.9*W, H/2.0));
+//
+//		c.setPlotFileName("cluster-3x1");
+//		c.iterKmeans(1, 3, (unsigned)ceil(pins.size()/3.0), 0, means, 1);
+//	}
+//	
+//	{ // 1x3
+//		CKMeans::clustering c(pins);
+//
+//		vector<pair<float, float>> means; 
+//		means.push_back(make_pair(W/2.0, 0.3*H));
+//		means.push_back(make_pair(W/2.0, 0.6*H));
+//		means.push_back(make_pair(W/2.0, 0.9*H));
+//
+//		c.setPlotFileName("cluster-1x3");
+//		c.iterKmeans(1, 3, (unsigned)ceil(pins.size()/3.0), 0, means, 1);
+//	}
+//	
+//	{ // 4x4
+//		CKMeans::clustering c(pins);
+//
+//		vector<pair<float, float>> means; 
+//		means.push_back(make_pair(W/4.0, H/4.0));
+//		means.push_back(make_pair(3.0*W/4.0, H/4.0));
+//		means.push_back(make_pair(W/4.0, 3.0*H/4.0));
+//		means.push_back(make_pair(3.0*W/4.0, 3.0*H/4.0));
+//
+//		c.setPlotFileName("cluster-4x4");
+//		c.iterKmeans(1, 4, (unsigned)ceil(pins.size()/4.0), 0, means, 1);
+//	}
+}
+

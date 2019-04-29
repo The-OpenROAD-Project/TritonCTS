@@ -95,8 +95,8 @@ set ck_port [dict get $parms "ck_port"]
 puts [concat "ck_port : " $ck_port]
 set db_units [dict get $parms "db_units"]
 puts [concat "db_units : " $db_units]
-set root_buf [dict get $parms "root_buf"]
-puts [concat "root_buf : " $root_buf]
+set root_buff [dict get $parms "root_buff"]
+puts [concat "root_buff : " $root_buff]
 
 set db_ratio [expr $db_units/1000.0]
 
@@ -125,10 +125,11 @@ if {$tech==28} {
 	set buf_out_pin "Y"
 }
 
+puts "../third_party/lefdef2cts -lef $lef -def $path -cpin $ck_pin -cts sinks.txt -blk blks.txt" 
 catch {exec ../third_party/lefdef2cts -lef $lef -def $path -cpin $ck_pin -cts sinks.txt -blk blks_tmp.txt}
 
 set blkFileIn [open blks_tmp.txt r]              
-set blkFileOut [open blks_tmp2.txt w]              
+set blkFileOut [open blks.txt w]              
 while {[gets $blkFileIn line]>=0} {
 	set xmin [lindex $line 0]
 	set ymin [lindex $line 1]
@@ -141,23 +142,10 @@ close $blkFileOut
 exec tail -n+1 sinks.txt > sink_cap_tmp.txt
 exec awk {{print $1,$2,$3,1.0}} sink_cap_tmp.txt > sink_cap.txt
 
-exec cp ../src/scripts/die-area-hack.py .
-exec python die-area-hack.py 
-
-set hackDieFile [open die-size.txt r]              
-while {[gets $hackDieFile line]>=0} {
-	set hackWidth [lindex $line 0]
-	set hackHeight [lindex $line 1]
-	set hackOffsetX [lindex $line 2] 
-	set hackOffsetY [lindex $line 3] 
-}
-close $hackDieFile
-exec echo "" > blks.txt 
-
 # run DP-based clock tree topology and buffering / ILP-based clustering
 puts "\nRunning GH-tree (should take a while...)"
-puts "genHtree -w [expr $hackWidth] -h [expr $hackHeight] -n $number -s $target_skew -tech $tech"
-catch {exec ../bin/genHtree -w [expr $hackWidth] -h [expr $hackHeight] -n $number -s $target_skew -tech $tech | tee rpt}
+puts "genHtree -n $number -s $target_skew -tech $tech -compute_sink_region_mode"
+catch {exec ../bin/genHtree -n $number -s $target_skew -tech $tech -compute_sink_region_mode | tee rpt}
 
 exec cp sol_0.txt sol.txt
 
@@ -176,7 +164,7 @@ while {[gets $solFileIn line]>=0} {
 	set name [lindex $line 0]
 	set x 	 [lindex $line 1]
 	set y	 [lindex $line 2]
-	puts $solFileOut "$name [expr ($x+15*$hackOffsetX)*$db_ratio] [expr ($y+15*$hackOffsetY)*$db_ratio]"
+	puts $solFileOut "$name [expr $x*$db_ratio] [expr $y*$db_ratio]"
 }
 close $solFileIn
 close $solFileOut
@@ -201,37 +189,37 @@ if {[file exists $replace_dir]} {
 }
 
 puts "Running legalization..."
-catch {exec ../third_party/RePlAce -bmflag etc -lef $lef -def cts.def -output leg -t 1 -dpflag NTU3 -dploc ../third_party/ntuplace3 -onlyLG -onlyDP -fragmentedRow -denDP 0.9 -plot > leg_rpt} 
+catch {exec ../third_party/RePlAce -bmflag etc -lef $lef -def cts.def -output leg -t 1 -dpflag NTU3 -dploc ../../../../../../../third_party/ntuplace3 -onlyLG -onlyDP -fragmentedRow -denDP 0.9 -plot > leg_rpt} 
 exec cp leg/etc/cts/experiment000/cts_final.def post_leg.def
 #exec cp cts.def post_leg.def
 
 # Update cell locations
 exec python ../src/scripts/extract_locations.py post_leg.def > cell_locs_final.txt
 
-exec echo "$ck_port" > clockNet.txt
-exec grep ck_net* post_leg.def | awk {{print $2}} >> clockNet.txt
-
-# Dump GCELLs for clock pins
-exec cp ../src/scripts/router.param .
-exec sed -i s#_LEF_#$lef#g router.param
-exec sed -i s/_DEF_/post_leg.def/g router.param
-exec sed -i s/_GCELLH_/$gcellh/g router.param
-exec sed -i s/_GCELLW_/$gcellw/g router.param
-exec ../third_party/FlexRoute router.param
-
-# Build guides 
-exec cp -rf ../src/scripts/build_guides.py build_guides.py
-exec sed -i s/_CK_PIN_/$ck_pin/g build_guides.py
-exec sed -i s/_CK_PORT_/$ck_port/g build_guides.py
-exec sed -i s/_BUFF_OUT_PIN_/$buf_out_pin/g build_guides.py
-exec python build_guides.py $clkx $clky $gcellw $gcellh $width $height $enable_pd > guides.log
-
-# Merge guides
-exec cp -rf ../src/scripts/merge_guides.py merge_guides.py
-exec sed -i s/_CK_PIN_/$ck_pin/g merge_guides.py
-exec sed -i s/_CK_PORT_/$ck_port/g merge_guides.py
-exec sed -i s/_BUFF_OUT_PIN_/$buf_out_pin/g merge_guides.py
-exec python merge_guides.py > cts.guides
+#exec echo "$ck_port" > clockNet.txt
+#exec grep ck_net* post_leg.def | awk {{print $2}} >> clockNet.txt
+#
+## Dump GCELLs for clock pins
+#exec cp ../src/scripts/router.param .
+#exec sed -i s#_LEF_#$lef#g router.param
+#exec sed -i s/_DEF_/post_leg.def/g router.param
+#exec sed -i s/_GCELLH_/$gcellh/g router.param
+#exec sed -i s/_GCELLW_/$gcellw/g router.param
+#exec ../third_party/FlexRoute router.param
+#
+## Build guides 
+#exec cp -rf ../src/scripts/build_guides.py build_guides.py
+#exec sed -i s/_CK_PIN_/$ck_pin/g build_guides.py
+#exec sed -i s/_CK_PORT_/$ck_port/g build_guides.py
+#exec sed -i s/_BUFF_OUT_PIN_/$buf_out_pin/g build_guides.py
+#exec python build_guides.py $clkx $clky $gcellw $gcellh $width $height $enable_pd > guides.log
+#
+## Merge guides
+#exec cp -rf ../src/scripts/merge_guides.py merge_guides.py
+#exec sed -i s/_CK_PIN_/$ck_pin/g merge_guides.py
+#exec sed -i s/_CK_PORT_/$ck_port/g merge_guides.py
+#exec sed -i s/_BUFF_OUT_PIN_/$buf_out_pin/g merge_guides.py
+#exec python merge_guides.py > cts.guides
 
 # Generate the final def and verilog
 exec python ../src/scripts/verilog_preprocess.py

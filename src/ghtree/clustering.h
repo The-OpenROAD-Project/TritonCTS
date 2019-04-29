@@ -1,49 +1,62 @@
 #include <vector>
 #include <cmath>
+#include "tree.h"
 
 namespace CKMeans {
 using namespace std;
 
 class flop {
 public:
-    flop(string, float, float);
-    // gate name
-    string name;
     // location
     float x, y;
     unsigned x_idx, y_idx;
     vector<float> dists;
     unsigned idx;
-    vector<flop*> nbrs;
     vector<pair<int, int>> match_idx;
     vector<float> silhs;
-    float d_x, d_y;
-	//float skew;
+	pin* p;
+    flop(const float x, const float y, pin* p) : x(x), y(y), p(p) {};
 };
 
 
 class clustering {
 	vector<flop*> flops;
-	map<unsigned, vector<pair<float, float>>> shifts;  // relative x- and y-shifts of slots w.r.t tray 
-	map<unsigned, float> tray_ars;
-	int verbose;
-	int TEST_LAYOUT;
-	int TEST_ITER;
-
+	vector<vector<flop*>> clusters;
+	
+	//map<unsigned, vector<pair<float, float>>> shifts;  // relative x- and y-shifts of slots w.r.t tray 
+	int verbose = 1;
+	int TEST_LAYOUT = 1;
+	int TEST_ITER = 1;
+	std::string plotFile;
+	
+	//std::pair<float,float> branchPoint;
+	//float minDist;
+	//float maxDist;
+	
+	float segmentLength;
+	std::pair<float, float> branchingPoint;
+	
 public:
+	clustering(const vector<pin*>&, float, float);
+	~clustering();
 	float Kmeans(unsigned, unsigned, unsigned, vector<pair<float, float>>&, unsigned);
 	void iterKmeans(unsigned, unsigned, unsigned, unsigned, vector<pair<float, float>>&, unsigned MAX = 15);
 	float calcSilh(const vector<pair<float,float>>&, unsigned, unsigned);
-	
-	inline float calcDist (const pair<float, float>& loc, flop * f) {
+	void minCostFlow (const vector<pair<float, float>>&, unsigned, unsigned, float); 
+	void setPlotFileName(const std::string fileName) { plotFile = fileName; }
+	void getClusters(vector<vector<pin*>>&);
+	void fixSegmentLengths(vector<pair<float, float>>&);
+	void fixSegment(const pair<float, float>& fixedPoint, pair<float, float>& movablePoint, float targetDist);
+
+	inline float calcDist (const pair<float, float>& loc, flop * f) const {
     	return (fabs(loc.first - f->x) + fabs(loc.second - f->y));
 	}
-
-	inline float calcDistAR (const pair<float, float>& loc, flop * f, unsigned size) {
-	    float dx = fabs(f->x - loc.first);
-    	float dy = fabs(f->y - loc.second);
-    	return (dy + dx / tray_ars[size]);
+	
+	inline float calcDist (const pair<float, float>& loc1, pair<float, float>& loc2) const {
+    	return (fabs(loc1.first - loc2.first) + fabs(loc1.second - loc2.second));
 	}
+
+	void plotClusters(const vector<vector<flop*>>&, const vector<pair<float, float>>&) const;
 };
 
 }

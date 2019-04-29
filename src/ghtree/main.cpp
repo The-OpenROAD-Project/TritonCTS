@@ -50,7 +50,7 @@
 
 using   namespace   std;
 
-int     main(int argc, char* argv[]){
+int main(int argc, char* argv[]){
     CArgument          argument;
     CMeasure           measure;
     design * my_design = new design();
@@ -87,7 +87,7 @@ int     main(int argc, char* argv[]){
     //my_design->parseBlks();
     if (!my_design->cluster_only) {
         my_design->optTree();
-        my_design->reconstructTree();
+       my_design->reconstructTree();
         my_design->placeTree();
     } else {
         my_design->selectTreeSol();
