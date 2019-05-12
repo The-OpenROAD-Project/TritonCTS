@@ -1,6 +1,7 @@
 #! /usr/bin/tclsh
 
 set distList "20 40 60 80"
+#set distList "20"
 set NDR "W2X"
 set unit_dist 20
 
@@ -19,11 +20,11 @@ foreach dist $distList {
         exec rm -rf $dir
     } 
     exec mkdir $dir
-    exec cp -rf ./template/genTest.tcl $dir/ 
-    exec cp -rf ./template/run_sta.tcl $dir/
-    exec cp -rf ./template/sta_proc.tcl $dir/
-    exec cp -rf ./template/config.tcl $dir/
-    exec cp -rf ./template/create_spef_files.tcl $dir/
+    exec cp -rf ./openSTA_template/genTest.tcl $dir/ 
+    exec cp -rf ./openSTA_template/run_sta.tcl $dir/
+    exec cp -rf ./openSTA_template/sta_proc.tcl $dir/
+    exec cp -rf ./openSTA_template/config.tcl $dir/
+    exec cp -rf ./openSTA_template/create_spef_files.tcl $dir/
     
     
     exec sed -i s/_DESIGN_/${dir}/g $dir/config.tcl
@@ -43,6 +44,7 @@ foreach dist $distList {
     ##create spef files and characterize LUT
     catch {exec ../sta -f ./run_sta.tcl }
 	
+    # Do sizing and characterize LUT    
     cd ..
     puts "Completed $dir"
 }

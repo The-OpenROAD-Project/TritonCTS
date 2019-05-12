@@ -3,6 +3,7 @@
 set selPoints "0.1 0.5 0.9"
 
 #set lutList "50.lut 100.lut 150.lut 200.lut 250.lut"
+set lutList "20.lut 40.lut 60.lut 80.lut"
 
 array set opt1Power {}
 array set opt1inCap {}
