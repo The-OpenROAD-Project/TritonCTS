@@ -8,19 +8,51 @@
 $ cd ../genLUT
 ```
 
- - Edit _template/config.tcl_ to add paths to .lib files and the CTS buffer names.  Examples of path names and CTS buffer names
-   are shown in the _config.tcl_ file provided in the unpacked release.
+ - Update the following variables in _template/config.tcl_ accordingly:
  
- - Edit _template/config.tcl_ to add paths to library files.  Examples of paths to library files are shown in the _config.tcl_ file provided in the unpacked release.
- 
- - Edit _run_all.tcl_ to specify wire sizes and NDRs (non-default routing rules).
- 
- - Edit _template/genTest.tcl_ to specify a buffer cell (variable _bufName_), a flip-flop cell (variable _FFName_) and their respective cell heights (variable _cellHeight_) and footprints (variable _path_).
- 
- - Run the characterization script, _run_all.tcl_ (valid OpenSTA binary are required).
+   * list_lib - Path to you library files.
+     * E.g.: _set list_lib "path/to/my/library.lib"_
+   * cap_unit - Must set to 1 if your library has _pF_ as capacitance unit or 1000 if your library has _fF_ as capacitance unit.
+     * E.g.: _set cap_unit 1_
+   * time_unit - Must set to 1 if your library has _ns_ as timing unit or 1000 if your library has _ps_ as timing unit.
+     * E.g.: _set time_unit 1_
+   * bufTypes - List of standard cells to be used as clock buffers.
+     * E.g.: _set bufTypes "BUF_X1 BUF_X2 BUF_X4 BUF_X16 BUF_X32"_
+   * Q_ffpin - Name of the output data pin of the library flip-flops.
+     * E.g.: _set Q_ffpin "Q"_
+   * D_ffpin - Name of the input data pin of the library flip-flips.
+     * E.g.: _set D_ffpin "D"_
+   * buff_inPin - Name of the input pin of the library buffers.
+     * E.g: _set buff_inPin "A"_
+   * buff_outPin - Name of the output pin of the library buffers.
+     * E.g.: _set buff_outPin "Y"_
+   * clk_pin - Clock signal pin name of the library flip-flips.
+     * E.g.: _set clk_pin "CK_
+   * bufName - Library buffer to be used in the beggining of the wire during characterization.
+     * E.g.: _set bufName "BUF_X16"_
+   * FFName - Library flip-flop to be used in the end of the wire during characterization. 
+     * E.g.: _set FFName "FF_X2"_
+   * cellHeight - Height of your library cells in _um_.
+     * E.g.: _set cellHeight "0.5"_
+   * cap_per_unit_len - Capacitance per unit length of your technology. Use your technology units and update only the value after the keyword _expr_
+     * E.g.: _set cap_per_unit_len [expr 0.8 / (1000 * $cap_unit) ]_
+   * res_per_unit_len - Resistance per unit length of your technology. Use your technology units and update only the value after the keyword _expr_
+     * set res_per_unit_len [expr 0.9 / (1000 * $cap_unit) ] # Assumes cap and res multipliers are the same
 
-- After _run_all.tcl_ script has finished, make sure that a file named _XX.lut_ exists under each generated folder. The characterization folders have the naming convention: _test_XX_YY_NDR_, where _XX_ is the dist, _YY_ is the _unit_dist_ and _NDR_*** is the non-default rule). When characterizing for larger values of _dist_ (e.g. _dist_=80), and smaller values of _unit_dist_ (e.g. _unit_dist_=10) on 8 cores the expected runtime is around than 72 hours or more depending on your local setup.
-*** Please note that as of January 2019 TritonCTS will only produce single-width clock routes even if NDRs are specified in the library characterization.
+* We encourage you to **DO NOT** change the following variables unless you **REALLY** know what you are doing.
+   * maxSlew, inputSlew, slewInter - max, min and step for slew in characterization scripts.
+     * E.g.: set maxSlew [expr 0.060 * $time_unit]
+     * E.g.: set inputSlew [expr 0.005 * $time_unit]
+     * E.g.: set slewInter [expr 0.005 * $time_unit]
+
+   * outloadNum, baseLoad, loadInter - Number of loads, min load value and step for the characterization scripts. For the last two, only change the value after _expr_ using your library units.     
+     * E.g.: set outLoadNum 34
+     * E.g.: set baseLoad [expr 0.005 * $cap_unit]
+     * E.g.: set loadInter [ expr 0.005 * $cap_unit]
+
+ - Run the characterization script, _run_all.tcl_ (a valid OpenSTA binary under _genLUT_ is required).
+
+- After _run_all.tcl_ script has finished, make sure that a file named _XX.lut_ exists under each generated folder. The characterization folders have the naming convention: _test_XX_YY_NDR_, where _XX_ is the dist, _YY_ is the _unit_dist_ and _NDR_ is the non-default rule. When characterizing for larger values of _dist_ (e.g. _dist_=80 um), on a single core the expected runtime is around 1 hour or less depending on your local setup.
 
 - Edit variable _lutList_ in _genLUTOPt2.tcl_ with the paths of the _XX.lut_ files
 
