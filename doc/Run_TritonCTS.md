@@ -22,6 +22,8 @@ num_sinks 256
 clkx 69.09 
 clky 140.544
 tech 16
+width 140.736
+height 140.544
 ```
 
 - Parameters description:
