@@ -6,27 +6,22 @@
 
 - Compile the source code:
 ``` bash
-$ make CPLEXDIR=path/to/cplex/include CONCERTDIR=path/to/concert/include CPLEXLIBDIR=path/to/cplex/static_bin CONCERTLIBDIR=path/to/concert/static_bin
+$ make -j <num_cores> LEMON_HOME=<path_to_your_lemon_dir>
 ```
 
 - Create a file named _.config_ to specify the input parameters. See an example and description below:
 
 ## Example of a _.config_ file
 ``` tcl
-lef /path/to/lef
-path /path/to/def
+lef /path/to/file.lef
+path /path/to/file.def
 verilog /path/to/verilog
 design my_design
 target_skew 150
-width 140.736
-height 140.544
 num_sinks 256
 clkx 69.09 
 clky 140.544
-gcellw 1152
-gcellh 1152
 tech 16
-enable_pd 1
 ```
 
 - Parameters description:
@@ -36,9 +31,7 @@ enable_pd 1
     - _width_ and _height_ are float values specifying the core dimensions in um;
     - _num_sinks_ is an integer value specifying the number of sink regions;
     - _clkx_ and _clky_ are float values specifying the clock entry point in _um_;
-    - _gcellw_ and _gcellh_ are integer values specifying the GCELL sizes for routing in DEF database units;
     - _tech_ is an integer number specifying the technology node. The values 16 and 28 are currently available, corresponding to TSMC16 and ST28, respectively;
-    - _enable_pd_ is a boolean value. TritonCTS uses [PD-Rev](https://github.com/abk-openroad/PD-Rev) for routing the leaf-level if enable_pd is set to 1. Otherwise, TritonCTS uses [RST-T](https://dl.acm.org/citation.cfm?id=505366).
 
 - Add a "Dummy buffer" macro to your technology .lef file. You may do this by duplicating any buffer macro and renaming it as "DUMMY".
 
