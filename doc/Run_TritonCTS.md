@@ -39,7 +39,7 @@ root_buffer BUF_X16
     - _tech_ is an integer number specifying the technology node. The values 16 and 28 are currently available, corresponding to TSMC16 and ST28, respectively;
     - _ck_port_ a string representing the clock port name in your design;
     - _db_units_ is an integer value representing your DEF db units;
-    - root_buffer is an string value naming the library cell of the root buffer.
+    - root_buffer is a string value naming the library cell of the root buffer.
 - Add a "Dummy buffer" macro to your technology .lef file. You may do this by duplicating any buffer macro and renaming it as "DUMMY".
 
 - Run TritonCTS:
