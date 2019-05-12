@@ -24,6 +24,9 @@ clky 140.544
 tech 16
 width 140.736
 height 140.544
+ck_port clk
+db_units 2000
+root_buffer BUF_X16
 ```
 
 - Parameters description:
@@ -34,7 +37,9 @@ height 140.544
     - _num_sinks_ is an integer value specifying the number of sink regions;
     - _clkx_ and _clky_ are float values specifying the clock entry point in _um_;
     - _tech_ is an integer number specifying the technology node. The values 16 and 28 are currently available, corresponding to TSMC16 and ST28, respectively;
-
+    - _ck_port_ a string representing the clock port name in your design;
+    - _db_units_ is an integer value representing your DEF db units;
+    - root_buffer is an string value naming the library cell of the root buffer.
 - Add a "Dummy buffer" macro to your technology .lef file. You may do this by duplicating any buffer macro and renaming it as "DUMMY".
 
 - Run TritonCTS:
