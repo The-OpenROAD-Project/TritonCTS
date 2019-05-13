@@ -6,10 +6,10 @@ K. Han, A. B. Kahng and J. Li, "Optimal Generalized H-Tree Topology and Bufferin
 Many subsequent changes for open-sourcing were made by [Mateus Fogaça](https://github.com/mpfogaca).
 
 ### Inputs and outputs
-TritonTCS requires 5 input files and produces 3 output files. Refer to [OpenROAD Flow and Notes](https://theopenroadproject.org/wp-content/uploads/2018/12/OpenROAD_Flow_and_Notes_Nov2018-v1p0-1.pdf) for more information.
+TritonTCS requires 5 input files and produces 2 output files. Refer to [OpenROAD Flow and Notes](https://theopenroadproject.org/wp-content/uploads/2018/12/OpenROAD_Flow_and_Notes_Nov2018-v1p0-1.pdf) for more information.
 
 Inputs:
-- [Library characterization file](doc/Technology_characterization.md)
+- [Library characterization files](doc/Technology_characterization.md)
 - Verilog with gate-level netlist
 - Placed DEF with netlist
 - [Configuration file](doc/Run_TritonCTS.md#example-of-a-config-file)
@@ -17,15 +17,9 @@ Inputs:
 Outputs:
 - Placed DEF with clock buffers
 - Verilog with clock buffers
-- Route guides in ISPD18 format
 
 ### Supported features / assumptions
 - 1 clock source;
-- Core origin must be (0, 0);
-- DEF database units must be equal to 1000 dbu per micron;
-- No support for non-default rules (NDRs) in the clock routing.
-
-** TritonCTS is currently under a pre-alpha release. The list of features and limitations may change significantly in the future. The target for alpha release is June 2019.
 
 ### Validation
 TritonCTS has been validated for the following list of platforms, tools and enablements.
@@ -35,9 +29,9 @@ TritonCTS has been validated for the following list of platforms, tools and enab
 | Operating system | CentOS 6 |
 | Compiler  | GCC 4.4.7 |
 | Enablements | ST28 and TSMC16 |
-| CPLEX | Version 12.8 |
 | TCL | Version 8.4.20 |
 | Python | Version 2.7.12 |
+| [Lemon](https://lemon.cs.elte.hu/trac/lemon) | Version 1.3.1 |
 
 ### Tutorials
 ---
