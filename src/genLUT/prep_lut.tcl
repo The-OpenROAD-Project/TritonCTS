@@ -1,6 +1,6 @@
 #!/usr/bin/tclsh
 
-source templace/config.tcl
+source openSTA_template/config.tcl
 
 set in_file [lindex $argv 0]
 
@@ -35,7 +35,7 @@ while {[gets $inFile line]>=0} {
 
 
     # power unit = mW
-    set power    [expr [lindex $line 0] * 1000]
+    set power    [expr [lindex $line 0] * $cap_unit]
     # load (unit = 5fF)
     set load     [lindex $line 1]
     if {$load < [expr 0.005 * $cap_unit]} {
