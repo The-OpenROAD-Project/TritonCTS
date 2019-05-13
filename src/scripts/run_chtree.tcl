@@ -118,9 +118,9 @@ if {$tech==28} {
 	set ck_pin "CK"
 	set buf_out_pin "Y"
 } elseif {$tech==65} {
-	set buf_regex "BUFF"
-	set ck_pin "CP"
-	set buf_out_pin "I"
+	set buf_regex "BUF"
+	set ck_pin "CK"
+	set buf_out_pin "A"
 }
 
 puts "../third_party/lefdef2cts -lef $lef -def $path -cpin $ck_pin -cts sinks.txt -blk blks.txt" 
