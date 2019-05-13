@@ -629,8 +629,9 @@ void design::optTree () {
 
     // DP-based optimization
     opt_t_idx  = -1;
-    float min_power     = INT_MAX;
+    float min_power     = std::numeric_limits<float>::max();
     unsigned opt_skew   = -1;
+	int n_dbg = 0;
     for (unsigned d = 2; d <= max_d; ++d) {    // DEPTH
         cout << "Depth = " << d << " .." << endl;
         unsigned k   = 1;  // new solution
@@ -1031,8 +1032,10 @@ void design::optTree () {
         unsigned J = H/2 - 1;
         for (unsigned M = 0; M < sols[0][I][J].size(); ++M) {
             unsigned N = (M+1)*2;
+			n_dbg = std::max((int)N, n_dbg);
             if (N < num_sinks) 
                 continue;
+
             for (unsigned idx_c = 0; idx_c < size_cap; ++idx_c) {
                 for (unsigned idx_s = 0; idx_s < size_slew; ++idx_s) {
                     for (unsigned L = 0; L < sols[0][I][J][M][idx_c][idx_s].size(); ++L) {
@@ -1045,6 +1048,7 @@ void design::optTree () {
                             opt_t_idx = t->idx;
                             opt_skew  = t->max_laten - t->min_laten;
                             avg_cap   = total_cap / num_sinks;
+							//cout << "Intermediate n_dbg = " << n_dbg << "\n";
                         }
                     }
                 }
@@ -1059,6 +1063,7 @@ void design::optTree () {
     unsigned J = H/2 - 1;
     for (unsigned M = 0; M < sols[0][I][J].size(); ++M) {
         unsigned N = (M+1)*2;
+		n_dbg = max(n_dbg, (int) N);
         if (N < num_sinks) 
             continue;
         for (unsigned idx_c = 0; idx_c < size_cap; ++idx_c) {
@@ -1071,6 +1076,7 @@ void design::optTree () {
                         opt_t_idx = t->idx;
                         opt_skew  = t->max_laten - t->min_laten;
                         avg_cap   = total_cap / num_sinks;
+						//cout << "Intermediate n_dbg = " << n_dbg << "\n";
                     }
                 }
             }
@@ -1080,6 +1086,7 @@ void design::optTree () {
     sols.erase(sols.begin(), sols.begin()+1);
    // sols.push_back(prep_sol);
 
+	cout << "Final n_dbg = " << n_dbg << "\n";
     // select the optimal solution
     if (opt_t_idx == -1) {
         cout << "No feasible solution" << endl;

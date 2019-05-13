@@ -41,6 +41,7 @@
 #include <stdlib.h>
 #include <iostream>
 #include <cstring>
+#include <limits>
 
 using   namespace   std;
 
@@ -55,7 +56,7 @@ CArgument::CArgument(){
     time_i              = 1;
     cap_i               = 1;
     toler               = 0;
-    max_delay           = 10000;
+    max_delay           = std::numeric_limits<int>::max();
     max_solnum          = 1;
     cluster_only        = false;
 	compute_sink_region_mode = false;

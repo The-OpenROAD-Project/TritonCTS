@@ -70,6 +70,9 @@ int main(int argc, char* argv[]){
 	if (argument.tech_node == 28) {
 		my_design->out_slew_idx = 7;
 		my_design->min_slew_idx = 3;
+	} else if (argument.tech_node == 65){
+		my_design->out_slew_idx = 5;
+		my_design->min_slew_idx = 3;
 	} else {
 		my_design->out_slew_idx = 2;
 		my_design->min_slew_idx = 0;

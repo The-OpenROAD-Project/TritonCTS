@@ -49,16 +49,11 @@ SYSTEM     = x86-64_sles10_4.1
 LIBFORMAT  = static_pic
 
 CCPATH   = g++
-#CPLEXDIR      = /home/tool/ilog/CPLEX_Studio1251/cplex/include
-#CONCERTDIR    = /home/tool/ilog/CPLEX_Studio1251/concert/include
 
-LEMON_HOME    = /home/tool/lemon/lemon-1.3.1
 LEMON_INCLUDE = $(LEMON_HOME)/include
 LEMON_LIB     = $(LEMON_HOME)/lib   
 
 CXXOPTS  = -m64 -O3 -std=c++11 -fPIC -fno-strict-aliasing -fexceptions -DNDEBUG -DIL_STD -Wno-ctor-dtor-privacy -fopenmp  
-#CXXOPTS  = -m64 -std=c++11 -fPIC -fno-strict-aliasing -fexceptions -DNDEBUG -DIL_STD -Wno-ctor-dtor-privacy -fopenmp  
-#CCFLAG = $(CXXOPTS) -I$(CPLEXDIR) -I$(CONCERTDIR) -I $(LEMON_INCLUDE) 
 CCFLAG = $(CXXOPTS) -I$(LEMON_INCLUDE) 
 
 SYS_LD_SO = -shared
@@ -67,10 +62,7 @@ SYSLIBS  = -ldl
 LIB_SO_EXT = .so
 DEBUG = -g 
 
-#CPLEXLIBDIR   = $(CPLEXDIR)/../lib/$(SYSTEM)/$(LIBFORMAT)
-#CONCERTLIBDIR = $(CONCERTDIR)/../lib/$(SYSTEM)/$(LIBFORMAT)
 
-#CCLNFLAG = -lm -pthread -fopenmp -L$(CPLEXLIBDIR) -lilocplex -lcplex -L$(CONCERTLIBDIR) -lconcert -L$(LEMON_LIB) -lemon
 CCLNFLAG = -lm -pthread -fopenmp -L$(LEMON_LIB) -lemon
 
  $(BINDIR)/main.o : $(SRCDIR)/main.cpp $(SRCDIR)/argument.h $(SRCDIR)/mystring.h $(SRCDIR)/design.h

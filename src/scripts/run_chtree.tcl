@@ -83,14 +83,8 @@ set clkx [dict get $parms "clkx"]
 puts [concat "clkx : " $clkx]
 set clky [dict get $parms "clky"]
 puts [concat "clky : " $clky]
-set gcellw [dict get $parms "gcellw"]
-puts [concat "gcellw : " $gcellw]
-set gcellh [dict get $parms "gcellh"]
-puts [concat "gcellh : " $gcellh]
 set tech [dict get $parms "tech"]
 puts [concat "tech : " $tech]
-set enable_pd [dict get $parms "enable_pd"]
-puts [concat "enable_pd : " $enable_pd]
 set ck_port [dict get $parms "ck_port"]
 puts [concat "ck_port : " $ck_port]
 set db_units [dict get $parms "db_units"]
@@ -123,6 +117,10 @@ if {$tech==28} {
 	set buf_regex "BUF"
 	set ck_pin "CK"
 	set buf_out_pin "Y"
+} elseif {$tech==65} {
+	set buf_regex "BUFF"
+	set ck_pin "CP"
+	set buf_out_pin "I"
 }
 
 puts "../third_party/lefdef2cts -lef $lef -def $path -cpin $ck_pin -cts sinks.txt -blk blks.txt" 
