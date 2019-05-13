@@ -35,9 +35,9 @@ $ cd ../genLUT
    * cellHeight - Height of your library cells in _um_.
      * E.g.: _set cellHeight "0.5"_
    * cap_per_unit_len - Capacitance per unit length of your technology. Use your technology units and update only the value after the keyword _expr_
-     * E.g.: _set cap_per_unit_len [expr 0.8 / (1000 * $cap_unit) ]_
+     * E.g.: _set cap_per_unit_len [expr (0.8 / 1000) * $cap_unit ]_
    * res_per_unit_len - Resistance per unit length of your technology. Use your technology units and update only the value after the keyword _expr_
-     * set res_per_unit_len [expr 0.9 / (1000 * $cap_unit) ] # Assumes cap and res multipliers are the same
+     * set res_per_unit_len [expr (0.9 / 1000) * $cap_unit ] # Assumes cap and res multipliers are the same
 
 * We encourage you to **DO NOT** change the following variables unless you **REALLY** know what you are doing.
    * maxSlew, inputSlew, slewInter - max, min and step for slew in characterization scripts.
