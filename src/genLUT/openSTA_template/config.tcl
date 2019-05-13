@@ -31,12 +31,12 @@ set FFName "flip_flop"
 set cellHeight "row_height_in_um"
 
 # Change 1.0 to your library values. Use your lib units.
-set incap_buf [expr 1.0 / (1000 * $cap_unit) ]
-set incap_D_ff [expr 1.0 / (1000 * $cap_unit) ]
-set incap_CK_ff [expr 1.0 / (1000 * $cap_unit) ]
+set incap_buf [expr (1.0 / 1000) * $cap_unit ]
+set incap_D_ff [expr (1.0 / 1000) * $cap_unit ]
+set incap_CK_ff [expr (1.0 / 1000) * $cap_unit ]
 set split_num 4	
-set cap_per_unit_len [expr 1.0 / (1000 * $cap_unit) ]
-set res_per_unit_len [expr 1.0 / (1000 * $cap_unit) ] # Assumes cap and res multipliers are the same
+set cap_per_unit_len [expr (1.0 / 1000) * $cap_unit ]
+set res_per_unit_len [expr (1.0 / 1000) * $cap_unit ] # Assumes cap and res multipliers are the same
 
 set dist _DIST_
 set unitDist _UNITDIST_
