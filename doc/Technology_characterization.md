@@ -1,6 +1,10 @@
 # Technology characterization
 
-These steps generates lookup tables for buffered or non-buffered wire segments, which will be used as building blocks for clock tree construction.
+These steps generate lookup tables for buffered or non-buffered wire segments delimited by flip-flops. The lookup tables are used as building blocks for clock tree construction and store information about delay, power and slew of the wire segments. 
+
+| <img src="characterization.png" width=550px> |
+|:--:|
+| *A buffered wire segment delimited by two flip-flops* |
 
 *** These steps are required per foundry/IP enablement, since the enablement is visible only under NDA, and often readable only by foundry-qualified tools. Please refer to [OpenROAD Flow and Notes](https://theopenroadproject.org/wp-content/uploads/2018/12/OpenROAD_Flow_and_Notes_Nov2018-v1p0-1.pdf) for a better understanding of supported technologies and current limitations / assumptions.
 
