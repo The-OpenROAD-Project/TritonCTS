@@ -34,7 +34,7 @@ $ cd ../genLUT
      * E.g.: _set buff_outPin "Y"_
    * clk_pin - Clock signal pin name of the library flip-flips.
      * E.g.: _set clk_pin "CK_
-   * bufName - Library buffer to be used in as a placeholder at the beginning of the characterization.
+   * bufName - Library buffer to be used as a placeholder at the beginning of the characterization.
      * E.g.: _set bufName "BUF_X16"_
    * FFName - Library flip-flop to be used in the end of the wire during characterization. 
      * E.g.: _set FFName "FF_X2"_
