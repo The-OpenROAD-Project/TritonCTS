@@ -6,7 +6,7 @@ K. Han, A. B. Kahng and J. Li, "Optimal Generalized H-Tree Topology and Bufferin
 Many subsequent changes for open-sourcing were made by [Mateus Fogaça](https://github.com/mpfogaca).
 
 ### Inputs and outputs
-TritonTCS requires 5 input files and produces 2 output files. Refer to [OpenROAD Flow and Notes](https://theopenroadproject.org/wp-content/uploads/2018/12/OpenROAD_Flow_and_Notes_Nov2018-v1p0-1.pdf) for more information.
+TritonCTS requires 5 input files and produces 2 output files. Refer to [OpenROAD Flow and Notes](https://theopenroadproject.org/wp-content/uploads/2018/12/OpenROAD_Flow_and_Notes_Nov2018-v1p0-1.pdf) for more information.
 
 Inputs:
 - [Library characterization files](doc/Technology_characterization.md)
