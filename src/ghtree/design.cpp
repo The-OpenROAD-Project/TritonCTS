@@ -1165,6 +1165,10 @@ void design::printSol (string file_name, unsigned d) {
     }
     outFile.close();
     cout << cnt <<  " solutions" << endl;
+	if (cnt > 10000000) {
+		std::cout << "Too many solutions, please try to increase the value of \"toler\" parameter\n";
+		std::exit(1);
+	}
 }
 
 /*** Evaluate whether the current solution dominates a previous solution ******/

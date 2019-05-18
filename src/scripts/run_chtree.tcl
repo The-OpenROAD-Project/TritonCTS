@@ -91,6 +91,8 @@ set db_units [dict get $parms "db_units"]
 puts [concat "db_units : " $db_units]
 set root_buff [dict get $parms "root_buff"]
 puts [concat "root_buff : " $root_buff]
+set toler [dict get $parms "toler"]
+puts [concat "tolerance : " $toler]
 
 set db_ratio [expr $db_units/1000.0]
 
@@ -142,8 +144,8 @@ exec awk {{print $1,$2,$3,1.0}} sink_cap_tmp.txt > sink_cap.txt
 
 # run DP-based clock tree topology and buffering / ILP-based clustering
 puts "\nRunning GH-tree (should take a while...)"
-puts "genHtree -n $number -s $target_skew -tech $tech -compute_sink_region_mode"
-catch {exec ../bin/genHtree -n $number -s $target_skew -tech $tech -compute_sink_region_mode | tee rpt}
+puts "genHtree -n $number -s $target_skew -tech $tech -compute_sink_region_mode -t $toler"
+catch {exec ../bin/genHtree -n $number -s $target_skew -tech $tech -compute_sink_region_mode -t $toler | tee rpt}
 
 exec cp sol_0.txt sol.txt
 
