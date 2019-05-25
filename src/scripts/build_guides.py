@@ -57,10 +57,10 @@ netsPostProc	= defaultdict(list) # these are nets wo/ dummy buffers
 #------------------------------------------------------------------------------
 # Read netlist from file
 def readNetlistFile():
-	nets['clk'].append(['PIN', 'clk'])
-	clkx = sys.argv[1]
-	clky = sys.argv[2]
-	#placement['clk/clk'] = [clkx, clky]
+	nets['_CK_PORT_'].append(['PIN', '_CK_PORT_'])
+	_CK_PORT_x = sys.argv[1]
+	_CK_PORT_y = sys.argv[2]
+	#placement['_CK_PORT_/_CK_PORT_'] = [_CK_PORT_x, _CK_PORT_y]
 
 	with open(netlistFilePath) as fp:
 		for line in fp:
@@ -115,7 +115,7 @@ def appendPinGuides(guides, net):
 	height	= int(float(sys.argv[6]) * 1000)
 
 	for node, pin in nets[net]:
-		if "clk" in pin:
+		if "_CK_PORT_" in pin:
 			continue
 		if node in mapping.keys() and "DUMMY" in mapping[node]:
 			continue
@@ -125,7 +125,7 @@ def appendPinGuides(guides, net):
 		ygrid = floor(y/gcellh)
 		guide = str(max((xgrid)*gcellw,0)) + " " + str(max((ygrid)*gcellh,0)) + " " + str(min((xgrid+1)*gcellw, width)) + " " + str(min((ygrid+1)*gcellh,height))
 		
-		if pin == "_BUFF_OUT_PIN_" or pin == "A" or pin == "clk":
+		if pin == "_BUFF_OUT_PIN_" or pin == "A" or pin == "_CK_PORT_":
 			guides[0] += guide + " M1\n"
 			guides[1] += guide + " M2\n"
 			guides[2] += guide + " M3\n"

@@ -44,6 +44,16 @@
 using   namespace   std;
 
 class design {
+	struct BufferSolution {
+		pair<float, float> _originLoc;
+		pair<float, float> _targetLoc;	
+		vector<bool> _isRealBuffer;
+		vector<float> _relDist; 
+		
+		vector<pair<float, float>> _bufferLocs;
+		int _cost;
+	};
+	
     public:
 		unsigned out_slew_idx;
 		unsigned min_slew_idx;
@@ -56,6 +66,8 @@ class design {
         unsigned verbose;
         unsigned opt_t_idx;
         int toler;
+		float xoffset;
+		float yoffset;
 
         unsigned max_delay;
         unsigned max_solnum;
@@ -82,7 +94,7 @@ class design {
         map<int, LUT*> lut_map;
 
         // functions
-        bool parseDesignInfo(float, float, float, float, float, float, unsigned, unsigned, int, unsigned, unsigned, bool, string);
+        bool parseDesignInfo(float, float, float, float, float, float, unsigned, unsigned, int, unsigned, unsigned, bool, string, bool);
         void parseLUT();
         void parseSinkCap();
         void parseBlks();
@@ -91,14 +103,22 @@ class design {
         inline bool evalTree(tree*, unsigned, unsigned, unsigned, unsigned, unsigned, unsigned);
         inline void evalSegment(segment*, vector<segment*>&);
         //float findLocs(vector<pair<float, float>>, vector<pair<float, float>>& , float);
-        float findLocs(const vector<pair<float, float>>&in_locs, vector<pair<float, float>>&out_locs, vector<pair<float, float>>&opt_buf_locs, const vector<bool>& isBuffer, const vector <float>& dist, const vector < vector <blockage*> > &blks);
+        //float findLocs(const vector<pair<float, float>>&in_locs, vector<pair<float, float>>&out_locs, vector<pair<float, float>>&opt_buf_locs, const vector<bool>& isBuffer, const vector <float>& dist, const vector < vector <blockage*> > &blks);
+		float findLocsGreedy(const vector<pair<float, float>>&in_locs, vector<pair<float, float>>&out_locs, vector<pair<float, float>>&opt_buf_locs, const vector<bool>& isBuffer, const vector <float>& dist, const vector < vector <blockage*> > &blks);
 
         void reconstructTree();
         void selectTreeSol();
-        void cluster(vector<pin*>, vector<vector<pin*>>&, vector<pair<float,float>>, vector<pair<float,float>>&, float);
+        void cluster(vector<pin*>, vector<vector<pin*>>&, vector<pair<float,float>>, vector<pair<float,float>>&, float, float, float);
         void placeTree();
         int idenLoc(pair<float, float>, pair<float, float>);
         float calcDist(pair<float, float>, pair<float, float>);
         void printSol(vector<solution*> &all_sols);
+
+		// MF @ 180206: hacking sink region
+		void computeSinkRegion(const float);
+
+		void runKMeansClustering();
+		void createLShapeConnection(BufferSolution&, const vector<vector<blockage*>>&, bool);
+		int computeCost(const pair<float,float>&, const vector<vector<blockage*>>&);
 };
 

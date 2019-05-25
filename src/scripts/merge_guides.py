@@ -92,7 +92,7 @@ def postProcNets():
 	toVisit = Queue()
 	toVisit.put("ck_tree_0")
 
-	rootNets['clk'] = 'clk'
+	rootNets['_CK_PORT_'] = '_CK_PORT_'
 	while not toVisit.empty():
 		currNode = toVisit.get()
 		#print ("Curr node: " + currNode)

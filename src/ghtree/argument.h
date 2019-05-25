@@ -59,6 +59,7 @@ class   CArgument{
         unsigned         max_solnum;
         string           sol_file;
 		int 			 tech_node;
+		bool			 compute_sink_region_mode; 
         // functions
         CArgument();
         bool        argument(int argc, char* argv[]);

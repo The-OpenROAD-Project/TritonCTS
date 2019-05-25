@@ -86,8 +86,8 @@ def readPlacementFile():
 #------------------------------------------------------------------------------
 
 def writeNets():
-	print("- clk")
-	print("( PIN clk )")
+	print("- _CK_PORT_")
+	print("( PIN _CK_PORT_ )")
 	print("( ck_tree_0 A )")
 	print(";")
 
@@ -156,7 +156,7 @@ def dumpVerilog():
 		for i in range(1, len(components)):
 			inputs[components[i][0]] = net 
 	
-	inputs['ck_tree_0'] = 'clk'
+	inputs['ck_tree_0'] = '_CK_PORT_'
 	printedNets = False
 	outputfile = open('final.v', 'w')
 	with open('place-2.v') as fp:
@@ -170,7 +170,7 @@ def dumpVerilog():
 					libcell = buffers[mod][0]
 					outputfile.write("  " + libcell + " " + mod + "( .A(" + inputs[mod] + "), ._BUFF_OUT_PIN_(" + outputs[mod]  + ") );\n")
 			elif "._CK_PIN_" in line:		
-				line = line.replace("clk", inputs[line.split()[1]])
+				line = line.replace("_CK_PORT_", inputs[line.split()[1].replace("\\", "")])
 			outputfile.write(line)
 	outputfile.close()
 
@@ -215,7 +215,7 @@ with open(defFile) as fp:
 			numNets = int(subprocess.check_output(cmd1, shell=True)) + len(netsPostProc) - 1
 			print("NETS " + str(numNets) + " ;")
 			writeNets()
-		elif "- clk" in line and not "NET" in line: # Skip the original clock net
+		elif "- _CK_PORT_" in line and not "NET" in line: # Skip the original clock net
 			while ";" not in line:
 				line = fp.readline()
 		else: 

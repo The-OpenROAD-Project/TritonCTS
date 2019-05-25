@@ -1,21 +1,12 @@
 # Technology characterization
 
+These steps generate lookup tables for buffered or non-buffered wire segments delimited by flip-flops. The lookup tables are used as building blocks for clock tree construction and store information about delay, power and slew of the wire segments. 
+
+| <img src="characterization.png" width=550px> |
+|:--:|
+| *A buffered wire segment delimited by two flip-flops* |
+
 *** These steps are required per foundry/IP enablement, since the enablement is visible only under NDA, and often readable only by foundry-qualified tools. Please refer to [OpenROAD Flow and Notes](https://theopenroadproject.org/wp-content/uploads/2018/12/OpenROAD_Flow_and_Notes_Nov2018-v1p0-1.pdf) for a better understanding of supported technologies and current limitations / assumptions.
-
-- Change directory to _genLoad_ folder.
-```
-$ cd src/scripts/genLoad
-```
-
-- Edit _temp_lump_header.txt_ to match the header of your Liberty file.
-
-- Edit _temp_lump_cell.txt_ to match the description of a flip-flop cell in your Liberty file.
-
-- In previous steps, please note that your files must keep the _\_CORNER\__, _\_VOLT\__, _\_TEMP\__, _\_LTEMP\__ variables seen in the .txt files. 
-
-- Run the _gen_load_lib.tcl_ script. This will generate a Liberty file with artificial loads; the artificial loads will eventually form the basis of a lookup table used by TritonCTS.
-
-- Use Synopsys Library Compiler to create a .db from the Liberty file.  The command name to use in version O-2018.06 is seen on page 86 (out of 1134 pages) in the Library Compiler user Guide.
 
 - Change directory to _genLUT_ folder.
 
@@ -23,25 +14,62 @@ $ cd src/scripts/genLoad
 $ cd ../genLUT
 ```
 
- - Edit _template/pt_config.tcl_ to add paths to .db files and the CTS buffer names.  Examples of path names and CTS buffer names are shown in the _pt_config.tcl_ file provided in the unpacked release.
+ - Update the following variables in _template/config.tcl_ accordingly:
  
- - Edit _template/pt_config.tcl_ to add paths to library files.  Examples of paths to library files are shown in the _pt_config.tcl_ file provided in the unpacked release.
- 
- - Edit _run_all.tcl_ to specify wire sizes and NDRs (non-default routing rules).
- 
- - Edit _template/genTest.tcl_ to specify a buffer cell (variable _bufName_), a flip-flop cell (variable _FFName_) and their respective cell heights (variable _cellHeight_) and footprints (variable _path_).
- 
- - Run the characterization script, _run_all.tcl_ (valid Cadence Innovus and Synopsys PrimeTime licenses are required).
+   * list_lib - Path to you library files.
+     * E.g.: _set list_lib "path/to/my/library.lib"_
+   * cap_unit - Must set to 1 if your library has _pF_ as capacitance unit or 1000 if your library has _fF_ as capacitance unit.
+     * E.g.: _set cap_unit 1_
+   * time_unit - Must set to 1 if your library has _ns_ as timing unit or 1000 if your library has _ps_ as timing unit.
+     * E.g.: _set time_unit 1_
+   * bufTypes - List of standard cells to be used as clock buffers.
+     * E.g.: _set bufTypes "BUF_X1 BUF_X2 BUF_X4 BUF_X16 BUF_X32"_
+   * Q_ffpin - Name of the output data pin of the library flip-flops.
+     * E.g.: _set Q_ffpin "Q"_
+   * D_ffpin - Name of the input data pin of the library flip-flips.
+     * E.g.: _set D_ffpin "D"_
+   * buff_inPin - Name of the input pin of the library buffers.
+     * E.g: _set buff_inPin "A"_
+   * buff_outPin - Name of the output pin of the library buffers.
+     * E.g.: _set buff_outPin "Y"_
+   * clk_pin - Clock signal pin name of the library flip-flips.
+     * E.g.: _set clk_pin "CK_
+   * bufName - Library buffer to be used as a placeholder at the beginning of the characterization.
+     * E.g.: _set bufName "BUF_X16"_
+   * FFName - Library flip-flop to be used in the end of the wire during characterization. 
+     * E.g.: _set FFName "FF_X2"_
+   * cellHeight - Height of your library cells in _um_.
+     * E.g.: _set cellHeight "0.5"_
+   * cap_per_unit_len - Capacitance per unit length of your technology. Use your technology units and update only the value after the keyword _expr_
+     * E.g.: _set cap_per_unit_len [expr (0.8 / 1000) * $cap_unit ]_
+   * res_per_unit_len - Resistance per unit length of your technology. Use your technology units and update only the value after the keyword _expr_
+     * set _res_per_unit_len [expr (0.9 / 1000) * $cap_unit ]_ # Assumes cap and res multipliers are the same
+   * initial_cap_interval - used for rounding to the nearest capacitance value during characterization for fine-grained change of output load
+	    * E.g: _set initial_cap_interval 0.001 #Assumes the capacitance units are in fF_
+   * final_cap_interval - used for rounding to the nearest capacitance value during characterization for coarse-grained change of output load.
+	    * E.g: _set final_cap_interval 0.005 #Assumes the capacitance units are in fF_
 
-- After _run_all.tcl_ script has finished, make sure that a file named _XX.lut_ exists under each generated folder. The characterization folders have the naming convention: _test_XX_YY_NDR_, where _XX_ is the dist, _YY_ is the _unit_dist_ and _NDR_*** is the non-default rule). When characterizing for larger values of _dist_ (e.g. _dist_=80), and smaller values of _unit_dist_ (e.g. _unit_dist_=10) on 8 cores the expected runtime is around than 72 hours or more depending on your local setup.
-*** Please note that as of January 2019 TritonCTS will only produce single-width clock routes even if NDRs are specified in the library characterization.
+* We encourage you to **DO NOT** change the following variables unless you **REALLY** know what you are doing.
+   * maxSlew, inputSlew, slewInter - max, min and step for slew in characterization scripts.
+     * E.g.: _set maxSlew [expr 0.060 * $time_unit]_
+     * E.g.: _set inputSlew [expr 0.005 * $time_unit]_
+     * E.g.: _set slewInter [expr 0.005 * $time_unit]_
 
-- Edit variable _lutList_ in _genLUTOPt2.tcl_ with the paths of the _XX.lut_ files
+   * outloadNum, baseLoad, loadInter - Number of loads, min load value and step for the characterization scripts. For the last two, only change the value after _expr_ using your library units.     
+     * E.g.: _set outLoadNum 34_
+     * E.g.: _set baseLoad [expr 0.005 * $cap_unit]_
+     * E.g.: _set loadInter [ expr 0.005 * $cap_unit]_
 
-- Run the _genLUTOPt2.tcl_ script:
+ - Run the characterization script, _run_all.tcl_ (a valid OpenSTA binary under _genLUT_ is required).
+
+- After _run_all.tcl_ script has finished, make sure that a file named _XX.lut_ exists under each generated folder. The characterization folders have the naming convention: _test_XX_YY_NDR_, where _XX_ is the dist, _YY_ is the _unit_dist_ and _NDR_ is the non-default rule. When characterizing for larger values of _dist_ (e.g. _dist_=80 um), on a single core the expected runtime is around 1 hour or less depending on your local setup.
+
+- Edit variable _lutList_ in _genLUTOpt2.tcl_ with the paths of the _XX.lut_ files
+
+- Run the _genLUTOpt2.tcl_ script:
 
 ```
-$ ./genLUTOPt2.tcl > concat.lut
+$ ./genLUTOpt2.tcl > concat.lut
 ```
 
 - Run _prep_lut.tcl_
@@ -72,5 +100,7 @@ $ cp lut.txt ../../src/tech/lut-16.txt
     *   Non-empty _XX.lut_ file under each _test_XX_YY_NDR_ folder.
     *   Non-empty _sol_list-XX.txt_ file under ../../src/tech
     *   Non-empty _lut-XX.txt_ file under ../../src/tech
+
+(We provide examples of technology characterization files for 45nm OpenPDK [here](../src/tech/).)
 
 - You may now [run TritonCTS]().
