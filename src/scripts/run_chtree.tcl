@@ -122,8 +122,20 @@ if {$tech==28} {
 } elseif {$tech==65} {
 	set buf_regex "BUF"
 	set ck_pin "CK"
-	set buf_out_pin "A"
+	set buf_out_pin "Y"
 }
+
+exec cp -rf ../src/scripts/remove_dummies.py remove_dummies.py
+exec sed -i s/_CK_PIN_/$ck_pin/g remove_dummies.py
+exec sed -i s/_CK_PORT_/$ck_port/g remove_dummies.py
+exec sed -i s/_BUFF_OUT_PIN_/$buf_out_pin/g remove_dummies.py
+
+exec cp -rf ../src/scripts/parse_sol.tcl parse_sol.tcl
+exec sed -i s/_WIDTH_/$width/g parse_sol.tcl
+exec sed -i s/_HEIGHT_/$height/g parse_sol.tcl
+exec sed -i s/_CK_PORT_/$ck_port/g parse_sol.tcl
+exec sed -i s/_ROOT_BUFF_/$root_buff/g parse_sol.tcl
+exec sed -i s/_BUFF_REGEX_/$buf_regex/g parse_sol.tcl
 
 puts "../third_party/lefdef2cts -lef $lef -def $path -cpin $ck_pin -cts sinks.txt -blk blks.txt" 
 catch {exec ../third_party/lefdef2cts -lef $lef -def $path -cpin $ck_pin -cts sinks.txt -blk blks_tmp.txt}
@@ -150,12 +162,6 @@ catch {exec ../bin/genHtree -n $number -s $target_skew -tech $tech -compute_sink
 exec cp sol_0.txt sol.txt
 
 # Update the netlist
-exec cp -rf ../src/scripts/parse_sol.tcl parse_sol.tcl
-exec sed -i s/_WIDTH_/$width/g parse_sol.tcl
-exec sed -i s/_HEIGHT_/$height/g parse_sol.tcl
-exec sed -i s/_CK_PORT_/$ck_port/g parse_sol.tcl
-exec sed -i s/_ROOT_BUFF_/$root_buff/g parse_sol.tcl
-exec sed -i s/_BUFF_REGEX_/$buf_regex/g parse_sol.tcl
 exec ./parse_sol.tcl
 
 set solFileIn [open locations.txt r]              
@@ -188,8 +194,10 @@ if {[file exists $replace_dir]} {
 	exec rm -rf 
 }
 
+set legPath [file normalize ../third_party/ntuplace4h]
 puts "Running legalization..."
-catch {exec ../third_party/RePlAce -bmflag etc -lef $lef -def cts.def -output leg -t 1 -dpflag NTU3 -dploc ../../../../../../../third_party/ntuplace3 -onlyLG -onlyDP -fragmentedRow -denDP 0.9 -plot > leg_rpt} 
+puts "../third_party/RePlAce -bmflag etc -lef $lef -def cts.def -output leg -t 1 -dpflag NTU4 -dploc $legPath -onlyLG -onlyDP -fragmentedRow -denDP 0.9 -plot -pcofmax 1.04"
+catch {exec ../third_party/RePlAce -bmflag etc -lef $lef -def cts.def -output leg -t 1 -dpflag NTU4 -dploc $legPath -onlyLG -onlyDP -fragmentedRow -denDP 0.9 -plot -pcofmax 1.04 > leg_rpt} 
 exec cp leg/etc/cts/experiment000/cts_final.def post_leg.def
 #exec cp cts.def post_leg.def
 
@@ -223,9 +231,5 @@ exec python ../src/scripts/extract_locations.py post_leg.def > cell_locs_final.t
 
 # Generate the final def and verilog
 exec python ../src/scripts/verilog_preprocess.py
-exec cp -rf ../src/scripts/remove_dummies.py remove_dummies.py
-exec sed -i s/_CK_PIN_/$ck_pin/g remove_dummies.py
-exec sed -i s/_CK_PORT_/$ck_port/g remove_dummies.py
-exec sed -i s/_BUFF_OUT_PIN_/$buf_out_pin/g remove_dummies.py
 exec python remove_dummies.py > cts_final.def
 

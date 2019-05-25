@@ -2391,22 +2391,25 @@ void design::placeTree() {
             }
             cout << endl;
 
-			cout << "In_locs size = " << in_locs.size() << "\n";
-			cout << "opt_locs size = " << opt_locs.size() << "\n";
-			cout << "opt_buf_locs size = " << opt_buf_locs.size() << "\n";
-			cout << "isBuffer size = " << isBuffer.size() << "\n";
-			cout << "rel_dist size = " << rel_dist.size() << "\n";
-			cout << "blks_in_sinks size = " << blks_in_sinks.size() << "\n";
+			//cout << "-----------------------------------------\n";	
+			//cout << "In_locs size = " << in_locs.size() << "\n";
+			//cout << "opt_locs size = " << opt_locs.size() << "\n";
+			//cout << "opt_buf_locs size = " << opt_buf_locs.size() << "\n";
+			//cout << "isBuffer size = " << isBuffer.size() << "\n";
+			//cout << "rel_dist size = " << rel_dist.size() << "\n";
+			//cout << "blks_in_sinks size = " << blks_in_sinks.size() << "\n";
 //#ifdef CPLEX_CLUSTERING
 			findLocsGreedy(in_locs, opt_locs, opt_buf_locs, isBuffer, rel_dist, blks_in_sinks);
             //findLocs(in_locs, opt_locs, opt_buf_locs, isBuffer, rel_dist, blks_in_sinks);
 //#endif			
-			cout << "In_locs size = " << in_locs.size() << "\n";
-			cout << "opt_locs size = " << opt_locs.size() << "\n";
-			cout << "opt_buf_locs size = " << opt_buf_locs.size() << "\n";
-			cout << "isBuffer size = " << isBuffer.size() << "\n";
-			cout << "rel_dist size = " << rel_dist.size() << "\n";
-			cout << "blks_in_sinks size = " << blks_in_sinks.size() << "\n";
+			//cout << "-\n";	
+			//cout << "In_locs size = " << in_locs.size() << "\n";
+			//cout << "opt_locs size = " << opt_locs.size() << "\n";
+			//cout << "opt_buf_locs size = " << opt_buf_locs.size() << "\n";
+			//cout << "isBuffer size = " << isBuffer.size() << "\n";
+			//cout << "rel_dist size = " << rel_dist.size() << "\n";
+			//cout << "blks_in_sinks size = " << blks_in_sinks.size() << "\n";
+			//cout << "-----------------------------------------\n";	
 				
             if (verbose > 1) {
             cout << "OPT_LOCS " ;
@@ -2446,6 +2449,7 @@ void design::placeTree() {
             for (unsigned i = 0; i < buf_sols[r->lvl-1].size(); ++i) {
                 sol->buf_sols.push_back(buf_sols[r->lvl-1][i]);
             }
+			//cout << ">>> OPT BUF LOCS: " << opt_buf_locs.size() << "\n";
             for (unsigned i = 0; i < opt_buf_locs.size(); ++i) {
                 sol->buf_locs.push_back(make_pair(opt_buf_locs[i].first, opt_buf_locs[i].second));
             }
@@ -2506,6 +2510,7 @@ void design::placeTree() {
         outFile << sol->idx << " : ";
         outFile << sol->lvl << " {";
         for (unsigned i = 0; i < sol->buf_sols.size(); ++i) {
+			//std::cout << "OPT BUF LOCS SIZE WIRE SOL.TXT:" << sol->buf_sols.size() << "\n";
             outFile << sol->buf_sols[i] << " ";
         }
         outFile << "} ";
@@ -2609,10 +2614,9 @@ float design::findLocsGreedy( const vector<pair<float, float>>&in_locs,
 			bestSol = 1;
 		}
 		
-		//pt_buf_locs.insert(opt_buf_locs.end(),
-	//		bufferingSolutions[bestSol]._bufferLocs.begin(),
-	//		bufferingSolutions[bestSol]._bufferLocs.end());
-			
+		opt_buf_locs.insert(opt_buf_locs.end(),
+			bufferingSolutions[bestSol]._bufferLocs.begin(),
+			bufferingSolutions[bestSol]._bufferLocs.end());
 		startPos += segmentLength;
 	}
 }
@@ -2630,7 +2634,6 @@ void design::createLShapeConnection(BufferSolution& bufferSolution,
 	cost = 0;
 	
 	float segmentMediumPoint = calcDist(originLoc, targetLoc) / 2.0;
-	
 	for (unsigned i = 0; i < relDist.size(); ++i) {
 		if (!isBuffer[i]) {
 			continue;
@@ -2647,9 +2650,9 @@ void design::createLShapeConnection(BufferSolution& bufferSolution,
 				bufferPos.second = originLoc.second;
 			} else {
 				if (originLoc.first < targetLoc.first) {
-					bufferPos.first + segmentMediumPoint;
+					bufferPos.first = originLoc.first + segmentMediumPoint;
 				} else {
-					bufferPos.first - segmentMediumPoint;
+					bufferPos.first = originLoc.first - segmentMediumPoint;
 				}
 				
 				if (originLoc.second < targetLoc.second) {
@@ -2668,9 +2671,9 @@ void design::createLShapeConnection(BufferSolution& bufferSolution,
 				bufferPos.first = originLoc.first;
 			} else {
 				if (originLoc.second < targetLoc.second) {
-					bufferPos.second + segmentMediumPoint;
+					bufferPos.second = originLoc.second + segmentMediumPoint;
 				} else {
-					bufferPos.second - segmentMediumPoint;
+					bufferPos.second = originLoc.second - segmentMediumPoint;
 				}
 				
 				if (originLoc.first < targetLoc.first) {
@@ -2681,6 +2684,11 @@ void design::createLShapeConnection(BufferSolution& bufferSolution,
 			}
 		}
 		
+		std::cout << "originLoc = (" << originLoc.first << ", " << originLoc.second << ")\n";
+		std::cout << "targetLoc = (" << targetLoc.first << ", " << targetLoc.second << ")\n";
+		std::cout << "rel_dist = " << relDist[i] << ", segmentMediumPost = " << segmentMediumPoint << "\n";
+		std::cout << "bufferLoc = (" << bufferPos.first << ", " << bufferPos.second << ")\n";
+
 		cost += computeCost(bufferPos, blks);
 		bufferLocs.push_back(bufferPos);
 	}
