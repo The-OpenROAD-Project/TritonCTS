@@ -34,18 +34,18 @@ TritonCTS has been validated for the following list of platforms, tools and enab
 | [Lemon](https://lemon.cs.elte.hu/trac/lemon) | Version 1.3.1 |
 
 ### Tutorials
----
 - [Run the library characterization](doc/Technology_characterization.md)
-- [Run TritonCTS](doc/Run_TritonCTS.md)
+- [Compile and run TritonCTS](doc/Run_TritonCTS.md)
 
 ### Example
+Below we display the clock nets for the design jpeg_encoder implemented in TSMC65 with 24K intances, followed by TritonCTS routing topology.
 
-Below we display the design _jpeg_encoder_ implemented in TSMC16 with 42K intances, followed by TritonCTS routing topology targeting 150, 100 and 50ps skew.
-
-| <img src="doc/jpeg.png" width=550px> |
+| <img src="doc/jpeg-tsmc-65.png" width=550px> |
 |:--:|
-| *Visualized examples of jpeg_encoder with TSMC16 with 42K instances* |
+| *TritonCTS generated clock nets for jpeg_encoder* |
 
-| <img src="doc/150ps.png" width=250px> | <img src="doc/100ps.png" width=250px> | <img src="doc/50ps.png" width=250px> | 
-|:--:|:--:|:--:| 
-| *jpeg_encoder targeting 150ps skew* | *jpeg_encoder targeting 100ps skew* | *jpeg_encoder targeting 50ps skew* |
+| <img src="doc/topology-jpeg-65.png" width=550px> |
+|:--:| 
+| *TritonCTS clock tree topology for jpeg_encoder* |
+
+
