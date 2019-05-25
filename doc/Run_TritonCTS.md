@@ -1,4 +1,4 @@
-# Run TritonCTS
+# Compile and run TritonCTS
 
 - Change directory to the repository top folder "TritonCTS".
 
