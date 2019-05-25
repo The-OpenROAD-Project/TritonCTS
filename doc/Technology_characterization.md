@@ -101,4 +101,6 @@ $ cp lut.txt ../../src/tech/lut-16.txt
     *   Non-empty _sol_list-XX.txt_ file under ../../src/tech
     *   Non-empty _lut-XX.txt_ file under ../../src/tech
 
+(We provide examples of technology characterization files for 45nm OpenPDK [here](../src/tech/).)
+
 - You may now [run TritonCTS]().
