@@ -45,8 +45,8 @@ import subprocess
 
 
 netlistFilePath		= 'netlist.txt'  
-placementFilePath 	= 'cell_locs_final.txt'  
-defFile 			= 'post_leg.def'
+placementFilePath 	= 'cell_locs_pre_leg.txt'
+defFile 			= 'cts.def'
 verilogFile			= 'place.v'
 	
 nets 			= defaultdict(list) # these are nets with dummy buffers

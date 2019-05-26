@@ -63,9 +63,9 @@ foreach line $data {
 puts "+------------------------+"
 puts "|      Configuration     |"
 puts "+------------------------+"
-set path [dict get $parms "path"]
+set path [file normalize [dict get $parms "path"]]
 puts [concat "path : " $path]
-set verilog [dict get $parms "verilog"]
+set verilog [file normalize [dict get $parms "verilog"]]
 puts [concat "verilog : " $verilog]
 set design [dict get $parms "design"]
 puts [concat "design : " $design]
@@ -77,7 +77,7 @@ set height [dict get $parms "height"]
 puts [concat "height : " $height]
 set number [dict get $parms "num_sinks"]
 puts [concat "num_sinks : " $number]
-set lef [dict get $parms "lef"]
+set lef [file normalize [dict get $parms "lef"]]
 puts [concat "lef : " $lef]
 set clkx [dict get $parms "clkx"]
 puts [concat "clkx : " $clkx]
@@ -194,42 +194,13 @@ if {[file exists $replace_dir]} {
 	exec rm -rf 
 }
 
+exec python ../src/scripts/extract_locations.py cts.def > cell_locs_pre_leg.txt
+exec python ../src/scripts/verilog_preprocess.py
+exec python remove_dummies.py > cts_no_dummies.def
+
 set legPath [file normalize ../third_party/ntuplace4h]
 puts "Running legalization..."
 puts "../third_party/RePlAce -bmflag etc -lef $lef -def cts.def -output leg -t 1 -dpflag NTU4 -dploc $legPath -onlyLG -onlyDP -fragmentedRow -denDP 0.9 -plot -pcofmax 1.04"
-catch {exec ../third_party/RePlAce -bmflag etc -lef $lef -def cts.def -output leg -t 1 -dpflag NTU4 -dploc $legPath -onlyLG -onlyDP -fragmentedRow -denDP 0.9 -plot -pcofmax 1.04 > leg_rpt} 
-exec cp leg/etc/cts/experiment000/cts_final.def post_leg.def
-#exec cp cts.def post_leg.def
-
-# Update cell locations
-exec python ../src/scripts/extract_locations.py post_leg.def > cell_locs_final.txt
-
-#exec echo "$ck_port" > clockNet.txt
-#exec grep ck_net* post_leg.def | awk {{print $2}} >> clockNet.txt
-#
-## Dump GCELLs for clock pins
-#exec cp ../src/scripts/router.param .
-#exec sed -i s#_LEF_#$lef#g router.param
-#exec sed -i s/_DEF_/post_leg.def/g router.param
-#exec sed -i s/_GCELLH_/$gcellh/g router.param
-#exec sed -i s/_GCELLW_/$gcellw/g router.param
-#exec ../third_party/FlexRoute router.param
-#
-## Build guides 
-#exec cp -rf ../src/scripts/build_guides.py build_guides.py
-#exec sed -i s/_CK_PIN_/$ck_pin/g build_guides.py
-#exec sed -i s/_CK_PORT_/$ck_port/g build_guides.py
-#exec sed -i s/_BUFF_OUT_PIN_/$buf_out_pin/g build_guides.py
-#exec python build_guides.py $clkx $clky $gcellw $gcellh $width $height $enable_pd > guides.log
-#
-## Merge guides
-#exec cp -rf ../src/scripts/merge_guides.py merge_guides.py
-#exec sed -i s/_CK_PIN_/$ck_pin/g merge_guides.py
-#exec sed -i s/_CK_PORT_/$ck_port/g merge_guides.py
-#exec sed -i s/_BUFF_OUT_PIN_/$buf_out_pin/g merge_guides.py
-#exec python merge_guides.py > cts.guides
-
-# Generate the final def and verilog
-exec python ../src/scripts/verilog_preprocess.py
-exec python remove_dummies.py > cts_final.def
+catch {exec ../third_party/RePlAce -bmflag etc -lef $lef -def cts_no_dummies.def -output leg -t 1 -dpflag NTU4 -dploc $legPath -onlyLG -onlyDP -fragmentedRow -denDP 0.9 -plot -pcofmax 1.04 > leg_rpt} 
+exec cp leg/etc/cts_no_dummies/experiment000/cts_no_dummies_final.def cts_final.def
 
