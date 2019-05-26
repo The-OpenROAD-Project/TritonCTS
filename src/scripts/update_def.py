@@ -55,7 +55,8 @@ def readNetlistFile():
 			terms = line.rstrip("\n").split(' ')
 			if terms[0] is "B":
 				for i in range(2, len(terms)):
-					nets[terms[1]].append([terms[i].rstrip("/_CK_PIN_"), "_CK_PIN_"])
+					instPinPair = terms[i].rsplit("/", 1)
+					nets[terms[1]].append([instPinPair[0], instPinPair[1]])
 			else:
 				node 	= "ck_" + terms[0]
 				libCell	= terms[1]

@@ -121,12 +121,13 @@ if {$tech==28} {
 	set buf_out_pin "Y"
 } elseif {$tech==65} {
 	set buf_regex "BUF"
-	set ck_pin "CK"
+	set ck_pin "CK CLKA CLKB" 
 	set buf_out_pin "Y"
 }
 
+set inst_ck_pin [lindex [split $ck_pin] 0]
 exec cp -rf ../src/scripts/remove_dummies.py remove_dummies.py
-exec sed -i s/_CK_PIN_/$ck_pin/g remove_dummies.py
+exec sed -i s/_CK_PIN_/$inst_ck_pin/g remove_dummies.py
 exec sed -i s/_CK_PORT_/$ck_port/g remove_dummies.py
 exec sed -i s/_BUFF_OUT_PIN_/$buf_out_pin/g remove_dummies.py
 
@@ -137,8 +138,11 @@ exec sed -i s/_CK_PORT_/$ck_port/g parse_sol.tcl
 exec sed -i s/_ROOT_BUFF_/$root_buff/g parse_sol.tcl
 exec sed -i s/_BUFF_REGEX_/$buf_regex/g parse_sol.tcl
 
-puts "../third_party/lefdef2cts -lef $lef -def $path -cpin $ck_pin -cts sinks.txt -blk blks.txt" 
-catch {exec ../third_party/lefdef2cts -lef $lef -def $path -cpin $ck_pin -cts sinks.txt -blk blks_tmp.txt}
+foreach pin $ck_pin {  
+	puts "../third_party/lefdef2cts -lef $lef -def $path -cpin $pin -cts sinks.txt -blk blks.txt" 
+	catch {exec ../third_party/lefdef2cts -lef $lef -def $path -cpin $pin -cts sinks_part.txt -blk blks_tmp.txt}
+	exec cat sinks_part.txt >> sinks.txt
+}
 
 set blkFileIn [open blks_tmp.txt r]              
 set blkFileOut [open blks.txt w]              
@@ -176,9 +180,7 @@ close $solFileIn
 close $solFileOut
 
 exec mv locations_final.txt locations.txt
-
 exec cp -rf ../src/scripts/update_def.py update_def.py
-exec sed -i s/_CK_PIN_/$ck_pin/g update_def.py
 exec sed -i s/_CK_PORT_/$ck_port/g update_def.py
 exec sed -i s/_BUFF_OUT_PIN_/$buf_out_pin/g update_def.py
 exec python update_def.py > cts.def 

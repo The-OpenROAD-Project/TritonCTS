@@ -54,7 +54,7 @@ netsPostProc	= defaultdict(list) # these are nets wo/ dummy buffers
 placement 		= defaultdict(list)
 buffers			= defaultdict(list)
 segments		= defaultdict(list)
-
+inClkPins		= set()
 
 #------------------------------------------------------------------------------
 # Read netlist from locations.txt file
@@ -64,7 +64,9 @@ def readNetlistFile():
 			terms = line.rstrip("\n").split(' ')
 			if terms[0] is "B":
 				for i in range(2, len(terms)):
-					nets[terms[1]].append([terms[i].rstrip("/_CK_PIN_"), "_CK_PIN_"])
+					instPinPair = terms[i].rsplit("/", 1)
+					inClkPins.add(instPinPair[1])
+					nets[terms[1]].append([instPinPair[0], instPinPair[1]])
 			else:
 				node 	= "ck_" + terms[0]
 				libCell	= terms[1]
@@ -125,13 +127,13 @@ def postProcNets():
 				#print("\tTesting sink: " + node)
 				if not node in buffers:
 					#print("\tSink: " + node)
-					netsPostProc[rootNet].append([node, '_CK_PIN_'])
+					netsPostProc[rootNet].append([node, pin])
 				elif "DUMMY" in buffers[node][0]:
 					#print("\t\tis Dummy!")
 					netsToVisit.put(buffers[node][2])
 				else:
 					#print("\tSink: " + node)
-					netsPostProc[rootNet].append([node, 'A'])
+					netsPostProc[rootNet].append([node, pin])
 					toVisit.put(node)	
 		#print("-----------------------------")
 
@@ -169,9 +171,12 @@ def dumpVerilog():
 				for mod, out in outputs.items():
 					libcell = buffers[mod][0]
 					outputfile.write("  " + libcell + " " + mod + "( .A(" + inputs[mod] + "), ._BUFF_OUT_PIN_(" + outputs[mod]  + ") );\n")
-			elif "._CK_PIN_" in line:		
-				line = line.replace("_CK_PORT_", inputs[line.split()[1].replace("\\", "")])
-			outputfile.write(line)
+			else:
+				for clkPin in inClkPins:
+					pin = "." + clkPin
+					if pin in line:
+						line = line.replace(pin + "(_CK_PORT_)", pin + "(" + inputs[line.split()[1].replace("\\", "")] + ")")
+				outputfile.write(line)
 	outputfile.close()
 
 #------------------------------------------------------------------------------
