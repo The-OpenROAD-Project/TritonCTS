@@ -171,6 +171,7 @@ def dumpVerilog():
 				for mod, out in outputs.items():
 					libcell = buffers[mod][0]
 					outputfile.write("  " + libcell + " " + mod + "( .A(" + inputs[mod] + "), ._BUFF_OUT_PIN_(" + outputs[mod]  + ") );\n")
+				outputfile.write("endmodule")
 			else:
 				for clkPin in inClkPins:
 					pin = "." + clkPin
