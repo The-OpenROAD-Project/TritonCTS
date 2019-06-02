@@ -1,7 +1,7 @@
 #////////////////////////////////////////////////////////////////////////////////////
 #// Authors: Kwangsoo Han and Jiajia Li
 #//          (Ph.D. advisor: Andrew B. Kahng),
-#//          Many subsequent changes for open-sourcing were made by Mateus Fogaça
+#//          Many subsequent changes for open-sourcing were made by Mateus Fogaca
 #//          (Ph.D. advisor: Ricardo Reis)
 #//
 #// BSD 3-Clause License
@@ -35,7 +35,6 @@
 #// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #////////////////////////////////////////////////////////////////////////////////////
 from collections import defaultdict
-from statistics import median
 from math import floor, ceil
 
 netlistFilePath				= 'netlist.txt'  
@@ -104,95 +103,15 @@ def writeNets():
 	
 #------------------------------------------------------------------------------
 
-def writeGuides():
-	f = open("g.guides", "w")
-
-	gcellw = 5*1360
-	gcellh = 5*1000
-	tolx = 1500
-	toly = 1200
-	for net, components in nets.items():
-		xlocs = []
-		ylocs = []
-		for node, pin in components:
-			xlocs.append(float(placement[node][0])*1000)	
-			ylocs.append(float(placement[node][1])*1000)
-		xmax = max(xlocs)
-		xmin = min(xlocs)
-		ymax = max(ylocs)
-		ymin = min(ylocs)
-			
-		f.write(net + "\n")
-		f.write("(\n")
-
-		guidesm1 = ""
-		guidesm2 = ""
-		guidesm3 = ""
-		guidesm4 = ""
-		if xmax-xmin > ymax-ymin: #trunk horizontal
-			ycoord = median(ylocs)
-			
-			# build trunk...
-			ygrid 		= floor(ycoord/gcellh)
-			xgridmin	= floor(xmin/gcellw)	
-			xgridmax	= floor(xmax/gcellw)
-			
-			guide = str((xgridmin-1)*gcellw) + " " + str((ygrid-1)*gcellh) + " " + str((xgridmax+2)*gcellw) + " " + str((ygrid+2)*gcellh)
-			guidesm1 = guidesm1 + guide + " M1\n"
-			guidesm2 = guidesm2 + guide + " M2\n"
-			guidesm3 = guidesm3 + guide + " M3\n"
-			guidesm4 = guidesm4 + guide + " M4\n"
-
-			# build stems...
-			for i in range(0, len(xlocs)):
-				xgrid = floor(xlocs[i]/gcellw)
-				ygridmin = min(ygrid, floor(ylocs[i]/gcellh))
-				ygridmax = max(ygrid, floor(ylocs[i]/gcellh))	
-				
-				guide = str((xgrid-1)*gcellw) + " " + str((ygridmin-1)*gcellh) + " " + str((xgrid+2)*gcellw) + " " + str((ygridmax+2)*gcellh)
-				guidesm1 = guidesm1 + guide + " M1\n"
-				guidesm2 = guidesm2 + guide + " M2\n"
-				guidesm3 = guidesm3 + guide + " M3\n"
-				guidesm4 = guidesm4 + guide + " M4\n"
-		else: # trunk vertical
-			xcoord = median(xlocs)
-			
-			# build trunk...
-			xgrid 		= floor(xcoord/gcellw)
-			ygridmin	= floor(ymin/gcellh)	
-			ygridmax	= floor(ymax/gcellh)
-			
-			guide = str((xgrid-1)*gcellw) + " " + str((ygridmin-1)*gcellh) + " " + str((xgrid+2)*gcellw) + " " + str((ygridmax+2)*gcellh);
-			guidesm1 = guidesm1 + guide + " M1\n"
-			guidesm2 = guidesm2 + guide + " M2\n"
-			guidesm3 = guidesm3 + guide + " M3\n"
-			guidesm4 = guidesm4 + guide + " M4\n"
-
-			# build stems...
-			for i in range(0, len(xlocs)):
-				ygrid = floor(ylocs[i]/gcellh)
-				xgridmin = min(xgrid, floor(xlocs[i]/gcellw))
-				xgridmax = max(xgrid, floor(xlocs[i]/gcellw))	
-				guide = str((xgridmin-1)*gcellw) + " " + str((ygrid-1)*gcellh - toly) + " " + str((xgridmax+2)*gcellw + tolx) + " " + str((ygrid+2)*gcellh)
-				guidesm1 = guidesm1 + guide + " M1\n"
-				guidesm2 = guidesm2 + guide + " M2\n"
-				guidesm3 = guidesm3 + guide + " M3\n"
-				guidesm4 = guidesm4 + guide + " M4\n"
-
-		f.write(guidesm1);
-		f.write(guidesm2);
-		f.write(guidesm3);
-		f.write(guidesm4);
-		f.write(")\n")
-	f.close()
-#------------------------------------------------------------------------------
-
 ### main
 readNetlistFile()
 readPlacementFile()
 
 with open(defFile) as fp:
-		for line in fp:
+		while True:
+			line = fp.readline()
+			if not line:
+				break
 			line = line.rstrip("\n")
 			terms = line.split(" ")
 			if "COMPONENTS" in line and "END" not in line:

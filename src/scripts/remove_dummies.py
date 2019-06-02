@@ -1,7 +1,7 @@
 #////////////////////////////////////////////////////////////////////////////////////
 #// Authors: Kwangsoo Han and Jiajia Li
 #//          (Ph.D. advisor: Andrew B. Kahng),
-#//          Many subsequent changes for open-sourcing were made by Mateus Fogaça
+#//          Many subsequent changes for open-sourcing were made by Mateus Fogaca
 #//          (Ph.D. advisor: Ricardo Reis)
 #//
 #// BSD 3-Clause License
@@ -35,7 +35,6 @@
 #// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #////////////////////////////////////////////////////////////////////////////////////
 from collections import defaultdict
-from statistics import median
 from queue import *
 from math import floor, ceil
 import matplotlib.pyplot as plt
@@ -203,7 +202,10 @@ cmd0 = "grep \"COMPONENTS \" place.def | tail -1 | awk '{gsub(/[^0-9. ]/,\"\")}1
 cmd1 = "grep \"NETS \" place.def | tail -1 | awk '{gsub(/[^0-9. ]/,\"\")}1'"
 
 with open(defFile) as fp:
-	for line in fp:
+	while True:
+		line = fp.readline()
+		if not line:
+			break
 		line = line.rstrip("\n")
 		terms = line.split(" ")
 

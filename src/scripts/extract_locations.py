@@ -1,7 +1,7 @@
 #////////////////////////////////////////////////////////////////////////////////////
 #// Authors: Kwangsoo Han and Jiajia Li
 #//          (Ph.D. advisor: Andrew B. Kahng),
-#//          Many subsequent changes for open-sourcing were made by Mateus Fogaça
+#//          Many subsequent changes for open-sourcing were made by Mateus Fogaca
 #//          (Ph.D. advisor: Ricardo Reis)
 #//
 #// BSD 3-Clause License
