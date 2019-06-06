@@ -1,4 +1,4 @@
-# TritonCTS 
+# TritonCTS
 
 ### Original work
 K. Han, A. B. Kahng and J. Li, "Optimal Generalized H-Tree Topology and Buffering for High-Performance and Low-Power Clock Distribution", IEEE Trans. on CAD (2018), [doi:10.1109/TCAD.2018.2889756](https://doi.org/10.1109/TCAD.2018.2889756).
@@ -22,7 +22,7 @@ Outputs:
 - 1 clock source;
 
 ### Validation
-TritonCTS has been validated for the following list of platforms, tools and enablements.
+TritonCTS has been validated for the following list of platforms, tools and environments.
 
 | Feature | Support |
 |---|---|
@@ -38,14 +38,12 @@ TritonCTS has been validated for the following list of platforms, tools and enab
 - [Compile and run TritonCTS](doc/Run_TritonCTS.md)
 
 ### Example
-Below we display the clock nets for the design jpeg_encoder implemented in TSMC65 with 24K intances, followed by TritonCTS routing topology.
+Below we display the clock nets for the design jpeg_encoder implemented in TSMC65 with 24K instances, followed by TritonCTS routing topology.
 
 | <img src="doc/jpeg-tsmc-65.png" width=550px> |
 |:--:|
 | *TritonCTS generated clock nets for jpeg_encoder* |
 
 | <img src="doc/topology-jpeg-65.png" width=550px> |
-|:--:| 
+|:--:|
 | *TritonCTS clock tree topology for jpeg_encoder* |
-
-
