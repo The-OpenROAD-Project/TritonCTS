@@ -38,9 +38,9 @@ fo = open('place-2.v','w')
 
 with open('place.v') as fp:
 	for line in fp:
-		if line.startswith('/*') or line.startswith('#') or line.startswith('*/'): 
+		if line.startswith('/*') or line.startswith('#') or line.startswith('*/') or line.startswith("//"): 
 			continue
-		if ";" in line:
+		if ";" in line or line == "\n":
 			fo.write(line)
 		else:
 			fo.write(line.rstrip("\n"))

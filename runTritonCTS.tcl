@@ -259,10 +259,15 @@ proc initWorkingDirectory {} {
 		puts "Script not found: $scriptsPath/parse_sol.tcl]"
 		exit		
 	}
+
+	# Special treatment for clk port names with []
+	set ck_port_fixed [string map {"\[" "\\\\\[" } $ck_port]
+	set ck_port_fixed [string map {"\]" "\\\\\]" } $ck_port_fixed]
+
 	exec cp -rf $scriptsPath/parse_sol.tcl parse_sol.tcl
 	exec sed -i s/_WIDTH_/$width/g parse_sol.tcl
 	exec sed -i s/_HEIGHT_/$height/g parse_sol.tcl
-	exec sed -i s/_CK_PORT_/$ck_port/g parse_sol.tcl
+	exec sed -i s#_CK_PORT_#$ck_port_fixed#g parse_sol.tcl
 	exec sed -i s/_ROOT_BUFF_/$root_buff/g parse_sol.tcl
 	exec sed -i s/_BUFF_REGEX_/$buf_regex/g parse_sol.tcl
 }
