@@ -101,8 +101,6 @@ proc parseConfigFile {} {
 	global height
 	global number
 	global lef
-	global clkx
-	global clky
 	global tech
 	global ck_port
 	global db_units
@@ -153,14 +151,8 @@ proc parseConfigFile {} {
 	puts [concat "width : " $width]
 	set height [dict get $parms "height"]
 	puts [concat "height : " $height]
-	set number [dict get $parms "num_sinks"]
-	puts [concat "num_sinks : " $number]
 	set lef [file normalize [dict get $parms "lef"]]
 	puts [concat "lef : " $lef]
-	set clkx [dict get $parms "clkx"]
-	puts [concat "clkx : " $clkx]
-	set clky [dict get $parms "clky"]
-	puts [concat "clky : " $clky]
 	set tech [dict get $parms "tech"]
 	puts [concat "tech : " $tech]
 	set ck_port [dict get $parms "ck_port"]
@@ -173,6 +165,7 @@ proc parseConfigFile {} {
 	puts [concat "tolerance : " $toler]
 	
 	set db_ratio [expr $db_units/1000.0]
+	set number 64
 
 	if {$tech==28} {
 		set buf_regex "BFX"

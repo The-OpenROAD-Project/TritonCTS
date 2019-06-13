@@ -68,6 +68,7 @@ class design {
         int toler;
 		float xoffset;
 		float yoffset;
+		float normalizationRatio;
 
         unsigned max_delay;
         unsigned max_solnum;

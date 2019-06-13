@@ -101,12 +101,14 @@ bool design::parseDesignInfo(float _W, float _H, float dist_i, float cap_i, floa
     sol_file        = _sol_file;
 	xoffset			= 0.0f;
 	yoffset			= 0.0f;
+	
+	normalizationRatio = 1.0f;
 
     parseSinkCap();
 
 	// MF @ 180206: hacking sink region
 	if (computeSinkRegionMode) {
-		computeSinkRegion(dist_i);		
+		computeSinkRegion(dist_i);
 	} else {
 		W = (unsigned)ceil(_W / (dist_i*2))*2;
     	H = (unsigned)ceil(_H / (dist_i*2))*2;
@@ -127,7 +129,7 @@ void design::computeSinkRegion(const float dist_i) {
 	std::cout << " TritonCTS is running on 'computing sink region mode'\n";
 	std::cout << " Computing sink region now...\n";
 	
-	int percentile = (int) std::round(0.00 * pins.size());
+	int percentile = 0;
 	std::sort(pins.begin(), pins.end(), sortByX);
 	float minx = pins[percentile]->x;
 	float maxx = pins[pins.size() - 1 - percentile]->x;
@@ -144,6 +146,13 @@ void design::computeSinkRegion(const float dist_i) {
 	W = (unsigned)ceil((maxx-minx) / (dist_i*2))*2;
     H = (unsigned)ceil((maxy-miny) / (dist_i*2))*2;
 	
+	if (W > 150 || H > 150) {
+		normalizationRatio = 2.0f;
+		W = std::ceil( W / normalizationRatio );
+		H = std::ceil( H / normalizationRatio );
+		std::cout << "Running TritonCTS on a large floorplan, using normalization\n";
+	}
+		
 	xoffset = minx;
 	yoffset = miny;
 
@@ -154,8 +163,25 @@ void design::computeSinkRegion(const float dist_i) {
 
 	for (unsigned i = 0; i < pins.size(); ++i) {
 		pins[i]->x -= xoffset;
+		pins[i]->x /= normalizationRatio;
 		pins[i]->y -= yoffset;
+		pins[i]->y /= normalizationRatio;
 	}
+	
+	// Automatic computation of sink regions
+	// num_sinks = std::pow(2, std::ceil( std::log2( pins.size() ) - 1) );
+	const unsigned numClockSinks = pins.size();
+	if (numClockSinks < 100) {
+		num_sinks = 4;
+	} else if (numClockSinks < 1000) {
+		num_sinks = 64;
+	} else if (numClockSinks < 10000) {
+		num_sinks = 128;
+	} else {
+		num_sinks = 256;
+	}
+	std::cout << "Number of clock sinks: " << numClockSinks << "\n";
+	std::cout << "Number of sink regions: " << num_sinks << "\n";	
 }
 
 void design::parseSinkCap() {
@@ -259,10 +285,10 @@ void design::parseBlks() {
         stringstream ss(str);
         ss >> x1 >> y1 >> x2 >> y2;
         blockage * blk = new blockage(
-						atof(x1.c_str())-xoffset, 
-						atof(y1.c_str())-yoffset, 
-						atof(x2.c_str())-xoffset,
-					   	atof(y2.c_str())-yoffset);
+						(atof(x1.c_str()) - xoffset) / normalizationRatio, 
+						(atof(y1.c_str()) - yoffset) / normalizationRatio, 
+						(atof(x2.c_str()) - xoffset) / normalizationRatio,
+					   	(atof(y2.c_str()) - yoffset) / normalizationRatio );
         blks.push_back(blk);
     }
     inFile.close();
@@ -301,7 +327,7 @@ void design::optTree () {
     }
 
     vector<vector<tree*>> dummy1;
-    dummy1.resize(size_slew); 
+    dummy1.resize(size_slew);
     vector<vector<vector<tree*>>> dummy2;
     for (unsigned i = 0; i < size_cap; ++i) {
         dummy2.push_back(dummy1);
@@ -312,6 +338,7 @@ void design::optTree () {
     dummy3_l.resize(num_max);
     dummy3_s.resize(num_min);
     vector<vector<vector<vector<vector<vector<tree*>>>>>> prep_sol;
+	prep_sol.reserve(num_max);
     for (unsigned i = 0; i < num_max; ++i) {
         if (i < num_min) {
             prep_sol.push_back(dummy3_l);
@@ -326,17 +353,34 @@ void design::optTree () {
             unsigned h = (j+1)*2; 
             if (i >= num_min && j >= num_min) 
                 continue;
-            if ((float)w/h >= 30 || (float)w/h <= 0.03) 
-            //if ((float)w/h >= 10 || (float)w/h <= 0.1) 
+            //if ((float)w/h >= 30 || (float)w/h <= 0.03) 
+            if ((float)w/h >= 10 || (float)w/h <= 0.1) 
                 continue; 
            // if ((float)w/h <= 0.025) 
 
             // number of sinks is an even number
             //unsigned m = (int)ceil(num_sinks*1.5/((W*H)/(w*h))/2) - (int)floor(num_sinks*0.6/((W*H)/(w*h))/2) + 1; 
-            unsigned m = (int)ceil(num_sinks*10.0/((W*H)/(w*h))/2); 
+            unsigned m = (int)ceil(num_sinks*10.0/((W*H)/(w*h))/2);
             prep_sol[i][j].resize(m, dummy2);
         }
     }
+	
+	//long long int prepSolSize = 0;
+	//for(int i = 0; i < prep_sol.size(); ++i) {
+	//	for(int j = 0; j < prep_sol[i].size(); ++j) {
+	//		for(int k = 0; k < prep_sol[i][j].size(); ++k) {
+	//			for(int l = 0; l < prep_sol[i][j][k].size(); ++l) {
+	//				for(int m = 0; m < prep_sol[i][j][k][l].size(); ++m) {
+	//					prepSolSize += prep_sol[i][j][k][l][m].size() * 8;
+	//				}
+	//				prepSolSize += 8;
+	//			}
+	//			prepSolSize += 8;
+	//		}
+	//		prepSolSize += 8;
+	//	}
+	//	prepSolSize += 8;
+	//}
 
     sols.clear();
     // only keep two-level solutions in memory
@@ -2480,6 +2524,11 @@ void design::placeTree() {
 	// MF @ 180207: Fixing blockages, branching points and buffer locations
 	for (unsigned i = 0; i < blks.size(); i++) {
 		blockage* blk = blks[i];
+		blk->x1 *= normalizationRatio;
+		blk->x2 *= normalizationRatio;
+		blk->y1 *= normalizationRatio;
+		blk->y2 *= normalizationRatio;
+		
 		blk->x1 += xoffset;
 		blk->x2 += xoffset;
 		blk->y1 += yoffset;
@@ -2489,11 +2538,15 @@ void design::placeTree() {
 	for (unsigned j = 0; j < all_sols.size(); ++j) {
 		solution * sol = all_sols[j];
 		for (unsigned i = 0; i < sol->locs.size(); ++i) {
+			sol->locs[i].first *= normalizationRatio;
+			sol->locs[i].second *= normalizationRatio;
 			sol->locs[i].first += xoffset;
 			sol->locs[i].second += yoffset;
         }
 		
 		for (unsigned i = 0; i < sol->buf_locs.size(); ++i) {
+			sol->buf_locs[i].first *= normalizationRatio;
+			sol->buf_locs[i].second *= normalizationRatio;
 			sol->buf_locs[i].first += xoffset;
 			sol->buf_locs[i].second += yoffset;
 		}

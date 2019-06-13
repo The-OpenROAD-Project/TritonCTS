@@ -52,7 +52,7 @@ with open(defFile) as fp:
 				ready = True
 		
 		if ready == True and terms[0] == '-':
-			placement = re.search("\d+ \d+", line)
+			placement = re.search("[-]?\d+ [-]?\d+", line)
 			x = float(placement.group(0).split(' ')[0])/1000
 			y = float(placement.group(0).split(' ')[1])/1000
 			print(terms[1] + " " + str("%.3f"%x) + " " + str("%.3f"%y))
