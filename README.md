@@ -38,7 +38,7 @@ TritonCTS has been validated for the following list of platforms, tools and enab
 - [Compile and run TritonCTS](doc/Run_TritonCTS.md)
 
 ### Example
-Below we display the clock nets for the design jpeg_encoder implemented in TSMC65 with 24K intances, followed by TritonCTS routing topology.
+Below we display the clock nets for the design jpeg_encoder implemented in TSMC65 with 24K instances, followed by TritonCTS routing topology.
 
 | <img src="doc/jpeg-tsmc-65.png" width=550px> |
 |:--:|
