@@ -42,7 +42,6 @@ proc initProgramOptions {argv} {
 	global executablePath
 	global lefDefParserPath
 	global scriptsPath
-    global replacePath
 	global legalizerPath
 	global outputPath
 	global techFilesPath
@@ -52,8 +51,7 @@ proc initProgramOptions {argv} {
 	set executablePath [file normalize "./bin/genHtree"]
 	set lefDefParserPath [file normalize "./third_party/lefdef2cts"]
 	set scriptsPath [file normalize "./src/scripts"]
-    set replacePath [file normalize "./third_party/RePlAce"]
-	set legalizerPath [file normalize "./third_party/ntuplace4h"]
+	set legalizerPath [file normalize "./third_party/opendp"]
 	set techFilesPath [file normalize "./src/tech"]
 	set outputPath "" 
 
@@ -66,7 +64,6 @@ proc initProgramOptions {argv} {
 			"-executablePath" { set executablePath [file normalize $val] }
 			"-lefDefParserPath" { set lefDefParserPath [file normalize $val] }
 			"-scriptsPath" { set scriptsPath [file normalize $val] }
-			"-replacePath" { set replacePath [file normalize $val] }
 			"-legalizerPath" { set legalizerPath [file normalize $val] }
 			"-techFilesPath" { set techFilesPath [file normalize $val] }
 			"-outputPath" { set outputPath [file normalize $val] }
@@ -84,7 +81,6 @@ proc initProgramOptions {argv} {
 	puts "Executable: $executablePath"
     puts "Lef/Def parser: $lefDefParserPath"
 	puts "Scripts path: $scriptsPath"
-	puts "RePlAce binary: $replacePath"
 	puts "Legalizer binary: $legalizerPath"
 	puts "Output path: $outputPath" 
 }
@@ -341,7 +337,6 @@ proc runGHtree {} {
 proc updateDEFAndVerilog {} {
 	global ck_port
 	global buf_out_pin
-	global replace_dir
 	global scriptsPath 
 
 	exec mv locations_final.txt locations.txt
@@ -349,12 +344,6 @@ proc updateDEFAndVerilog {} {
 	exec sed -i s/_CK_PORT_/$ck_port/g update_def.py
 	exec sed -i s/_BUFF_OUT_PIN_/$buf_out_pin/g update_def.py
 	exec python update_def.py > cts.def 
-	
-	# Remove previous replace run
-	set replace_dir "leg"
-	if {[file exists $replace_dir]} {
-		exec rm -rf 
-	}
 	
 	exec python $scriptsPath/extract_locations.py cts.def > cell_locs_pre_leg.txt
 	exec python $scriptsPath/verilog_preprocess.py
@@ -364,14 +353,8 @@ proc updateDEFAndVerilog {} {
 #------------------------------------------------------------------------------
 
 proc legalize {} {
-	global replacePath
 	global legalizerPath
 	global lef
-	
-	if {![file exists $replacePath]} {
-		puts "Binary not found: $replacePath"
-		exit		
-	}
 
 	if {![file exists $legalizerPath]} {
 		puts "Binary not found: $legalizerPath"
@@ -379,10 +362,8 @@ proc legalize {} {
 	}
 
 	puts "Running legalization..."
-	puts "$replacePath -bmflag etc -lef $lef -def cts.def -output leg -t 1 -dpflag NTU4 -dploc $legalizerPath -onlyLG -onlyDP -fragmentedRow -denDP 0.9 -plot -pcofmax 1.04"
-	catch {exec $replacePath -bmflag etc -lef $lef -def cts_no_dummies.def -output leg -t 1 -dpflag NTU4 -dploc $legalizerPath -onlyLG -onlyDP -fragmentedRow -denDP 0.9 -plot -pcofmax 1.04 > leg_rpt} 
-
-	exec cp leg/etc/cts_no_dummies/experiment000/cts_no_dummies_final.def cts_final.def
+	puts "$legalizerPath -lef $lef -def cts.def -output_def cts_final.def"
+	catch {exec $legalizerPath -lef $lef -def cts.def -output_def cts_final.def > leg_rpt} 
 }
 
 #------------------------------------------------------------------------------
