@@ -362,8 +362,8 @@ proc legalize {} {
 	}
 
 	puts "Running legalization..."
-	puts "$legalizerPath -lef $lef -def cts.def -output_def cts_final.def"
-	catch {exec $legalizerPath -lef $lef -def cts.def -output_def cts_final.def > leg_rpt} 
+	puts "$legalizerPath -lef $lef -def cts_no_dummies.def -output_def cts_final.def"
+	catch {exec $legalizerPath -lef $lef -def cts_no_dummies.def -output_def cts_final.def > leg_rpt} 
 }
 
 #------------------------------------------------------------------------------
