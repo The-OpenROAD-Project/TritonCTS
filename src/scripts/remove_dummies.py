@@ -95,6 +95,8 @@ def writeNets():
 	for net, components in netsPostProc.items():
 		print("- " + net)	
 		for node, pin in components:
+			if "/" in node and "\\/" not in node:
+				node = node.replace("/", "\\/")
 			print("( " + node + " " + pin + " )")
 		print(";")
 	
@@ -220,7 +222,7 @@ with open(defFile) as fp:
 			writeComponents()
 		elif "NETS" in line and "END" not in line and "SPECIAL" not in line: 
 			terms = line.split(" ")
-			numNets = int(subprocess.check_output(cmd1, shell=True)) + len(netsPostProc) - 1
+			numNets = int(subprocess.check_output(cmd1, shell=True)) + len(netsPostProc)
 			print("NETS " + str(numNets) + " ;")
 			writeNets()
 		elif "- _CK_PORT_" in line and not "NET" in line: # Skip the original clock net
