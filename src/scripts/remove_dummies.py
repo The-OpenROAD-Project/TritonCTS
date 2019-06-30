@@ -54,6 +54,7 @@ placement 		= defaultdict(list)
 buffers			= defaultdict(list)
 segments		= defaultdict(list)
 inClkPins		= set()
+useTrailingChar = False
 
 #------------------------------------------------------------------------------
 # Read netlist from locations.txt file
@@ -78,9 +79,11 @@ def readNetlistFile():
 #------------------------------------------------------------------------------
 # Read placement from CT-related components locations file 
 def readPlacementFile():
+	global useTrailingChar
 	with open(placementFilePath) as fp:
 		for line in fp:
 			terms = line.rstrip("\n").split(' ')
+			useTrailingChar = useTrailingChar or ("\\" in terms[0])
 			placement[terms[0]].append(terms[1])
 			placement[terms[0]].append(terms[2])
 
@@ -92,10 +95,11 @@ def writeNets():
 	print("( ck_tree_0 A )")
 	print(";")
 
+	global useTrailingChar
 	for net, components in netsPostProc.items():
 		print("- " + net)	
 		for node, pin in components:
-			if "/" in node and "\\/" not in node:
+			if useTrailingChar and "/" in node and "\\/" not in node:
 				node = node.replace("/", "\\/")
 			print("( " + node + " " + pin + " )")
 		print(";")
