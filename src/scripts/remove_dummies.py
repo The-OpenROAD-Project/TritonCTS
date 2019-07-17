@@ -40,8 +40,8 @@ from math import floor, ceil
 import matplotlib.pyplot as plt
 import random
 from itertools import cycle
-import subprocess 
-
+import subprocess
+import re
 
 netlistFilePath		= 'netlist.txt'  
 placementFilePath 	= 'cell_locs_pre_leg.txt'
@@ -53,6 +53,10 @@ netsPostProc	= defaultdict(list) # these are nets wo/ dummy buffers
 placement 		= defaultdict(list)
 buffers			= defaultdict(list)
 segments		= defaultdict(list)
+
+#keysToRemove = []
+#instToRemove = []
+
 inClkPins		= set()
 useTrailingChar = False
 
@@ -61,7 +65,7 @@ useTrailingChar = False
 def readNetlistFile():
 	with open(netlistFilePath) as fp:
 		for line in fp:
-			terms = line.rstrip("\n").split(' ')
+			terms = line.rstrip("\n").replace("{", "").replace("}", "").split(' ')
 			if terms[0] is "B":
 				for i in range(2, len(terms)):
 					instPinPair = terms[i].rsplit("/", 1)
@@ -101,6 +105,13 @@ def writeNets():
 		for node, pin in components:
 			if useTrailingChar and "/" in node and "\\/" not in node:
 				node = node.replace("/", "\\/")
+
+			if useTrailingChar and "[" in node and "\\[" not in node:
+				node = node.replace("[", "\\[")
+
+			if useTrailingChar and "]" in node and "\\]" not in node:
+				node = node.replace("]", "\\]")
+			
 			print("( " + node + " " + pin + " )")
 		print(";")
 	
@@ -141,6 +152,17 @@ def postProcNets():
 					netsPostProc[rootNet].append([node, pin])
 					toVisit.put(node)	
 		#print("-----------------------------")
+#	
+#	for net, sinks in netsPostProc.items():
+#		if len(sinks) == 1:
+#			keysToRemove.append(net)
+#			instToRemove.append(sinks[0][0])
+#
+#	for key in keysToRemove:
+#		del netsPostProc[key]
+#		
+#	for inst in instToRemove:
+#		del buffers[inst]
 
 #------------------------------------------------------------------------------
 
@@ -161,13 +183,18 @@ def dumpVerilog():
 	for net, components in netsPostProc.items():
 		outputs[components[0][0]] = net
 		for i in range(1, len(components)):
-			inputs[components[i][0]] = net 
+			if (components[i][1]) in inClkPins:
+				inputs[components[i][0] + "/" + components[i][1]] = net 
+			else:
+				inputs[components[i][0]] = net 
 	
 	inputs['ck_tree_0'] = '_CK_PORT_'
 	printedNets = False
 	outputfile = open('final.v', 'w')
 	with open('place-2.v') as fp:
 		for line in fp:
+			line = re.sub("\t", " ", line)
+			line = re.sub("\s+", " ", line)
 			if "wire" in line and not printedNets:
 				for net, components in netsPostProc.items():
 					outputfile.write("  wire " + net + ";\n")	
@@ -181,8 +208,8 @@ def dumpVerilog():
 				for clkPin in inClkPins:
 					pin = "." + clkPin
 					if pin in line:
-						line = line.replace(pin + "(_CK_PORT_)", pin + "(" + inputs[line.split()[1].replace("\\", "")] + ")")
-				outputfile.write(line)
+						line = re.sub(pin + "\s*\(\s*_CK_PORT_\s*\)", pin + "(" + inputs[line.split()[1].replace("\\", "") + "/" + clkPin] + ")", line)
+				outputfile.write(line + "\n")
 	outputfile.close()
 
 #------------------------------------------------------------------------------
