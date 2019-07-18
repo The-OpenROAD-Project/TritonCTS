@@ -1,4 +1,4 @@
-#! /usr/bin/tclsh
+#!/usr/bin/env tclsh
 #////////////////////////////////////////////////////////////////////////////////////
 #// Authors: Kwangsoo Han and Jiajia Li
 #//          (Ph.D. advisor: Andrew B. Kahng),
@@ -224,7 +224,7 @@ proc initWorkingDirectory {} {
 		puts "Script not found: $scriptsPath/extract_locations.py"
 		exit		
 	}
-	exec python $scriptsPath/extract_locations.py place.def > cell_locs.txt
+	exec $scriptsPath/extract_locations.py place.def > cell_locs.txt
 	
 	
 	if {![file exists $techFilesPath/lut-$tech.txt]} {
@@ -347,11 +347,11 @@ proc updateDEFAndVerilog {} {
 	exec cp -rf $scriptsPath/update_def.py update_def.py
 	exec sed -i s/_CK_PORT_/$ck_port/g update_def.py
 	exec sed -i s/_BUFF_OUT_PIN_/$buf_out_pin/g update_def.py
-	exec python update_def.py > cts.def 
+	exec ./update_def.py > cts.def 
 	
-	exec python $scriptsPath/extract_locations.py cts.def > cell_locs_pre_leg.txt
-	exec python $scriptsPath/verilog_preprocess.py
-	exec python remove_dummies.py > cts_no_dummies.def
+	exec $scriptsPath/extract_locations.py cts.def > cell_locs_pre_leg.txt
+	exec $scriptsPath/verilog_preprocess.py
+	exec ./remove_dummies.py > cts_no_dummies.def
 }
 
 #------------------------------------------------------------------------------

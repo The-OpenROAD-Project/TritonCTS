@@ -1,4 +1,4 @@
-#!/usr/bin/tclsh
+#!/usr/bin/env tclsh
 #////////////////////////////////////////////////////////////////////////////////////
 #// Authors: Kwangsoo Han and Jiajia Li
 #//          (Ph.D. advisor: Andrew B. Kahng),
