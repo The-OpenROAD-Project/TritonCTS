@@ -55,11 +55,9 @@ placement 		= defaultdict(list)
 buffers			= defaultdict(list)
 segments		= defaultdict(list)
 
-#keysToRemove = []
-#instToRemove = []
-
-inClkPins		= set()
-useTrailingChar = False
+inClkPins	     = set()
+useTrailingChar  = False
+numSinglePinNets = 0
 
 #------------------------------------------------------------------------------
 # Read netlist from locations.txt file
@@ -102,6 +100,9 @@ def writeNets():
 
 	global useTrailingChar
 	for net, components in netsPostProc.items():
+		if len(components) < 2:
+			continue
+
 		print("- " + net)	
 		for node, pin in components:
 			if useTrailingChar and "/" in node and "\\/" not in node:
@@ -153,17 +154,11 @@ def postProcNets():
 					netsPostProc[rootNet].append([node, pin])
 					toVisit.put(node)	
 		#print("-----------------------------")
-#	
-#	for net, sinks in netsPostProc.items():
-#		if len(sinks) == 1:
-#			keysToRemove.append(net)
-#			instToRemove.append(sinks[0][0])
-#
-#	for key in keysToRemove:
-#		del netsPostProc[key]
-#		
-#	for inst in instToRemove:
-#		del buffers[inst]
+
+	global numSinglePinNets
+	for net, sinks in netsPostProc.items():
+		if len(sinks) == 1:
+			numSinglePinNets += 1
 
 #------------------------------------------------------------------------------
 
@@ -182,6 +177,10 @@ def dumpVerilog():
 	inputs = defaultdict(str)
 	outputs = defaultdict(str)
 	for net, components in netsPostProc.items():
+		if len(components) < 2:
+			outputs[components[0][0]] = "dangling"
+			continue
+
 		outputs[components[0][0]] = net
 		for i in range(1, len(components)):
 			if (components[i][1]) in inClkPins:
@@ -203,7 +202,10 @@ def dumpVerilog():
 			elif "endmodule" in line:
 				for mod, out in outputs.items():
 					libcell = buffers[mod][0]
-					outputfile.write("  " + libcell + " " + mod + "( .A(" + inputs[mod] + "), ._BUFF_OUT_PIN_(" + outputs[mod]  + ") );\n")
+					if outputs[mod] == "dangling":
+						outputfile.write("  " + libcell + " " + mod + "( .A(" + inputs[mod] + ") );\n")
+					else:
+						outputfile.write("  " + libcell + " " + mod + "( .A(" + inputs[mod] + "), ._BUFF_OUT_PIN_(" + outputs[mod]  + ") );\n")
 				outputfile.write("endmodule")
 			else:
 				for clkPin in inClkPins:
@@ -254,7 +256,7 @@ with open(defFile) as fp:
 			writeComponents()
 		elif "NETS" in line and "END" not in line and "SPECIAL" not in line: 
 			terms = line.split(" ")
-			numNets = int(subprocess.check_output(cmd1, shell=True)) + len(netsPostProc)
+			numNets = int(subprocess.check_output(cmd1, shell=True)) + len(netsPostProc) - numSinglePinNets
 			print("NETS " + str(numNets) + " ;")
 			writeNets()
 		elif "- _CK_PORT_" in line and not "NET" in line: # Skip the original clock net
