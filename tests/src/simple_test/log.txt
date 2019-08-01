@@ -1,0 +1,1182 @@
+------------------------------------------------------
+  UCSD Gen H-Tree Constructor                         
+  coded by Kwangsoo Han and Jiajia Li                 
+------------------------------------------------------
+*** Input parameters ***
+Area side:	12x12
+Max. skew:	512
+Max. latency:	2147483647
+#Leaf regions:	64
+Distance interval:	1
+Latency interval:	1
+Capacitance interval:	1
+Timing tolerance:	0
+Tech node: 	45
+Compute sink region mode	1
+
+TOTAL CAP = 530 fF
+
+ TritonCTS is running on 'computing sink region mode'
+ Computing sink region now...
+	minx =	0.96
+	miny =	0.933333
+	maxx =	26.36
+	maxy =	13.5733
+	xoffset =	0.96
+	yoffset =	0.933333
+	width =	26
+	height =	14
+Number of clock sinks: 530
+Number of sink regions: 64
+min_slew_idx: 0 out_slew_idx: 2
+***** Optimization *****
+Depth = 1 ..
+Depth = 2 ..
+414 solutions
+Depth = 3 ..
+1214 solutions
+Depth = 4 ..
+3039 solutions
+Depth = 5 ..
+2506 solutions
+Depth = 6 ..
+595 solutions
+Depth = 7 ..
+42 solutions
+0 solutions
+Final n_dbg = 640
+Optimal solution: 6272
+  power = 1.08589
+  skew  = 476
+Start parseBlks()
+***Error :: unable to open the blk file !
+End parseBlks()
+Depth: 1
+6.5 7
+6.5 7
+TOT LEN 6.5 2 1
+TOT_LENGTH: 13
+BUF LOCs 
+r_loc (13, 7)
+	(6.5, 7)
+	(19.5, 7)
+6.5 7
+19.5 7
+Iteration 0 Iteration 0
+ITERATION 1
+Total flow cost = 326261
+ITERATION 2
+Total flow cost = 311663
+ITERATION 3
+Total flow cost = 311632
+ITERATION 4
+Total flow cost = 311632
+ITERATION 5
+Total flow cost = 311632
+ITERATION 6
+Total flow cost = 311632
+SILH (265) is 0.539598
+Best SILH (265) is 0.539598
+OUT_PINS (size 2)
+265 265 
+OUT_LOCS (7.09175, 6.40825) (18.794, 6.29397) 
+CHECKING 13
+
+(7.09175 6.40825) (13 7) (18.794 6.29397) 
+0 0 0 
+REL_DIST: 
+6.5 6.5 
+Depth: 2
+3.5 4
+TOT LEN 3.5 1 1
+TOT_LENGTH: 7
+BUF LOCs 
+r_loc (7.09175, 6.40825)
+	(6.5, 3.5)
+	(6.5, 10.5)
+6.5 3.5
+6.5 10.5
+Iteration 0 Iteration 0
+ITERATION 1
+Total flow cost = 134292
+ITERATION 2
+Total flow cost = 120063
+ITERATION 3
+Total flow cost = 120063
+ITERATION 4
+Total flow cost = 120063
+ITERATION 5
+Total flow cost = 120063
+ITERATION 6
+Total flow cost = 120063
+SILH (132) is 0.465366
+Best SILH (132) is 0.465366
+OUT_PINS (size 2)
+133 132 
+OUT_LOCS (7.91409, 3.73058) (8.13689, 8.86311) 
+CHECKING 7
+
+(7.91409 3.73058) (7.09175 6.40825) (8.13689 8.86311) 
+0 0 0 
+REL_DIST: 
+3.5 3.5 
+3.5 4
+TOT LEN 3.5 1 1
+TOT_LENGTH: 7
+BUF LOCs 
+r_loc (18.794, 6.29397)
+	(19.5, 3.5)
+	(19.5, 10.5)
+19.5 3.5
+19.5 10.5
+Iteration 0 Iteration 0
+ITERATION 1
+Total flow cost = 131606
+ITERATION 2
+Total flow cost = 117593
+ITERATION 3
+Total flow cost = 118559
+ITERATION 4
+Total flow cost = 119400
+ITERATION 5
+Total flow cost = 119658
+ITERATION 6
+Total flow cost = 119591
+SILH (132) is 0.47011
+Best SILH (132) is 0.47011
+OUT_PINS (size 2)
+133 132 
+OUT_LOCS (17.4177, 4.17023) (18.8198, 9.76812) 
+CHECKING 7
+
+(17.4177 4.17023) (18.794 6.29397) (18.8198 9.76812) 
+0 0 0 
+REL_DIST: 
+3.5 3.5 
+Depth: 3
+1.625 2
+3.25 4
+TOT LEN 4.875 2 2
+TOT_LENGTH: 9.75
+BUF LOCs 0.8125 2.4375 4.0625 4.0625 5.6875 5.6875 7.3125 8.9375 
+r_loc (7.91409, 3.73058)
+	(1.625, 3.5)
+	(4.875, 3.5)
+	(8.125, 3.5)
+	(11.375, 3.5)
+1.625 3.5
+4.875 3.5
+8.125 3.5
+11.375 3.5
+Iteration 0 Iteration 0
+ITERATION 1
+Total flow cost = 42664
+ITERATION 2
+Total flow cost = 36751
+ITERATION 3
+Total flow cost = 36689
+ITERATION 4
+Total flow cost = 37050
+ITERATION 5
+Total flow cost = 37674
+ITERATION 6
+Total flow cost = 37834
+SILH (33) is 0.454898
+Best SILH (33) is 0.454898
+OUT_PINS (size 4)
+34 33 33 33 
+OUT_LOCS (5.1665, 2.46945) (8.34722, 2.53872) (8.21591, 5.05376) (11.3472, 5.17249) 
+CHECKING 3.25
+
+(5.1665 2.46945) (8.34722 2.53872) (7.91409 3.73058) (8.21591 5.05376) (11.3472 5.17249) 
+0 1 1 0 1 1 0 1 1 0 1 1 0 
+REL_DIST: 
+0.8125 1.625 0.8125 0.8125 0 0.8125 0.8125 0 0.8125 0.8125 1.625 0.8125 
+originLoc = (5.1665, 2.46945)
+targetLoc = (8.34722, 2.53872)
+rel_dist = 0.8125, segmentMediumPost = 1.625
+bufferLoc = (5.979, 2.46945)
+originLoc = (5.1665, 2.46945)
+targetLoc = (8.34722, 2.53872)
+rel_dist = 2.4375, segmentMediumPost = 1.625
+bufferLoc = (6.7915, 3.28195)
+originLoc = (5.1665, 2.46945)
+targetLoc = (8.34722, 2.53872)
+rel_dist = 0.8125, segmentMediumPost = 1.625
+bufferLoc = (5.1665, 3.28195)
+originLoc = (5.1665, 2.46945)
+targetLoc = (8.34722, 2.53872)
+rel_dist = 2.4375, segmentMediumPost = 1.625
+bufferLoc = (5.979, 4.09445)
+originLoc = (8.34722, 2.53872)
+targetLoc = (7.91409, 3.73058)
+rel_dist = 0.8125, segmentMediumPost = 0.8125
+bufferLoc = (7.53472, 2.53872)
+originLoc = (8.34722, 2.53872)
+targetLoc = (7.91409, 3.73058)
+rel_dist = 0.8125, segmentMediumPost = 0.8125
+bufferLoc = (7.53472, 2.53872)
+originLoc = (8.34722, 2.53872)
+targetLoc = (7.91409, 3.73058)
+rel_dist = 0.8125, segmentMediumPost = 0.8125
+bufferLoc = (8.34722, 3.35122)
+originLoc = (8.34722, 2.53872)
+targetLoc = (7.91409, 3.73058)
+rel_dist = 0.8125, segmentMediumPost = 0.8125
+bufferLoc = (8.34722, 3.35122)
+originLoc = (7.91409, 3.73058)
+targetLoc = (8.21591, 5.05376)
+rel_dist = 0.8125, segmentMediumPost = 0.8125
+bufferLoc = (8.72659, 3.73058)
+originLoc = (7.91409, 3.73058)
+targetLoc = (8.21591, 5.05376)
+rel_dist = 0.8125, segmentMediumPost = 0.8125
+bufferLoc = (8.72659, 3.73058)
+originLoc = (7.91409, 3.73058)
+targetLoc = (8.21591, 5.05376)
+rel_dist = 0.8125, segmentMediumPost = 0.8125
+bufferLoc = (7.91409, 4.54308)
+originLoc = (7.91409, 3.73058)
+targetLoc = (8.21591, 5.05376)
+rel_dist = 0.8125, segmentMediumPost = 0.8125
+bufferLoc = (7.91409, 4.54308)
+originLoc = (8.21591, 5.05376)
+targetLoc = (11.3472, 5.17249)
+rel_dist = 0.8125, segmentMediumPost = 1.625
+bufferLoc = (9.02841, 5.05376)
+originLoc = (8.21591, 5.05376)
+targetLoc = (11.3472, 5.17249)
+rel_dist = 2.4375, segmentMediumPost = 1.625
+bufferLoc = (9.84091, 5.86626)
+originLoc = (8.21591, 5.05376)
+targetLoc = (11.3472, 5.17249)
+rel_dist = 0.8125, segmentMediumPost = 1.625
+bufferLoc = (8.21591, 5.86626)
+originLoc = (8.21591, 5.05376)
+targetLoc = (11.3472, 5.17249)
+rel_dist = 2.4375, segmentMediumPost = 1.625
+bufferLoc = (9.02841, 6.67876)
+1.625 2
+3.25 4
+TOT LEN 4.875 2 2
+TOT_LENGTH: 9.75
+BUF LOCs 0.8125 2.4375 4.0625 4.0625 5.6875 5.6875 7.3125 8.9375 
+r_loc (8.13689, 8.86311)
+	(1.625, 10.5)
+	(4.875, 10.5)
+	(8.125, 10.5)
+	(11.375, 10.5)
+1.625 10.5
+4.875 10.5
+8.125 10.5
+11.375 10.5
+Iteration 0 Iteration 0
+ITERATION 1
+Total flow cost = 40845
+ITERATION 2
+Total flow cost = 35599
+ITERATION 3
+Total flow cost = 36236
+ITERATION 4
+Total flow cost = 37187
+ITERATION 5
+Total flow cost = 37655
+ITERATION 6
+Total flow cost = 37625
+SILH (33) is 0.346248
+Best SILH (33) is 0.346248
+OUT_PINS (size 4)
+33 33 33 33 
+OUT_LOCS (6.50506, 8.85628) (9.14287, 8.24409) (7.6689, 10.0201) (10.4105, 9.5117) 
+CHECKING 3.25
+
+(6.50506 8.85628) (9.14287 8.24409) (8.13689 8.86311) (7.6689 10.0201) (10.4105 9.5117) 
+0 1 1 0 1 1 0 1 1 0 1 1 0 
+REL_DIST: 
+0.8125 1.625 0.8125 0.8125 0 0.8125 0.8125 0 0.8125 0.8125 1.625 0.8125 
+originLoc = (6.50506, 8.85628)
+targetLoc = (9.14287, 8.24409)
+rel_dist = 0.8125, segmentMediumPost = 1.625
+bufferLoc = (7.31756, 8.85628)
+originLoc = (6.50506, 8.85628)
+targetLoc = (9.14287, 8.24409)
+rel_dist = 2.4375, segmentMediumPost = 1.625
+bufferLoc = (8.13006, 8.04378)
+originLoc = (6.50506, 8.85628)
+targetLoc = (9.14287, 8.24409)
+rel_dist = 0.8125, segmentMediumPost = 1.625
+bufferLoc = (6.50506, 8.04378)
+originLoc = (6.50506, 8.85628)
+targetLoc = (9.14287, 8.24409)
+rel_dist = 2.4375, segmentMediumPost = 1.625
+bufferLoc = (7.31756, 7.23128)
+originLoc = (9.14287, 8.24409)
+targetLoc = (8.13689, 8.86311)
+rel_dist = 0.8125, segmentMediumPost = 0.8125
+bufferLoc = (8.33037, 8.24409)
+originLoc = (9.14287, 8.24409)
+targetLoc = (8.13689, 8.86311)
+rel_dist = 0.8125, segmentMediumPost = 0.8125
+bufferLoc = (8.33037, 8.24409)
+originLoc = (9.14287, 8.24409)
+targetLoc = (8.13689, 8.86311)
+rel_dist = 0.8125, segmentMediumPost = 0.8125
+bufferLoc = (9.14287, 9.05659)
+originLoc = (9.14287, 8.24409)
+targetLoc = (8.13689, 8.86311)
+rel_dist = 0.8125, segmentMediumPost = 0.8125
+bufferLoc = (9.14287, 9.05659)
+originLoc = (8.13689, 8.86311)
+targetLoc = (7.6689, 10.0201)
+rel_dist = 0.8125, segmentMediumPost = 0.8125
+bufferLoc = (7.32439, 8.86311)
+originLoc = (8.13689, 8.86311)
+targetLoc = (7.6689, 10.0201)
+rel_dist = 0.8125, segmentMediumPost = 0.8125
+bufferLoc = (7.32439, 8.86311)
+originLoc = (8.13689, 8.86311)
+targetLoc = (7.6689, 10.0201)
+rel_dist = 0.8125, segmentMediumPost = 0.8125
+bufferLoc = (8.13689, 9.67561)
+originLoc = (8.13689, 8.86311)
+targetLoc = (7.6689, 10.0201)
+rel_dist = 0.8125, segmentMediumPost = 0.8125
+bufferLoc = (8.13689, 9.67561)
+originLoc = (7.6689, 10.0201)
+targetLoc = (10.4105, 9.5117)
+rel_dist = 0.8125, segmentMediumPost = 1.625
+bufferLoc = (8.4814, 10.0201)
+originLoc = (7.6689, 10.0201)
+targetLoc = (10.4105, 9.5117)
+rel_dist = 2.4375, segmentMediumPost = 1.625
+bufferLoc = (9.2939, 9.20761)
+originLoc = (7.6689, 10.0201)
+targetLoc = (10.4105, 9.5117)
+rel_dist = 0.8125, segmentMediumPost = 1.625
+bufferLoc = (7.6689, 9.20761)
+originLoc = (7.6689, 10.0201)
+targetLoc = (10.4105, 9.5117)
+rel_dist = 2.4375, segmentMediumPost = 1.625
+bufferLoc = (8.4814, 8.39511)
+1.625 2
+3.25 4
+TOT LEN 4.875 2 2
+TOT_LENGTH: 9.75
+BUF LOCs 0.8125 2.4375 4.0625 4.0625 5.6875 5.6875 7.3125 8.9375 
+r_loc (17.4177, 4.17023)
+	(14.625, 3.5)
+	(17.875, 3.5)
+	(21.125, 3.5)
+	(24.375, 3.5)
+14.625 3.5
+17.875 3.5
+21.125 3.5
+24.375 3.5
+Iteration 0 Iteration 0
+ITERATION 1
+Total flow cost = 43974
+ITERATION 2
+Total flow cost = 35101
+ITERATION 3
+Total flow cost = 34866
+ITERATION 4
+Total flow cost = 34702
+ITERATION 5
+Total flow cost = 34700
+ITERATION 6
+Total flow cost = 34649
+SILH (33) is 0.498563
+Best SILH (33) is 0.498563
+OUT_PINS (size 4)
+34 33 33 33 
+OUT_LOCS (15.3226, 3.7001) (17.4556, 2.58314) (16.5751, 4.95261) (19.1924, 4.31995) 
+CHECKING 3.25
+
+(15.3226 3.7001) (17.4556 2.58314) (17.4177 4.17023) (16.5751 4.95261) (19.1924 4.31995) 
+0 1 1 0 1 1 0 1 1 0 1 1 0 
+REL_DIST: 
+0.8125 1.625 0.8125 0.8125 0 0.8125 0.8125 0 0.8125 0.8125 1.625 0.8125 
+originLoc = (15.3226, 3.7001)
+targetLoc = (17.4556, 2.58314)
+rel_dist = 0.8125, segmentMediumPost = 1.625
+bufferLoc = (16.1351, 3.7001)
+originLoc = (15.3226, 3.7001)
+targetLoc = (17.4556, 2.58314)
+rel_dist = 2.4375, segmentMediumPost = 1.625
+bufferLoc = (16.9476, 2.88761)
+originLoc = (15.3226, 3.7001)
+targetLoc = (17.4556, 2.58314)
+rel_dist = 0.8125, segmentMediumPost = 1.625
+bufferLoc = (15.3226, 2.8876)
+originLoc = (15.3226, 3.7001)
+targetLoc = (17.4556, 2.58314)
+rel_dist = 2.4375, segmentMediumPost = 1.625
+bufferLoc = (16.1351, 2.0751)
+originLoc = (17.4556, 2.58314)
+targetLoc = (17.4177, 4.17023)
+rel_dist = 0.8125, segmentMediumPost = 0.8125
+bufferLoc = (16.6431, 2.58314)
+originLoc = (17.4556, 2.58314)
+targetLoc = (17.4177, 4.17023)
+rel_dist = 0.8125, segmentMediumPost = 0.8125
+bufferLoc = (16.6431, 2.58314)
+originLoc = (17.4556, 2.58314)
+targetLoc = (17.4177, 4.17023)
+rel_dist = 0.8125, segmentMediumPost = 0.8125
+bufferLoc = (17.4556, 3.39564)
+originLoc = (17.4556, 2.58314)
+targetLoc = (17.4177, 4.17023)
+rel_dist = 0.8125, segmentMediumPost = 0.8125
+bufferLoc = (17.4556, 3.39564)
+originLoc = (17.4177, 4.17023)
+targetLoc = (16.5751, 4.95261)
+rel_dist = 0.8125, segmentMediumPost = 0.8125
+bufferLoc = (16.6052, 4.17023)
+originLoc = (17.4177, 4.17023)
+targetLoc = (16.5751, 4.95261)
+rel_dist = 0.8125, segmentMediumPost = 0.8125
+bufferLoc = (16.6052, 4.17023)
+originLoc = (17.4177, 4.17023)
+targetLoc = (16.5751, 4.95261)
+rel_dist = 0.8125, segmentMediumPost = 0.8125
+bufferLoc = (17.4177, 4.98273)
+originLoc = (17.4177, 4.17023)
+targetLoc = (16.5751, 4.95261)
+rel_dist = 0.8125, segmentMediumPost = 0.8125
+bufferLoc = (17.4177, 4.98273)
+originLoc = (16.5751, 4.95261)
+targetLoc = (19.1924, 4.31995)
+rel_dist = 0.8125, segmentMediumPost = 1.625
+bufferLoc = (17.3876, 4.95261)
+originLoc = (16.5751, 4.95261)
+targetLoc = (19.1924, 4.31995)
+rel_dist = 2.4375, segmentMediumPost = 1.625
+bufferLoc = (18.2001, 4.14011)
+originLoc = (16.5751, 4.95261)
+targetLoc = (19.1924, 4.31995)
+rel_dist = 0.8125, segmentMediumPost = 1.625
+bufferLoc = (16.5751, 4.14011)
+originLoc = (16.5751, 4.95261)
+targetLoc = (19.1924, 4.31995)
+rel_dist = 2.4375, segmentMediumPost = 1.625
+bufferLoc = (17.3876, 3.32761)
+1.625 2
+3.25 4
+TOT LEN 4.875 2 2
+TOT_LENGTH: 9.75
+BUF LOCs 0.8125 2.4375 4.0625 4.0625 5.6875 5.6875 7.3125 8.9375 
+r_loc (18.8198, 9.76812)
+	(14.625, 10.5)
+	(17.875, 10.5)
+	(21.125, 10.5)
+	(24.375, 10.5)
+14.625 10.5
+17.875 10.5
+21.125 10.5
+24.375 10.5
+Iteration 0 Iteration 0
+ITERATION 1
+Total flow cost = 41708
+ITERATION 2
+Total flow cost = 35881
+ITERATION 3
+Total flow cost = 36186
+ITERATION 4
+Total flow cost = 36186
+ITERATION 5
+Total flow cost = 36186
+ITERATION 6
+Total flow cost = 36186
+SILH (33) is 0.464269
+Best SILH (33) is 0.464269
+OUT_PINS (size 4)
+33 33 33 33 
+OUT_LOCS (15.2153, 9.84874) (17.7898, 9.17318) (19.3227, 8.64603) (22.2496, 8.96919) 
+CHECKING 3.25
+
+(15.2153 9.84874) (17.7898 9.17318) (18.8198 9.76812) (19.3227 8.64603) (22.2496 8.96919) 
+0 1 1 0 1 1 0 1 1 0 1 1 0 
+REL_DIST: 
+0.8125 1.625 0.8125 0.8125 0 0.8125 0.8125 0 0.8125 0.8125 1.625 0.8125 
+originLoc = (15.2153, 9.84874)
+targetLoc = (17.7898, 9.17318)
+rel_dist = 0.8125, segmentMediumPost = 1.625
+bufferLoc = (16.0278, 9.84874)
+originLoc = (15.2153, 9.84874)
+targetLoc = (17.7898, 9.17318)
+rel_dist = 2.4375, segmentMediumPost = 1.625
+bufferLoc = (16.8403, 9.03624)
+originLoc = (15.2153, 9.84874)
+targetLoc = (17.7898, 9.17318)
+rel_dist = 0.8125, segmentMediumPost = 1.625
+bufferLoc = (15.2153, 9.03624)
+originLoc = (15.2153, 9.84874)
+targetLoc = (17.7898, 9.17318)
+rel_dist = 2.4375, segmentMediumPost = 1.625
+bufferLoc = (16.0278, 8.22374)
+originLoc = (17.7898, 9.17318)
+targetLoc = (18.8198, 9.76812)
+rel_dist = 0.8125, segmentMediumPost = 0.8125
+bufferLoc = (18.6023, 9.17319)
+originLoc = (17.7898, 9.17318)
+targetLoc = (18.8198, 9.76812)
+rel_dist = 0.8125, segmentMediumPost = 0.8125
+bufferLoc = (18.6023, 9.17319)
+originLoc = (17.7898, 9.17318)
+targetLoc = (18.8198, 9.76812)
+rel_dist = 0.8125, segmentMediumPost = 0.8125
+bufferLoc = (17.7898, 9.98568)
+originLoc = (17.7898, 9.17318)
+targetLoc = (18.8198, 9.76812)
+rel_dist = 0.8125, segmentMediumPost = 0.8125
+bufferLoc = (17.7898, 9.98568)
+originLoc = (18.8198, 9.76812)
+targetLoc = (19.3227, 8.64603)
+rel_dist = 0.812501, segmentMediumPost = 0.8125
+bufferLoc = (19.6323, 9.76812)
+originLoc = (18.8198, 9.76812)
+targetLoc = (19.3227, 8.64603)
+rel_dist = 0.812501, segmentMediumPost = 0.8125
+bufferLoc = (19.6323, 9.76812)
+originLoc = (18.8198, 9.76812)
+targetLoc = (19.3227, 8.64603)
+rel_dist = 0.812501, segmentMediumPost = 0.8125
+bufferLoc = (18.8198, 8.95562)
+originLoc = (18.8198, 9.76812)
+targetLoc = (19.3227, 8.64603)
+rel_dist = 0.812501, segmentMediumPost = 0.8125
+bufferLoc = (18.8198, 8.95562)
+originLoc = (19.3227, 8.64603)
+targetLoc = (22.2496, 8.96919)
+rel_dist = 0.812501, segmentMediumPost = 1.625
+bufferLoc = (20.1352, 8.64603)
+originLoc = (19.3227, 8.64603)
+targetLoc = (22.2496, 8.96919)
+rel_dist = 2.4375, segmentMediumPost = 1.625
+bufferLoc = (20.9477, 9.45853)
+originLoc = (19.3227, 8.64603)
+targetLoc = (22.2496, 8.96919)
+rel_dist = 0.812501, segmentMediumPost = 1.625
+bufferLoc = (19.3227, 9.45853)
+originLoc = (19.3227, 8.64603)
+targetLoc = (22.2496, 8.96919)
+rel_dist = 2.4375, segmentMediumPost = 1.625
+bufferLoc = (20.1352, 10.271)
+Depth: 4
+0.875 1
+1.75 2
+TOT LEN 2.625 2 2
+TOT_LENGTH: 5.25
+BUF LOCs 
+r_loc (5.1665, 2.46945)
+	(1.625, 0.875)
+	(1.625, 2.625)
+	(1.625, 4.375)
+	(1.625, 6.125)
+1.625 0.875
+1.625 2.625
+1.625 4.375
+1.625 6.125
+Iteration 0 Iteration 0
+ITERATION 1
+Total flow cost = 11283
+ITERATION 2
+Total flow cost = 10847
+ITERATION 3
+Total flow cost = 10290
+ITERATION 4
+Total flow cost = 10290
+ITERATION 5
+Total flow cost = 10290
+ITERATION 6
+Total flow cost = 10290
+SILH (8) is 0.383035
+Best SILH  (8) is 0.383035
+OUT_PINS (size 4)
+9 9 8 8 
+OUT_LOCS (3.72574, 1.2852) (5.07782, 1.68312) (4.61001, 2.78796) (3.79648, 3.72443) 
+CHECKING 1.75
+
+(3.72574 1.2852) (5.07782 1.68312) (5.1665 2.46945) (4.61001 2.78796) (3.79648 3.72443) 
+0 0 0 0 0 
+REL_DIST: 
+1.75 0.875 0.875 1.75 
+0.875 1
+1.75 2
+TOT LEN 2.625 2 2
+TOT_LENGTH: 5.25
+BUF LOCs 
+r_loc (8.34722, 2.53872)
+	(4.875, 0.875)
+	(4.875, 2.625)
+	(4.875, 4.375)
+	(4.875, 6.125)
+4.875 0.875
+4.875 2.625
+4.875 4.375
+4.875 6.125
+Iteration 0 Iteration 0
+ITERATION 1
+Total flow cost = 9347
+ITERATION 2
+Total flow cost = 6844
+ITERATION 3
+Total flow cost = 6792
+ITERATION 4
+Total flow cost = 6792
+ITERATION 5
+Total flow cost = 6792
+ITERATION 6
+Total flow cost = 6792
+SILH (8) is 0.401901
+Best SILH  (8) is 0.401901
+OUT_PINS (size 4)
+9 8 8 8 
+OUT_LOCS (7.54386, 1.03459) (8.50598, 1.82247) (9.22171, 2.53923) (8.6725, 3.74002) 
+CHECKING 1.75
+
+(7.54386 1.03459) (8.50598 1.82247) (8.34722 2.53872) (9.22171 2.53923) (8.6725 3.74002) 
+0 0 0 0 0 
+REL_DIST: 
+1.75 0.875 0.875 1.75 
+0.875 1
+1.75 2
+TOT LEN 2.625 2 2
+TOT_LENGTH: 5.25
+BUF LOCs 
+r_loc (8.21591, 5.05376)
+	(8.125, 0.875)
+	(8.125, 2.625)
+	(8.125, 4.375)
+	(8.125, 6.125)
+8.125 0.875
+8.125 2.625
+8.125 4.375
+8.125 6.125
+Iteration 0 Iteration 0
+ITERATION 1
+Total flow cost = 6741
+ITERATION 2
+Total flow cost = 3749
+ITERATION 3
+Total flow cost = 3777
+ITERATION 4
+Total flow cost = 3756
+ITERATION 5
+Total flow cost = 3760
+ITERATION 6
+Total flow cost = 3791
+SILH (8) is 0.399139
+Best SILH  (8) is 0.399139
+OUT_PINS (size 4)
+9 8 8 8 
+OUT_LOCS (8.35882, 4.03586) (8.64842, 5.49625) (7.46701, 4.92767) (8.37607, 5.7686) 
+CHECKING 1.75
+
+(8.35882 4.03586) (8.64842 5.49625) (8.21591 5.05376) (7.46701 4.92767) (8.37607 5.7686) 
+0 0 0 0 0 
+REL_DIST: 
+1.75 0.875 0.875 1.75 
+0.875 1
+1.75 2
+TOT LEN 2.625 2 2
+TOT_LENGTH: 5.25
+BUF LOCs 
+r_loc (11.3472, 5.17249)
+	(11.375, 0.875)
+	(11.375, 2.625)
+	(11.375, 4.375)
+	(11.375, 6.125)
+11.375 0.875
+11.375 2.625
+11.375 4.375
+11.375 6.125
+Iteration 0 Iteration 0
+ITERATION 1
+Total flow cost = 5784
+ITERATION 2
+Total flow cost = 2955
+ITERATION 3
+Total flow cost = 2672
+ITERATION 4
+Total flow cost = 2693
+ITERATION 5
+Total flow cost = 2647
+ITERATION 6
+Total flow cost = 2693
+SILH (8) is 0.471381
+Best SILH  (8) is 0.471381
+OUT_PINS (size 4)
+9 8 8 8 
+OUT_LOCS (12.0182, 3.98872) (11.8371, 5.55762) (11.9676, 4.91792) (11.85, 6.55031) 
+CHECKING 1.75
+
+(12.0182 3.98872) (11.8371 5.55762) (11.3472 5.17249) (11.9676 4.91792) (11.85 6.55031) 
+0 0 0 0 0 
+REL_DIST: 
+1.75 0.875 0.875 1.75 
+0.875 1
+1.75 2
+TOT LEN 2.625 2 2
+TOT_LENGTH: 5.25
+BUF LOCs 
+r_loc (6.50506, 8.85628)
+	(1.625, 7.875)
+	(1.625, 9.625)
+	(1.625, 11.375)
+	(1.625, 13.125)
+1.625 7.875
+1.625 9.625
+1.625 11.375
+1.625 13.125
+Iteration 0 Iteration 0
+ITERATION 1
+Total flow cost = 6670
+ITERATION 2
+Total flow cost = 6512
+ITERATION 3
+Total flow cost = 6131
+ITERATION 4
+Total flow cost = 6013
+ITERATION 5
+Total flow cost = 5997
+ITERATION 6
+Total flow cost = 5997
+SILH (8) is 0.351416
+Best SILH  (8) is 0.351416
+OUT_PINS (size 4)
+9 8 8 8 
+OUT_LOCS (5.87815, 8.53824) (7.34509, 8.8213) (5.72247, 8.94868) (4.61961, 9.59582) 
+CHECKING 1.75
+
+(5.87815 8.53824) (7.34509 8.8213) (6.50506 8.85628) (5.72247 8.94868) (4.61961 9.59582) 
+0 0 0 0 0 
+REL_DIST: 
+1.75 0.875 0.875 1.75 
+0.875 1
+1.75 2
+TOT LEN 2.625 2 2
+TOT_LENGTH: 5.25
+BUF LOCs 
+r_loc (9.14287, 8.24409)
+	(4.875, 7.875)
+	(4.875, 9.625)
+	(4.875, 11.375)
+	(4.875, 13.125)
+4.875 7.875
+4.875 9.625
+4.875 11.375
+4.875 13.125
+Iteration 0 Iteration 0
+ITERATION 1
+Total flow cost = 11336
+ITERATION 2
+Total flow cost = 3223
+ITERATION 3
+Total flow cost = 2293
+ITERATION 4
+Total flow cost = 2211
+ITERATION 5
+Total flow cost = 2215
+ITERATION 6
+Total flow cost = 2215
+SILH (8) is 0.525127
+Best SILH  (8) is 0.525127
+OUT_PINS (size 4)
+9 8 8 8 
+OUT_LOCS (11.176, 7.65226) (9.59065, 7.81687) (8.87242, 7.63954) (10.3606, 7.37777) 
+CHECKING 1.75
+
+(11.176 7.65226) (9.59065 7.81687) (9.14287 8.24409) (8.87242 7.63954) (10.3606 7.37777) 
+0 0 0 0 0 
+REL_DIST: 
+1.75 0.875 0.875 1.75 
+0.875 1
+1.75 2
+TOT LEN 2.625 2 2
+TOT_LENGTH: 5.25
+BUF LOCs 
+r_loc (7.6689, 10.0201)
+	(8.125, 7.875)
+	(8.125, 9.625)
+	(8.125, 11.375)
+	(8.125, 13.125)
+8.125 7.875
+8.125 9.625
+8.125 11.375
+8.125 13.125
+Iteration 0 Iteration 0
+ITERATION 1
+Total flow cost = 10711
+ITERATION 2
+Total flow cost = 9377
+ITERATION 3
+Total flow cost = 9186
+ITERATION 4
+Total flow cost = 9114
+ITERATION 5
+Total flow cost = 9114
+ITERATION 6
+Total flow cost = 9114
+SILH (8) is 0.607499
+Best SILH  (8) is 0.607499
+OUT_PINS (size 4)
+9 8 8 8 
+OUT_LOCS (8.28125, 9.00757) (8.04385, 10.5202) (7.55784, 10.7841) (6.27483, 11.251) 
+CHECKING 1.75
+
+(8.28125 9.00757) (8.04385 10.5202) (7.6689 10.0201) (7.55784 10.7841) (6.27483 11.251) 
+0 0 0 0 0 
+REL_DIST: 
+1.75 0.875 0.875 1.75 
+0.875 1
+1.75 2
+TOT LEN 2.625 2 2
+TOT_LENGTH: 5.25
+BUF LOCs 
+r_loc (10.4105, 9.5117)
+	(11.375, 7.875)
+	(11.375, 9.625)
+	(11.375, 11.375)
+	(11.375, 13.125)
+11.375 7.875
+11.375 9.625
+11.375 11.375
+11.375 13.125
+Iteration 0 Iteration 0
+ITERATION 1
+Total flow cost = 4907
+ITERATION 2
+Total flow cost = 4186
+ITERATION 3
+Total flow cost = 4209
+ITERATION 4
+Total flow cost = 4179
+ITERATION 5
+Total flow cost = 4179
+ITERATION 6
+Total flow cost = 4179
+SILH (8) is 0.449794
+Best SILH  (8) is 0.449794
+OUT_PINS (size 4)
+9 8 8 8 
+OUT_LOCS (12.0391, 8.51527) (10.8753, 9.10153) (10.4687, 8.69493) (10.7702, 10.1434) 
+CHECKING 1.75
+
+(12.0391 8.51527) (10.8753 9.10153) (10.4105 9.5117) (10.4687 8.69493) (10.7702 10.1434) 
+0 0 0 0 0 
+REL_DIST: 
+1.75 0.875 0.875 1.75 
+0.875 1
+1.75 2
+TOT LEN 2.625 2 2
+TOT_LENGTH: 5.25
+BUF LOCs 
+r_loc (15.3226, 3.7001)
+	(14.625, 0.875)
+	(14.625, 2.625)
+	(14.625, 4.375)
+	(14.625, 6.125)
+14.625 0.875
+14.625 2.625
+14.625 4.375
+14.625 6.125
+Iteration 0 Iteration 0
+ITERATION 1
+Total flow cost = 5637
+ITERATION 2
+Total flow cost = 2436
+ITERATION 3
+Total flow cost = 2201
+ITERATION 4
+Total flow cost = 2167
+ITERATION 5
+Total flow cost = 2146
+ITERATION 6
+Total flow cost = 2146
+SILH (8) is 0.484102
+Best SILH  (8) is 0.484102
+OUT_PINS (size 4)
+9 9 8 8 
+OUT_LOCS (13.704, 4.08045) (15.141, 4.39348) (14.4979, 3.75046) (14.0234, 5.02588) 
+CHECKING 1.75
+
+(13.704 4.08045) (15.141 4.39348) (15.3226 3.7001) (14.4979 3.75046) (14.0234 5.02588) 
+0 0 0 0 0 
+REL_DIST: 
+1.75 0.875 0.875 1.75 
+0.875 1
+1.75 2
+TOT LEN 2.625 2 2
+TOT_LENGTH: 5.25
+BUF LOCs 
+r_loc (17.4556, 2.58314)
+	(17.875, 0.875)
+	(17.875, 2.625)
+	(17.875, 4.375)
+	(17.875, 6.125)
+17.875 0.875
+17.875 2.625
+17.875 4.375
+17.875 6.125
+Iteration 0 Iteration 0
+ITERATION 1
+Total flow cost = 7665
+ITERATION 2
+Total flow cost = 4721
+ITERATION 3
+Total flow cost = 4158
+ITERATION 4
+Total flow cost = 4152
+ITERATION 5
+Total flow cost = 4152
+ITERATION 6
+Total flow cost = 4152
+SILH (8) is 0.43189
+Best SILH  (8) is 0.43189
+OUT_PINS (size 4)
+9 8 8 8 
+OUT_LOCS (18.3399, 0.842429) (17.8598, 2.11236) (17.4827, 1.73522) (16.0435, 2.04599) 
+CHECKING 1.75
+
+(18.3399 0.842429) (17.8598 2.11236) (17.4556 2.58314) (17.4827 1.73522) (16.0435 2.04599) 
+0 0 0 0 0 
+REL_DIST: 
+1.75 0.875 0.875 1.75 
+0.875 1
+1.75 2
+TOT LEN 2.625 2 2
+TOT_LENGTH: 5.25
+BUF LOCs 
+r_loc (16.5751, 4.95261)
+	(21.125, 0.875)
+	(21.125, 2.625)
+	(21.125, 4.375)
+	(21.125, 6.125)
+21.125 0.875
+21.125 2.625
+21.125 4.375
+21.125 6.125
+Iteration 0 Iteration 0
+ITERATION 1
+Total flow cost = 10572
+ITERATION 2
+Total flow cost = 3211
+ITERATION 3
+Total flow cost = 2749
+ITERATION 4
+Total flow cost = 2849
+ITERATION 5
+Total flow cost = 2801
+ITERATION 6
+Total flow cost = 2801
+SILH (8) is 0.369451
+Best SILH  (8) is 0.369451
+OUT_PINS (size 4)
+9 8 8 8 
+OUT_LOCS (14.7352, 5.73776) (16.4662, 5.71868) (15.7636, 5.01616) (16.2065, 6.32332) 
+CHECKING 1.75
+
+(14.7352 5.73776) (16.4662 5.71868) (16.5751 4.95261) (15.7636 5.01616) (16.2065 6.32332) 
+0 0 0 0 0 
+REL_DIST: 
+1.75 0.875 0.875 1.75 
+0.875 1
+1.75 2
+TOT LEN 2.625 2 2
+TOT_LENGTH: 5.25
+BUF LOCs 
+r_loc (19.1924, 4.31995)
+	(24.375, 0.875)
+	(24.375, 2.625)
+	(24.375, 4.375)
+	(24.375, 6.125)
+24.375 0.875
+24.375 2.625
+24.375 4.375
+24.375 6.125
+Iteration 0 Iteration 0
+ITERATION 1
+Total flow cost = 10204
+ITERATION 2
+Total flow cost = 9809
+ITERATION 3
+Total flow cost = 9966
+ITERATION 4
+Total flow cost = 9982
+ITERATION 5
+Total flow cost = 9982
+ITERATION 6
+Total flow cost = 9982
+SILH (8) is 0.306587
+Best SILH  (8) is 0.306587
+OUT_PINS (size 4)
+9 8 8 8 
+OUT_LOCS (20.8681, 3.37064) (19.8731, 4.12566) (18.8, 4.80248) (20.2632, 5.08919) 
+CHECKING 1.75
+
+(20.8681 3.37064) (19.8731 4.12566) (19.1924 4.31995) (18.8 4.80248) (20.2632 5.08919) 
+0 0 0 0 0 
+REL_DIST: 
+1.75 0.875 0.875 1.75 
+0.875 1
+1.75 2
+TOT LEN 2.625 2 2
+TOT_LENGTH: 5.25
+BUF LOCs 
+r_loc (15.2153, 9.84874)
+	(14.625, 7.875)
+	(14.625, 9.625)
+	(14.625, 11.375)
+	(14.625, 13.125)
+14.625 7.875
+14.625 9.625
+14.625 11.375
+14.625 13.125
+Iteration 0 Iteration 0
+ITERATION 1
+Total flow cost = 3686
+ITERATION 2
+Total flow cost = 3551
+ITERATION 3
+Total flow cost = 3265
+ITERATION 4
+Total flow cost = 2964
+ITERATION 5
+Total flow cost = 2746
+ITERATION 6
+Total flow cost = 2746
+SILH (8) is 0.501639
+Best SILH  (8) is 0.501639
+OUT_PINS (size 4)
+9 8 8 8 
+OUT_LOCS (13.6605, 8.77858) (15.154, 9.03502) (14.8164, 10.3249) (14.4594, 11.7179) 
+CHECKING 1.75
+
+(13.6605 8.77858) (15.154 9.03502) (15.2153 9.84874) (14.8164 10.3249) (14.4594 11.7179) 
+0 0 0 0 0 
+REL_DIST: 
+1.75 0.875 0.875 1.75 
+0.875 1
+1.75 2
+TOT LEN 2.625 2 2
+TOT_LENGTH: 5.25
+BUF LOCs 
+r_loc (17.7898, 9.17318)
+	(17.875, 7.875)
+	(17.875, 9.625)
+	(17.875, 11.375)
+	(17.875, 13.125)
+17.875 7.875
+17.875 9.625
+17.875 11.375
+17.875 13.125
+Iteration 0 Iteration 0
+ITERATION 1
+Total flow cost = 8054
+ITERATION 2
+Total flow cost = 4324
+ITERATION 3
+Total flow cost = 4002
+ITERATION 4
+Total flow cost = 3963
+ITERATION 5
+Total flow cost = 3948
+ITERATION 6
+Total flow cost = 3999
+SILH (8) is 0.281654
+Best SILH  (8) is 0.281654
+OUT_PINS (size 4)
+9 8 8 8 
+OUT_LOCS (16.6713, 7.66664) (17.7771, 8.3108) (17.1132, 8.97471) (16.2385, 9.84995) 
+CHECKING 1.75
+
+(16.6713 7.66664) (17.7771 8.3108) (17.7898 9.17318) (17.1132 8.97471) (16.2385 9.84995) 
+0 0 0 0 0 
+REL_DIST: 
+1.75 0.875 0.875 1.75 
+0.875 1
+1.75 2
+TOT LEN 2.625 2 2
+TOT_LENGTH: 5.25
+BUF LOCs 
+r_loc (19.3227, 8.64603)
+	(21.125, 7.875)
+	(21.125, 9.625)
+	(21.125, 11.375)
+	(21.125, 13.125)
+21.125 7.875
+21.125 9.625
+21.125 11.375
+21.125 13.125
+Iteration 0 Iteration 0
+ITERATION 1
+Total flow cost = 6516
+ITERATION 2
+Total flow cost = 4598
+ITERATION 3
+Total flow cost = 4552
+ITERATION 4
+Total flow cost = 4833
+ITERATION 5
+Total flow cost = 4968
+ITERATION 6
+Total flow cost = 4330
+SILH (8) is 0.553209
+Best SILH  (8) is 0.553209
+OUT_PINS (size 4)
+9 8 8 8 
+OUT_LOCS (19.6266, 7.21484) (18.8778, 8.21598) (19.9318, 8.91196) (19.1061, 9.83623) 
+CHECKING 1.75
+
+(19.6266 7.21484) (18.8778 8.21598) (19.3227 8.64603) (19.9318 8.91196) (19.1061 9.83623) 
+0 0 0 0 0 
+REL_DIST: 
+1.75 0.875 0.875 1.75 
+0.875 1
+1.75 2
+TOT LEN 2.625 2 2
+TOT_LENGTH: 5.25
+BUF LOCs 
+r_loc (22.2496, 8.96919)
+	(24.375, 7.875)
+	(24.375, 9.625)
+	(24.375, 11.375)
+	(24.375, 13.125)
+24.375 7.875
+24.375 9.625
+24.375 11.375
+24.375 13.125
+Iteration 0 Iteration 0
+ITERATION 1
+Total flow cost = 10300
+ITERATION 2
+Total flow cost = 9668
+ITERATION 3
+Total flow cost = 9583
+ITERATION 4
+Total flow cost = 9631
+ITERATION 5
+Total flow cost = 9683
+ITERATION 6
+Total flow cost = 9596
+SILH (8) is 0.318006
+Best SILH  (8) is 0.318006
+OUT_PINS (size 4)
+9 8 8 8 
+OUT_LOCS (23.8724, 7.967) (22.8697, 8.71432) (22.621, 9.47276) (23.2978, 10.546) 
+CHECKING 1.75
+
+(23.8724 7.967) (22.8697 8.71432) (22.2496 8.96919) (22.621 9.47276) (23.2978 10.546) 
+0 0 0 0 0 
+REL_DIST: 
+1.75 0.875 0.875 1.75 
+Start writing sol.txt
+Finished writing sol.txt
+Wall-time taken: 2
+tasks                     time
+genHtree                  4.73
+
+----------------------------------------
+### VmPeak			: FDSize:	256
+### Memory Usage	: 2042.24 MB

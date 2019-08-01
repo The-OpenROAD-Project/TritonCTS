@@ -1,0 +1,87 @@
+0 : 1 {3933 2714 } 1 {8.05175 7.34158} 2 {19.754 7.2273} 
+1 : 2 {3860 } 3 {8.87409 4.66392} 4 {9.09689 9.79644} 
+2 : 2 {3860 } 5 {18.3777 5.10356} 6 {19.7798 10.7015} 
+3 : 3 {1473 3648 } 7 {6.1265 3.40278} 8 {9.30722 3.47205} 9 {9.17591 5.9871} 10 {12.3072 6.10582}  B {6.939 3.40278}  {7.7515 4.21528}  {8.49472 3.47205}  {8.49472 3.47205}  {9.68659 4.66392}  {9.68659 4.66392}  {9.98841 5.9871}  {10.8009 6.7996} 
+4 : 3 {1473 3648 } 11 {7.46506 9.78961} 12 {10.1029 9.17742} 13 {8.6289 10.9534} 14 {11.3705 10.445}  B {8.27756 9.78961}  {9.09006 8.97711}  {9.29037 9.17742}  {9.29037 9.17742}  {8.28439 9.79644}  {8.28439 9.79644}  {9.4414 10.9534}  {10.2539 10.1409} 
+5 : 3 {1473 3648 } 15 {16.2826 4.63344} 16 {18.4156 3.51648} 17 {17.5351 5.88594} 18 {20.1524 5.25328}  B {17.0951 4.63344}  {17.9076 3.82094}  {17.6031 3.51648}  {17.6031 3.51648}  {17.5652 5.10356}  {17.5652 5.10356}  {18.3476 5.88594}  {19.1601 5.07344} 
+6 : 3 {1473 3648 } 19 {16.1753 10.7821} 20 {18.7498 10.1065} 21 {20.2827 9.57936} 22 {23.2096 9.90253}  B {16.9878 10.7821}  {17.8003 9.96957}  {19.5623 10.1065}  {19.5623 10.1065}  {20.5923 10.7015}  {20.5923 10.7015}  {21.0952 9.57936}  {21.9077 10.3919} 
+7 : 4 {550 1324 } 23 {4.68574 2.21853} 24 {6.03782 2.61645} 25 {5.57001 3.7213} 26 {4.75648 4.65776} 
+8 : 4 {550 1324 } 27 {8.50386 1.96793} 28 {9.46598 2.75581} 29 {10.1817 3.47256} 30 {9.6325 4.67336} 
+9 : 4 {550 1324 } 31 {9.31882 4.96919} 32 {9.60842 6.42959} 33 {8.42701 5.861} 34 {9.33607 6.70194} 
+10 : 4 {550 1324 } 35 {12.9782 4.92205} 36 {12.7971 6.49095} 37 {12.9276 5.85126} 38 {12.81 7.48365} 
+11 : 4 {550 1324 } 39 {6.83815 9.47157} 40 {8.30509 9.75463} 41 {6.68247 9.88202} 42 {5.57961 10.5292} 
+12 : 4 {550 1324 } 43 {12.136 8.5856} 44 {10.5507 8.7502} 45 {9.83242 8.57287} 46 {11.3206 8.3111} 
+13 : 4 {550 1324 } 47 {9.24125 9.94091} 48 {9.00385 11.4535} 49 {8.51783 11.7174} 50 {7.23483 12.1844} 
+14 : 4 {550 1324 } 51 {12.9991 9.4486} 52 {11.8353 10.0349} 53 {11.4287 9.62827} 54 {11.7302 11.0768} 
+15 : 4 {550 1324 } 55 {14.664 5.01378} 56 {16.101 5.32681} 57 {15.4579 4.68379} 58 {14.9834 5.95921} 
+16 : 4 {550 1324 } 59 {19.2999 1.77576} 60 {18.8198 3.0457} 61 {18.4427 2.66856} 62 {17.0035 2.97932} 
+17 : 4 {550 1324 } 63 {15.6952 6.67109} 64 {17.4262 6.65201} 65 {16.7236 5.94949} 66 {17.1665 7.25665} 
+18 : 4 {550 1324 } 67 {21.8281 4.30397} 68 {20.8331 5.05899} 69 {19.76 5.73581} 70 {21.2232 6.02252} 
+19 : 4 {550 1324 } 71 {14.6205 9.71191} 72 {16.114 9.96835} 73 {15.7764 11.2582} 74 {15.4194 12.6512} 
+20 : 4 {550 1324 } 75 {17.6313 8.59997} 76 {18.7371 9.24413} 77 {18.0732 9.90804} 78 {17.1985 10.7833} 
+21 : 4 {550 1324 } 79 {20.5866 8.14818} 80 {19.8378 9.14931} 81 {20.8918 9.84529} 82 {20.0661 10.7696} 
+22 : 4 {550 1324 } 83 {24.8324 8.90034} 84 {23.8297 9.64765} 85 {23.581 10.4061} 86 {24.2578 11.4793} 
+B 23 text_in_r_reg_115_/CK text_in_r_reg_73_/CK text_in_r_reg_78_/CK text_in_r_reg_55_/CK text_in_r_reg_29_/CK text_in_r_reg_97_/CK text_in_r_reg_26_/CK text_in_r_reg_70_/CK text_in_r_reg_30_/CK 
+B 24 text_in_r_reg_109_/CK text_in_r_reg_67_/CK text_in_r_reg_120_/CK text_out_reg_89_/CK text_in_r_reg_89_/CK sa01_reg_1_/CK text_in_r_reg_99_/CK text_in_r_reg_46_/CK text_in_r_reg_117_/CK 
+B 25 text_in_r_reg_107_/CK text_in_r_reg_98_/CK text_in_r_reg_106_/CK text_in_r_reg_105_/CK text_in_r_reg_60_/CK sa01_reg_4_/CK sa01_reg_3_/CK sa01_reg_5_/CK 
+B 26 sa01_reg_2_/CK sa00_reg_0_/CK sa00_reg_2_/CK text_in_r_reg_110_/CK text_in_r_reg_113_/CK sa00_reg_4_/CK text_in_r_reg_58_/CK text_in_r_reg_72_/CK 
+B 27 text_out_reg_84_/CK text_in_r_reg_75_/CK text_in_r_reg_20_/CK text_out_reg_71_/CK text_out_reg_78_/CK text_in_r_reg_114_/CK sa01_reg_6_/CK sa01_reg_7_/CK text_out_reg_75_/CK 
+B 28 text_in_r_reg_95_/CK text_in_r_reg_93_/CK text_out_reg_98_/CK text_out_reg_99_/CK text_in_r_reg_7_/CK text_in_r_reg_52_/CK text_out_reg_90_/CK text_out_reg_95_/CK 
+B 29 text_in_r_reg_84_/CK text_in_r_reg_94_/CK u0/w_reg_0__27_/CK u0/w_reg_1__27_/CK sa20_reg_6_/CK text_out_reg_96_/CK text_out_reg_105_/CK text_out_reg_107_/CK 
+B 30 text_out_reg_69_/CK sa10_reg_3_/CK sa20_reg_1_/CK sa30_reg_3_/CK text_out_reg_102_/CK sa20_reg_3_/CK text_out_reg_73_/CK sa30_reg_0_/CK 
+B 31 text_out_reg_113_/CK text_out_reg_67_/CK sa20_reg_2_/CK sa30_reg_1_/CK text_out_reg_94_/CK sa30_reg_2_/CK sa20_reg_0_/CK text_out_reg_92_/CK text_out_reg_85_/CK 
+B 32 sa12_reg_1_/CK text_out_reg_123_/CK sa30_reg_4_/CK text_out_reg_106_/CK sa20_reg_5_/CK text_out_reg_77_/CK sa00_reg_3_/CK text_out_reg_100_/CK 
+B 33 text_out_reg_65_/CK sa11_reg_2_/CK text_out_reg_120_/CK sa01_reg_0_/CK text_out_reg_82_/CK sa11_reg_4_/CK sa31_reg_3_/CK text_out_reg_80_/CK 
+B 34 text_out_reg_121_/CK text_out_reg_108_/CK sa20_reg_4_/CK text_out_reg_115_/CK text_out_reg_124_/CK sa30_reg_5_/CK text_out_reg_122_/CK text_out_reg_68_/CK 
+B 35 text_out_reg_125_/CK sa20_reg_7_/CK text_out_reg_103_/CK text_out_reg_110_/CK u0/w_reg_0__14_/CK text_out_reg_111_/CK sa10_reg_5_/CK text_out_reg_119_/CK sa30_reg_6_/CK 
+B 36 u0/w_reg_0__19_/CK u0/w_reg_1__13_/CK text_out_reg_116_/CK text_out_reg_114_/CK u0/w_reg_3__13_/CK text_out_reg_42_/CK text_in_r_reg_116_/CK text_out_reg_33_/CK 
+B 37 sa30_reg_7_/CK text_out_reg_97_/CK u0/w_reg_0__9_/CK u0/w_reg_1__18_/CK u0/w_reg_0__18_/CK text_out_reg_126_/CK text_out_reg_118_/CK sa12_reg_4_/CK 
+B 38 text_out_reg_109_/CK text_out_reg_34_/CK sa02_reg_3_/CK sa12_reg_3_/CK u0/w_reg_2__19_/CK text_out_reg_32_/CK u0/w_reg_1__19_/CK text_out_reg_117_/CK 
+B 39 sa11_reg_0_/CK text_out_reg_74_/CK sa11_reg_7_/CK sa11_reg_1_/CK sa11_reg_3_/CK sa11_reg_6_/CK text_out_reg_81_/CK text_out_reg_87_/CK sa31_reg_6_/CK 
+B 40 text_out_reg_88_/CK sa21_reg_2_/CK sa11_reg_5_/CK text_out_reg_70_/CK sa21_reg_0_/CK sa21_reg_7_/CK sa21_reg_6_/CK sa21_reg_1_/CK 
+B 41 text_out_reg_66_/CK text_out_reg_64_/CK sa31_reg_7_/CK sa31_reg_0_/CK text_in_r_reg_28_/CK text_in_r_reg_123_/CK sa31_reg_2_/CK sa31_reg_1_/CK 
+B 42 sa31_reg_4_/CK text_in_r_reg_90_/CK sa31_reg_5_/CK text_in_r_reg_18_/CK text_in_r_reg_64_/CK text_in_r_reg_88_/CK text_in_r_reg_122_/CK text_in_r_reg_9_/CK 
+B 43 u0/w_reg_3__15_/CK text_out_reg_59_/CK u0/w_reg_2__1_/CK u0/w_reg_0__13_/CK u0/w_reg_1__12_/CK text_out_reg_39_/CK sa33_reg_2_/CK u0/w_reg_3__19_/CK u0/w_reg_2__27_/CK 
+B 44 u0/w_reg_2__2_/CK u0/w_reg_3__2_/CK u0/w_reg_1__10_/CK u0/w_reg_1__11_/CK u0/w_reg_2__10_/CK u0/w_reg_0__4_/CK u0/w_reg_2__11_/CK u0/w_reg_1__4_/CK 
+B 45 sa00_reg_5_/CK text_out_reg_93_/CK text_out_reg_86_/CK text_out_reg_91_/CK u0/w_reg_1__2_/CK text_out_reg_83_/CK sa23_reg_1_/CK sa21_reg_4_/CK 
+B 46 u0/w_reg_0__11_/CK text_out_reg_15_/CK text_out_reg_101_/CK sa12_reg_2_/CK u0/w_reg_0__2_/CK text_out_reg_104_/CK u0/w_reg_0__10_/CK u0/w_reg_0__12_/CK 
+B 47 text_out_reg_76_/CK text_out_reg_79_/CK sa00_reg_1_/CK sa21_reg_5_/CK sa23_reg_7_/CK sa21_reg_3_/CK sa23_reg_0_/CK u0/w_reg_1__0_/CK text_in_r_reg_4_/CK 
+B 48 text_in_r_reg_2_/CK text_in_r_reg_33_/CK text_in_r_reg_79_/CK text_in_r_reg_19_/CK text_in_r_reg_23_/CK text_in_r_reg_15_/CK text_in_r_reg_91_/CK text_in_r_reg_63_/CK 
+B 49 text_in_r_reg_86_/CK text_in_r_reg_121_/CK text_in_r_reg_8_/CK text_in_r_reg_69_/CK text_out_reg_72_/CK text_in_r_reg_101_/CK text_in_r_reg_27_/CK text_in_r_reg_68_/CK 
+B 50 text_in_r_reg_125_/CK text_in_r_reg_66_/CK text_in_r_reg_92_/CK text_in_r_reg_124_/CK text_in_r_reg_71_/CK text_in_r_reg_108_/CK text_in_r_reg_81_/CK text_in_r_reg_83_/CK 
+B 51 text_out_reg_51_/CK u0/w_reg_2__18_/CK u0/w_reg_2__4_/CK text_out_reg_47_/CK u0/w_reg_1__23_/CK u0/w_reg_2__15_/CK u0/w_reg_3__4_/CK u0/w_reg_3__18_/CK u0/w_reg_1__15_/CK 
+B 52 text_in_r_reg_10_/CK u0/w_reg_3__1_/CK sa23_reg_2_/CK u0/w_reg_1__1_/CK u0/w_reg_1__6_/CK u0/w_reg_0__15_/CK u0/w_reg_0__1_/CK u0/w_reg_2__0_/CK 
+B 53 sa00_reg_6_/CK sa00_reg_7_/CK text_in_r_reg_127_/CK u0/w_reg_3__10_/CK u0/w_reg_0__8_/CK u0/w_reg_3__11_/CK u0/w_reg_1__8_/CK text_in_r_reg_59_/CK 
+B 54 u0/w_reg_0__0_/CK text_out_reg_50_/CK text_in_r_reg_36_/CK text_in_r_reg_43_/CK text_in_r_reg_50_/CK text_in_r_reg_126_/CK text_in_r_reg_51_/CK text_out_reg_10_/CK 
+B 55 sa10_reg_1_/CK sa10_reg_0_/CK sa12_reg_7_/CK sa22_reg_3_/CK u0/w_reg_2__16_/CK sa10_reg_4_/CK text_out_reg_127_/CK text_out_reg_45_/CK u0/w_reg_1__16_/CK 
+B 56 sa33_reg_1_/CK sa10_reg_6_/CK sa22_reg_1_/CK sa22_reg_0_/CK u0/w_reg_2__22_/CK u0/w_reg_2__14_/CK text_out_reg_40_/CK u0/w_reg_1__22_/CK u0/w_reg_3__22_/CK 
+B 57 sa12_reg_6_/CK sa22_reg_6_/CK sa12_reg_0_/CK text_out_reg_112_/CK text_out_reg_46_/CK u0/w_reg_0__16_/CK u0/w_reg_1__14_/CK sa22_reg_5_/CK 
+B 58 text_out_reg_48_/CK sa12_reg_5_/CK sa22_reg_2_/CK u0/w_reg_1__21_/CK u0/w_reg_2__13_/CK sa33_reg_0_/CK u0/w_reg_2__21_/CK u0/w_reg_2__9_/CK 
+B 59 text_in_r_reg_11_/CK text_in_r_reg_25_/CK text_in_r_reg_87_/CK text_in_r_reg_96_/CK u0/r0/rcnt_reg_3_/CK u0/r0/rcnt_reg_1_/CK u0/r0/rcnt_reg_2_/CK u0/r0/out_reg_25_/CK u0/r0/out_reg_29_/CK 
+B 60 u0/r0/out_reg_31_/CK u0/r0/out_reg_28_/CK u0/w_reg_0__31_/CK u0/w_reg_0__26_/CK u0/w_reg_0__28_/CK u0/w_reg_1__26_/CK u0/w_reg_0__29_/CK u0/w_reg_1__31_/CK 
+B 61 text_in_r_reg_42_/CK text_in_r_reg_45_/CK u0/r0/rcnt_reg_0_/CK u0/r0/out_reg_27_/CK u0/r0/out_reg_24_/CK u0/r0/out_reg_30_/CK u0/r0/out_reg_26_/CK sa10_reg_7_/CK 
+B 62 text_in_r_reg_119_/CK text_in_r_reg_54_/CK text_in_r_reg_24_/CK text_in_r_reg_44_/CK u0/w_reg_0__23_/CK text_in_r_reg_74_/CK sa22_reg_7_/CK u0/w_reg_3__26_/CK 
+B 63 u0/w_reg_1__9_/CK sa22_reg_4_/CK text_out_reg_41_/CK text_out_reg_49_/CK text_in_r_reg_5_/CK text_out_reg_43_/CK text_out_reg_44_/CK text_out_reg_63_/CK text_out_reg_61_/CK 
+B 64 u0/w_reg_0__30_/CK text_out_reg_56_/CK sa33_reg_4_/CK u0/w_reg_3__24_/CK sa33_reg_6_/CK sa33_reg_7_/CK u0/w_reg_1__28_/CK u0/w_reg_2__24_/CK 
+B 65 u0/w_reg_1__30_/CK u0/w_reg_1__20_/CK u0/w_reg_0__22_/CK u0/w_reg_2__26_/CK u0/w_reg_0__20_/CK u0/w_reg_0__21_/CK u0/w_reg_1__17_/CK sa33_reg_5_/CK 
+B 66 u0/w_reg_1__24_/CK sa02_reg_1_/CK sa02_reg_6_/CK sa02_reg_5_/CK u0/w_reg_2__30_/CK text_out_reg_62_/CK sa02_reg_2_/CK u0/w_reg_1__7_/CK 
+B 67 text_in_r_reg_22_/CK text_in_r_reg_56_/CK text_in_r_reg_16_/CK text_in_r_reg_48_/CK text_in_r_reg_40_/CK text_in_r_reg_35_/CK text_in_r_reg_111_/CK text_in_r_reg_49_/CK text_in_r_reg_53_/CK 
+B 68 text_in_r_reg_6_/CK text_in_r_reg_3_/CK text_in_r_reg_38_/CK sa10_reg_2_/CK u0/w_reg_3__16_/CK u0/w_reg_0__25_/CK u0/w_reg_3__17_/CK text_in_r_reg_31_/CK 
+B 69 u0/w_reg_0__17_/CK u0/w_reg_2__17_/CK sa03_reg_1_/CK u0/w_reg_3__9_/CK u0/w_reg_0__24_/CK text_out_reg_18_/CK sa33_reg_3_/CK u0/w_reg_3__14_/CK 
+B 70 u0/w_reg_1__25_/CK u0/w_reg_3__21_/CK sa03_reg_6_/CK sa03_reg_5_/CK u0/w_reg_2__25_/CK text_out_reg_16_/CK sa03_reg_7_/CK text_out_reg_30_/CK 
+B 71 text_out_reg_37_/CK text_out_reg_53_/CK sa32_reg_4_/CK u0/w_reg_2__23_/CK u0/w_reg_2__12_/CK sa32_reg_2_/CK u0/w_reg_1__5_/CK u0/w_reg_0__5_/CK text_in_r_reg_112_/CK 
+B 72 u0/w_reg_2__28_/CK text_out_reg_2_/CK text_out_reg_57_/CK text_out_reg_60_/CK u0/w_reg_3__28_/CK sa32_reg_5_/CK text_out_reg_52_/CK sa32_reg_7_/CK 
+B 73 u0/w_reg_2__5_/CK u0/w_reg_0__6_/CK u0/w_reg_2__6_/CK u0/w_reg_3__6_/CK u0/w_reg_3__0_/CK u0/w_reg_3__5_/CK text_out_reg_38_/CK text_in_r_reg_1_/CK 
+B 74 text_out_reg_0_/CK text_in_r_reg_118_/CK text_in_r_reg_77_/CK text_in_r_reg_0_/CK text_in_r_reg_39_/CK text_out_reg_36_/CK text_in_r_reg_82_/CK text_in_r_reg_12_/CK 
+B 75 sa02_reg_4_/CK u0/w_reg_0__7_/CK text_out_reg_7_/CK text_out_reg_35_/CK text_out_reg_58_/CK sa02_reg_7_/CK u0/w_reg_2__7_/CK text_out_reg_4_/CK text_out_reg_54_/CK 
+B 76 text_out_reg_9_/CK u0/w_reg_3__30_/CK sa23_reg_3_/CK text_out_reg_25_/CK text_out_reg_11_/CK u0/w_reg_3__27_/CK text_out_reg_8_/CK sa32_reg_6_/CK 
+B 77 text_out_reg_12_/CK u0/w_reg_2__8_/CK u0/w_reg_0__3_/CK u0/w_reg_2__31_/CK u0/w_reg_3__12_/CK u0/w_reg_3__8_/CK u0/w_reg_2__3_/CK u0/w_reg_2__20_/CK 
+B 78 sa32_reg_0_/CK u0/w_reg_3__7_/CK sa32_reg_3_/CK sa23_reg_4_/CK u0/w_reg_1__3_/CK text_out_reg_55_/CK text_out_reg_1_/CK text_in_r_reg_57_/CK 
+B 79 sa03_reg_3_/CK sa02_reg_0_/CK text_out_reg_24_/CK sa03_reg_2_/CK text_out_reg_26_/CK sa03_reg_4_/CK text_out_reg_6_/CK text_out_reg_20_/CK text_out_reg_13_/CK 
+B 80 u0/w_reg_1__29_/CK text_out_reg_3_/CK text_out_reg_19_/CK u0/w_reg_2__29_/CK sa13_reg_3_/CK sa32_reg_1_/CK u0/w_reg_3__29_/CK text_out_reg_31_/CK 
+B 81 sa13_reg_4_/CK sa13_reg_5_/CK text_out_reg_27_/CK text_out_reg_21_/CK u0/w_reg_3__25_/CK text_out_reg_29_/CK text_out_reg_22_/CK sa23_reg_5_/CK 
+B 82 text_out_reg_28_/CK sa13_reg_2_/CK u0/w_reg_3__20_/CK text_out_reg_14_/CK u0/w_reg_3__31_/CK u0/w_reg_3__3_/CK sa23_reg_6_/CK text_out_reg_5_/CK 
+B 83 text_in_r_reg_17_/CK sa13_reg_0_/CK text_in_r_reg_65_/CK text_in_r_reg_100_/CK text_out_reg_17_/CK text_in_r_reg_76_/CK sa13_reg_1_/CK text_in_r_reg_102_/CK text_in_r_reg_103_/CK 
+B 84 text_in_r_reg_62_/CK text_in_r_reg_47_/CK text_in_r_reg_80_/CK text_in_r_reg_32_/CK sa13_reg_6_/CK sa13_reg_7_/CK text_in_r_reg_37_/CK text_in_r_reg_14_/CK 
+B 85 sa03_reg_0_/CK text_in_r_reg_104_/CK text_in_r_reg_34_/CK u0/w_reg_3__23_/CK ld_r_reg/CK text_out_reg_23_/CK text_in_r_reg_21_/CK text_in_r_reg_61_/CK 
+B 86 text_in_r_reg_13_/CK done_reg/CK dcnt_reg_2_/CK text_in_r_reg_41_/CK text_in_r_reg_85_/CK dcnt_reg_0_/CK dcnt_reg_3_/CK dcnt_reg_1_/CK 
