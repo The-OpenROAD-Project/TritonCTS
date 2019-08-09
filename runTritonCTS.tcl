@@ -179,6 +179,10 @@ proc parseConfigFile {} {
 		set buf_regex "BUF"
 		set ck_pin "CK"
 		set buf_out_pin "Z"
+	} elseif {$tech==7} {
+		set buf_regex "BUF"
+		set ck_pin "CLK"
+		set buf_out_pin "Y"
 	}
 
 	set inst_ck_pin [lindex [split $ck_pin] 0]
