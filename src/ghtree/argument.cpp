@@ -60,6 +60,7 @@ CArgument::CArgument(){
     max_solnum          = 1;
     cluster_only        = false;
 	compute_sink_region_mode = false;
+	percentile			= 0.0;
 }
 
 /*** Command Line Analyzer ***********************************************/
@@ -289,6 +290,23 @@ bool    CArgument::argument(int argc, char* argv[]){
             compute_sink_region_mode = true;
         }
  
+        else if(arg == "-percentile") {
+            if (i+1 < argc) {
+                i++;
+
+                if (argv[i][0] != '-') {
+                    percentile = atof(argv[i]);
+                } else {
+                    cout << "*** Error :: percentile value needed.." << endl;
+                    return  false;
+                }
+            } else {
+                cout << "*** Error :: percentile value needed.." << endl;
+                return  false;
+            }
+        }
+
+
 		else {
             cout << "*** Error :: Option(s) is(are) NOT applicable.." << endl;
             return  false;
@@ -311,6 +329,7 @@ bool    CArgument::argument(int argc, char* argv[]){
         cout << "Verbose mode:\t" << verbose << endl;
     }
 	cout << "Compute sink region mode\t" << compute_sink_region_mode << endl;
+	cout << "Percentile\t" << percentile << endl;
     cout << endl;
     return  true;
 }

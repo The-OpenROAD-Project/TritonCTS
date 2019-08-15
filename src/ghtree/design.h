@@ -69,6 +69,7 @@ class design {
 		float xoffset;
 		float yoffset;
 		float normalizationRatio;
+		double percentile;
 
         unsigned max_delay;
         unsigned max_solnum;
@@ -95,7 +96,7 @@ class design {
         map<int, LUT*> lut_map;
 
         // functions
-        bool parseDesignInfo(float, float, float, float, float, float, unsigned, unsigned, int, unsigned, unsigned, bool, string, bool);
+        bool parseDesignInfo(float, float, float, float, float, float, unsigned, unsigned, int, unsigned, unsigned, bool, string, bool, double);
         void parseLUT();
         void parseSinkCap();
         void parseBlks();

@@ -88,7 +88,7 @@ bool sortByY(pin* p1, pin* p2) {
 
 
 /*** Parse the input file **************************************************/
-bool design::parseDesignInfo(float _W, float _H, float dist_i, float cap_i, float _skew, float time_i, unsigned _n, unsigned _v, int _toler, unsigned _max_delay, unsigned _max_solnum, bool _cluster_only, string _sol_file, bool computeSinkRegionMode) {
+bool design::parseDesignInfo(float _W, float _H, float dist_i, float cap_i, float _skew, float time_i, unsigned _n, unsigned _v, int _toler, unsigned _max_delay, unsigned _max_solnum, bool _cluster_only, string _sol_file, bool computeSinkRegionMode, double _percentile) {
     
     max_skew        = (unsigned)floor(_skew / time_i);
     num_sinks       = _n;
@@ -101,6 +101,7 @@ bool design::parseDesignInfo(float _W, float _H, float dist_i, float cap_i, floa
     sol_file        = _sol_file;
 	xoffset			= 0.0f;
 	yoffset			= 0.0f;
+	percentile		= _percentile;
 	
 	normalizationRatio = 1.0f;
 
@@ -129,14 +130,14 @@ void design::computeSinkRegion(const float dist_i) {
 	std::cout << " TritonCTS is running on 'computing sink region mode'\n";
 	std::cout << " Computing sink region now...\n";
 	
-	int percentile = 0;
+	int bound = percentile*pins.size();
 	std::sort(pins.begin(), pins.end(), sortByX);
-	float minx = pins[percentile]->x;
-	float maxx = pins[pins.size() - 1 - percentile]->x;
+	float minx = pins[bound]->x;
+	float maxx = pins[pins.size() - 1 - bound]->x;
 
 	std::sort(pins.begin(), pins.end(), sortByY);
-	float miny = pins[percentile]->y;
-	float maxy = pins[pins.size()- 1 -percentile]->y;
+	float miny = pins[bound]->y;
+	float maxy = pins[pins.size()- 1 - bound]->y;
 	
 	std::cout << "\tminx =\t" << minx << "\n";	
 	std::cout << "\tminy =\t" << miny << "\n";	
@@ -175,7 +176,7 @@ void design::computeSinkRegion(const float dist_i) {
 		num_sinks = 4;
 	} else if (numClockSinks < 1000) {
 		num_sinks = 64;
-	} else if (numClockSinks < 10000) {
+	} else if (numClockSinks < 12000) {
 		num_sinks = 128;
 	} else {
 		num_sinks = 256;

@@ -107,6 +107,7 @@ proc parseConfigFile {} {
 	global ck_pin
 	global buf_out_pin
 	global inst_ck_pin
+	global percentile
 
 	# Define basic paths
 	set cfg_file $configFilePath
@@ -123,6 +124,7 @@ proc parseConfigFile {} {
 	close $fp
 	
 	# Populate the dict with input parameters
+	dict set parms "percentile" 0
 	set data [split $file_data "\n"]
 	foreach line $data {
 		set tokens [split $line]
@@ -159,6 +161,8 @@ proc parseConfigFile {} {
 	puts [concat "root_buff : " $root_buff]
 	set toler [dict get $parms "toler"]
 	puts [concat "tolerance : " $toler]
+	set percentile [dict get $parms "percentile"]
+	puts [concat "percentile : " $percentile]
 	
 	set db_ratio [expr $db_units/1000.0]
 	set number 64
@@ -312,6 +316,7 @@ proc runGHtree {} {
 	global toler
 	global db_ratio
 	global executablePath
+	global percentile
 	
 	if {![file exists $executablePath]} {
 		puts "Binary not found: $executablePath"
@@ -320,8 +325,8 @@ proc runGHtree {} {
 
 	# run DP-based clock tree topology and buffering / ILP-based clustering
 	puts "\nRunning GH-tree (should take a while...)"
-	puts "$executablePath -n $number -s $target_skew -tech $tech -compute_sink_region_mode -t $toler"
-	catch {exec $executablePath -n $number -s $target_skew -tech $tech -compute_sink_region_mode -t $toler | tee rpt}
+	puts "$executablePath -n $number -s $target_skew -tech $tech -compute_sink_region_mode -t $toler -percentile $percentile"
+	catch {exec $executablePath -n $number -s $target_skew -tech $tech -compute_sink_region_mode -t $toler -percentile $percentile | tee rpt}
 	
 	exec cp sol_0.txt sol.txt
 	
