@@ -361,7 +361,13 @@ void design::optTree () {
 
             // number of sinks is an even number
             //unsigned m = (int)ceil(num_sinks*1.5/((W*H)/(w*h))/2) - (int)floor(num_sinks*0.6/((W*H)/(w*h))/2) + 1; 
-            unsigned m = (int)ceil(num_sinks*10.0/((W*H)/(w*h))/2);
+
+			unsigned m = (int)ceil(num_sinks*10.0/((W*H)/(w*h))/2);	
+			if (pins.size() > 20000)
+			{
+				m = (int)ceil(num_sinks*1.0/((W*H)/(w*h))/2);	
+			}
+
             prep_sol[i][j].resize(m, dummy2);
         }
     }
