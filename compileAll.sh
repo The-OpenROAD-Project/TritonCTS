@@ -18,14 +18,23 @@ echo " - Lemon dir set to: $LEMON_DIR"
 echo " - Updating submodules"
 git submodule update --init --recursive
 
-# Compile CTS helper first...
+#####################################################################
+# Compile CtsHelper
+#####################################################################
 cd third_party/CtsHelper
-mkdir build
+mkdir -p build
 cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release
 make -j $NUM_THREADS
 cp lefdef2cts $THIRD_PARTY
 cd $CTS_HOME
 
+#####################################################################
 # Compile TritonCTS
-make LEMON_HOME=$LEMON_DIR -j $NUM_THREADS
+#####################################################################
+mkdir -p build
+cd build
+cmake .. -DLEMON_HOME=$LEMON_DIR
+make  -j $NUM_THREADS
+cd $CTS_HOME
+cp $CTS_HOME/build/tritoncts bin/

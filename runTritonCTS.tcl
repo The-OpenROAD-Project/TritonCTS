@@ -48,7 +48,7 @@ proc initProgramOptions {argv} {
 
 	# Default values
 	set configFilePath [file normalize "cts.cfg"]
-	set executablePath [file normalize "./bin/genHtree"]
+	set executablePath [file normalize "./bin/tritoncts"]
 	set lefDefParserPath [file normalize "./third_party/lefdef2cts"]
 	set scriptsPath [file normalize "./src/scripts"]
 	set legalizerPath [file normalize "./third_party/opendp"]
@@ -309,7 +309,7 @@ proc parseClockSinksAndBlockages {} {
 
 #------------------------------------------------------------------------------
 
-proc runGHtree {} {
+proc runTritonCTS {} {
 	global number
 	global target_skew
 	global tech
@@ -386,6 +386,6 @@ initProgramOptions $argv
 parseConfigFile
 initWorkingDirectory
 parseClockSinksAndBlockages
-runGHtree
+runTritonCTS
 updateDEFAndVerilog
 legalize
