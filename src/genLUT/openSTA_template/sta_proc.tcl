@@ -126,6 +126,10 @@ proc get_pincapmax {pin_nm} {
 	close $pin_rpt
 	file delete pin.rpt
 
+    # select the maximum capacitance
+    set r_cap [lindex [split $r_cap ":"] 1]
+    set f_cap [lindex [split $f_cap ":"] 1]
+
 	if {$r_cap > $f_cap} {
 		return $r_cap
 

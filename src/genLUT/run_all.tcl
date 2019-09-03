@@ -42,7 +42,7 @@ foreach dist $distList {
     exec ./create_spef_files.tcl $dir
     puts "Running $dir"
     ##create spef files and characterize LUT
-    catch {exec ../sta -f ./run_sta.tcl }
+    catch {exec ../openSTA_template/sta ./run_sta.tcl }
 	
     # Do sizing and characterize LUT    
     cd ..
