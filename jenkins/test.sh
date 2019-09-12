@@ -1,0 +1,1 @@
+docker run -v $(pwd):/tritoncts tritoncts bash -c "cd /tritoncts/tests && ./run_all.sh /tritoncts/bin"
