@@ -43,7 +43,8 @@ defFile = sys.argv[1]
 
 ready = False
 with open(defFile) as fp:
-	for line in fp:
+	while( True ):
+		line = fp.readline();
 		line = line.rstrip("\n")
 		terms = line.split()
 		if "COMPONENTS" in line:
@@ -53,6 +54,8 @@ with open(defFile) as fp:
 				ready = True
 		
 		if ready == True and terms[0] == '-':
+			while( ";" not in line ):
+				line += " " + fp.readline().rstrip("\n")
 			placement = re.search("[-]?\d+ [-]?\d+", line)
 			x = float(placement.group(0).split(' ')[0])/1000
 			y = float(placement.group(0).split(' ')[1])/1000
