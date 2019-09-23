@@ -67,6 +67,8 @@ def readNetlistFile():
 			terms = line.rstrip("\n").replace("{", "").replace("}", "").split(' ')
 			if terms[0] is "B":
 				for i in range(2, len(terms)):
+					if terms[i] == '':
+						continue
 					instPinPair = terms[i].rsplit("/", 1)
 					inClkPins.add(instPinPair[1])
 					nets[terms[1]].append([instPinPair[0], instPinPair[1]])
