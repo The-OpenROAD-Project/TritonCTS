@@ -1,5 +1,11 @@
 # TritonCTS 
 
+### ------------------------------- WARNING --------------------------------
+### :bangbang: This version of TritonCTS has been retired from the OpenROAD flow. :bangbang: 
+
+### :bangbang: You can find TritonCTS 2.0 [here](https://github.com/The-OpenROAD-Project/OpenROAD/tree/master/src/TritonCTS). :bangbang:
+### --------------------------------------------------------------------------
+
 ### Original work
 K. Han, A. B. Kahng and J. Li, "Optimal Generalized H-Tree Topology and Buffering for High-Performance and Low-Power Clock Distribution", IEEE Trans. on CAD (2018), [doi:10.1109/TCAD.2018.2889756](https://doi.org/10.1109/TCAD.2018.2889756).
 
