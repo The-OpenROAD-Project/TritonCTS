@@ -2,7 +2,7 @@
 
 set selPoints "0.1 0.5 0.9"
 
-set lutList "20.lut 40.lut 60.lut 80.lut"
+set lutList [glob test_*/*.lut]
 
 array set opt1Power {}
 array set opt1inCap {}

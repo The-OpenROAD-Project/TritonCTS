@@ -1,4 +1,3 @@
-
 source config.tcl
 
 proc listOptions {i {width {}} num} {
@@ -25,357 +24,334 @@ proc listOptions {i {width {}} num} {
     return $sign$res
 }
 
+proc pathDelay {path} {
 
-proc pathDelay {outpin inpin} {
-    
-    set path [find_timing_paths -through $outpin ]; 
-   
-    set points [get_property $path points]
-    set start  [lindex $points 0]
-    set end  [lindex $points [expr [llength $points] - 1]]
-    
-    set start_arrival_time 0
-    set end_arrival_time 0
-    
-    set delay  [expr {[get_property $end arrival] - [get_property $start arrival]} ]
-    
+    set start_arrival [get_property $path startpoint_arrival]
+    set end_arrival [get_property $path endpoint_arrival]
+
+    set delay  [expr $end_arrival - $start_arrival]
+
     #puts "(Delay) $delay"
     return $delay
 }
 
-proc getBufList {bufTypes bufNum} {
-   
-    set length [llength $bufTypes]
-    set totNum [expr pow($length, $bufNum)]
+proc combinations2 {myList size} {
+    ;# End recursion when size is 0 or equals our list size
+    if {$size == 0} {return}
+    if {$size == 1} {return $myList}
 
-    set allList ""
-    for {set i 0} {$i < $totNum} {incr i} {
-        set cur [listOptions $i $bufNum $length]
-        set allList "$allList $cur"
+    set newList {}
+    foreach item $myList {
+        foreach addList [combinations2 $myList [expr {$size-1}]] {
+            lappend newList [concat $item $addList]
+        }
     }
 
-    #puts $allList
-    return $allList
+    return $newList
 }
 
+proc getBufList {bufTypes bufNum} {
 
-##pwr_list "Internal Switching Leakgae" 
-proc get_power {inst_nm type} {
-	report_power -instance $inst_nm > pwr.rpt
-	set pwr_rpt	[open "./pwr.rpt" r]
-	
-	set pwr_list ""
+    if {$bufNum == 0} {
+        return [list]
+    } else {
+        set bufIdx [list]
+        for {set i 0} {$i < [llength $bufTypes]} {incr i} {
+            lappend bufIdx $i
+        }
+        return [combinations2 $bufIdx $bufNum]
+    }
+}
 
-	while {[gets $pwr_rpt line] >= 0} { 
-		
-		if {[regexp -nocase [ subst -nocommands -nobackslashes {(.*)\s+(.*)\s+(.*)\s+(.*)\s+$inst_nm} ] $line]} {
-			set wordlist [regexp -inline -all -- {\S+} $line]
-			set pwr_list [split $wordlist " "]
-		}
-	
-	}
-	#puts "PWR LIST: $pwr_list"
-	
-	close $pwr_rpt
-	file delete pwr.rpt
-	
-	if {$type == "switching"} {
-		return [lindex $pwr_list 1]
-	} elseif {$type == "internal"} {
-		return [lindex $pwr_list 0]
-	} elseif {$type == "leakage"} {
-		return [lindex $pwr_list 2]
-	} elseif {$type == "total"} {
-		return [lindex $pwr_list 3]
-	}	
+##pwr_list "Internal Switching Leakage Total"
+proc get_power {inst_nm} {
+    report_power -instance $inst_nm > pwr.rpt
+    set pwr_rpt	[open "./pwr.rpt" r]
 
- 	
+    set pwr_list ""
+
+    while {[gets $pwr_rpt line] >= 0} {
+
+        if {[regexp -nocase [ subst -nocommands -nobackslashes {(.*)\s+(.*)\s+(.*)\s+(.*)\s+$inst_nm} ] $line]} {
+            set wordlist [regexp -inline -all -- {\S+} $line]
+            set pwr_list [split $wordlist " "]
+        }
+
+    }
+    #puts "PWR LIST: $pwr_list"
+
+    close $pwr_rpt
+    file delete pwr.rpt
+
+    return $pwr_list
+    #    if {$type == "switching"} {
+    #        return [lindex $pwr_list 1]
+    #    } elseif {$type == "internal"} {
+    #        return [lindex $pwr_list 0]
+    #    } elseif {$type == "leakage"} {
+    #        return [lindex $pwr_list 2]
+    #    } elseif {$type == "total"} {
+    #        return [lindex $pwr_list 3]
+    #    }
 }
 
 proc get_pincapmax {pin_nm} {
-	
-	report_pin $pin_nm > pin.rpt
-	set pin_rpt	[open "./pin.rpt" r]
-	
-	while {[ gets $pin_rpt line ] >=0 } {
-		
-		set cell_nm [get_property [get_lib_cells -of_objects [get_cells -of_objects [lindex $line 1] ]	] full_name]
-		
-		if {[regex {^load.*} $cell_nm ]} {
-		
-			#puts "LINE 362: PIN: [llength $line ]"
-			set cap [lindex $line 3]
-			close $pin_rpt
-			file delete pin.rpt
-			return $cap
-		
-		} elseif {[regex {(.*)r(.*)f(.*)} $line ]} {		
-			
-			puts "LINE370: PIN: [llength $line ]"
-			set r_cap [lindex $line 4]
-			set f_cap [lindex $line 6]	
-			
-		} else {
-			set cap [lindex $line 3]
-			close $pin_rpt
-			file delete pin.rpt
-			return $cap
-		}
-	}
-	
-	close $pin_rpt
-	file delete pin.rpt
+
+    report_pin $pin_nm > pin.rpt
+    set pin_rpt	[open "./pin.rpt" r]
+
+    while {[ gets $pin_rpt line ] >=0 } {
+
+        set cell_nm [get_property [get_lib_cells -of_objects [get_cells -of_objects [lindex $line 1] ]	] full_name]
+
+        if {[regex {^load.*} $cell_nm ]} {
+
+            #puts "LINE 362: PIN: [llength $line ]"
+            set cap [lindex $line 3]
+            close $pin_rpt
+            file delete pin.rpt
+            return $cap
+
+        } elseif {[regex {(.*)r(.*)f(.*)} $line ]} {
+
+            #puts "LINE370: PIN: [llength $line ]"
+            set r_cap [lindex $line 4]
+            set f_cap [lindex $line 6]
+
+        } else {
+            set cap [lindex $line 3]
+            close $pin_rpt
+            file delete pin.rpt
+            return $cap
+        }
+    }
+
+    close $pin_rpt
+    file delete pin.rpt
 
     # select the maximum capacitance
     set r_cap [lindex [split $r_cap ":"] 1]
     set f_cap [lindex [split $f_cap ":"] 1]
 
-	if {$r_cap > $f_cap} {
-		return $r_cap
+    if {$r_cap > $f_cap} {
+        return $r_cap
 
-	} else {
+    } else {
 
-		return $f_cap
-	}
+        return $f_cap
+    }
 
 }
 
 proc get_netCap {net_nm} {
 
-	set net_rpt	[open "./netCap" r]	
-	
-	set net_list " "
-	while {[gets $net_rpt line] >= 0} {
-		 
-		if { [regexp -nocase [ subst -nocommands -nobackslashes {^$net_nm.*} ] $line] } {
-			set line [regexp -inline -all -- {\S+} $line]	
-			set net_list [split $line " "]
-		}
+    set net_rpt	[open "./netCap" r]
 
-	}
-	close $net_rpt
-	return [lindex $net_list 1]
+    set net_list " "
+    while {[gets $net_rpt line] >= 0} {
+
+        if { [regexp -nocase [ subst -nocommands -nobackslashes {^$net_nm.*} ] $line] } {
+            set line [regexp -inline -all -- {\S+} $line]
+            set net_list [split $line " "]
+        }
+
+    }
+    close $net_rpt
+    return [lindex $net_list 1]
 
 }
-
 
 proc charTables {dist unit_dist} {
     global cap_unit
     global time_unit
-    global initial_cap_interval  
+    global initial_cap_interval
     global final_cap_interval
     global bufTypes
     global maxSlew
-    global inputSlew 
-    global slewInter 
+    global inputSlew
+    global slewInter
     global outLoadNum
     global baseLoad
-    global loadInter 
-    
+    global loadInter
+
     global Q_ffpin "Q"
     global D_ffpin "D"
-    global buff_inPin "A" 
+    global buff_inPin "A"
 
     set numbuf_loc [expr int($dist/$unit_dist)]
     set totNum [expr pow(2, $numbuf_loc)]
-   
-    set totList ""
-    set loadList ""
+
+    #    set totList ""
+    set loadList [list]
     for {set i 1} {$i <= $outLoadNum} {incr i} {
         if {$i <= 5} {
-            set load [expr ($i/1000.0)*$cap_unit]
+            set load_val [expr ($i/1000.0)*$cap_unit]
         } else {
-            set load [expr $baseLoad + $loadInter*($i - 5)]
+            set load_val [expr $baseLoad + $loadInter*($i - 5)]
         }
-        set loadList "$loadList $load" 
+        lappend loadList $load_val
     }
+    puts "Loads: $loadList"
 
     #Use 1.0 instead of 2.0 until OpenSTA is fixed.
-	set power_default_signal_toggle_rate 2
-    
+    set power_default_signal_toggle_rate 2
+
     for {set i 0} {$i < $totNum} {incr i} {
         set bin [listOptions $i $numbuf_loc 2]
 
         set outPin "ff_${bin}_0/$Q_ffpin"
         set drivenCell "ff_${bin}_1"
         set inPin "ff_${bin}_1/$D_ffpin"
-        set bufNames ""
+        set bufNames [list]
         set cnt 1
         set preloc 0
-        set segList ""
-        set netName "net_${bin}_0"
-        
-        set totPower 0
-		set wirePower  [ get_power [ get_property [get_fanin -to $netName -levels 1 -only_cells] full_name ] switching ] 
-		puts "$netName $wirePower"
-        
-		for {set j 0} {$j < [string length $bin]} {incr j} {
+        set segList [list]
+
+        set wirePower  [lindex [get_power [get_property [get_fanin -to "net_${bin}_0" -levels 1 -only_cells] full_name]] 1]
+
+        for {set j 0} {$j < [string length $bin]} {incr j} {
             if {[string index $bin $j]} {
-                set bufNames "$bufNames buf_${bin}_${cnt}"
-                set netName "net_${bin}_${cnt}"
-                incr cnt 
-                set segList "$segList [expr ($j + 1)*$unit_dist - $preloc]"
+                lappend bufNames "buf_${bin}_${cnt}"
+                incr cnt
+                lappend segList [expr ($j + 1)*$unit_dist - $preloc]
                 set preloc [expr ($j + 1)*$unit_dist]
             }
         }
 
-        set segList "$segList [expr $dist - $preloc]"
+        lappend segList [expr $dist - $preloc]
         set optList [getBufList $bufTypes [expr $cnt - 1]]
-	
+        puts "Test $bin : $optList"
+
         if { [llength $optList] } {
-            for {set j 0} {$j < [llength $optList]} {incr j} {
-                
-				set curList [lindex $optList $j]
-                set totPower $wirePower
+            foreach curList $optList {
+                puts "  $curList : [array size power]"
+
                 set cur_sol ""
 
-                for {set k 0} {$k < [string length $curList]} {incr k} {
-                    
-                    set curBuf [lindex $bufTypes [string index $curList $k]]
+                for {set k 0} {$k < [llength $curList]} {incr k} {
+                    set curBuf [lindex $bufTypes [lindex $curList $k]]
                     set bufName [lindex $bufNames $k]
-                    if {[string compare [get_property [get_cells $bufName] ref_name] $curBuf]} { 
+                    if {[string compare [get_property [get_cells $bufName] ref_name] $curBuf]} {
                         replace_cell $bufName $curBuf
                     }
                     set cur_sol "$cur_sol[lindex $segList $k],$curBuf,"
                 }
 
-				
                 if {[lindex $segList end]} {
                     set cur_sol "$cur_sol[lindex $segList end]"
                 } else {
                     set cur_sol [string replace $cur_sol end end ""]
                 }
 
-                set pin "[lindex $bufNames 0]/$buff_inPin" 
-		 
-				puts "pin: $pin"
-                set inPinCap [get_pincapmax $pin]
-                set net "net_${bin}_0"
-				set inNetCap [expr ([get_netCap $net] / 1000)*$cap_unit]
-				
+                set inPinCap [get_pincapmax "[lindex $bufNames 0]/$buff_inPin"]
+                set inNetCap [expr ([get_netCap "net_${bin}_0"] / 1000)*$cap_unit]
+
                 set inCap [expr $inPinCap + $inNetCap]
-                puts "Cap Pin $net: $inPinCap Net: $inNetCap"
                 if {$inCap <= $baseLoad} {
-		     		set inCap [expr int(($inCap + ($initial_cap_interval/2)*$cap_unit)/($initial_cap_interval*$cap_unit))*($initial_cap_interval*$cap_unit)]
+                    set inCap [expr int(($inCap + ($initial_cap_interval/2)*$cap_unit)/($initial_cap_interval*$cap_unit))*($initial_cap_interval*$cap_unit)]
                 } else {
-		   			set inCap [expr int(($inCap + ($final_cap_interval/2)*$cap_unit)/($final_cap_interval*$cap_unit))*($final_cap_interval*$cap_unit)]
+                    set inCap [expr int(($inCap + ($final_cap_interval/2)*$cap_unit)/($final_cap_interval*$cap_unit))*($final_cap_interval*$cap_unit)]
                 }
-                
+
+                set outPinName [get_property [get_pins $outPin] full_name]
+
                 for {set slew $inputSlew} {$slew <= $maxSlew} {set slew [expr $slew + $slewInter]} {
-			    	set_assigned_transition -rise $slew [get_property  [get_pins $outPin] full_name]
-                 	set_assigned_transition -fall $slew [get_property  [get_pins $outPin] full_name]
+                    set_assigned_transition -rise $slew $outPinName
+                    set_assigned_transition -fall $slew $outPinName
                     for {set idx 0} {$idx < $outLoadNum} {incr idx} {
-						read_spef ./spef_files/spef_${idx}.spef
-                        puts "read_spef spef_${idx}.spef"
-                        set load [lindex $loadList $idx]
-                        set delay [format "%.3f" [pathDelay $outPin $inPin]]
-    					
-						set path [find_timing_paths -through $outPin ]; 
-
-                        set points [get_property $path points]
-                        set end    [lindex $points [expr [llength $points] - 1]]
-						set tr	[get_property [get_property $end pin ] actual_rise_transition_max]
-						set tf [get_property [get_property $end pin ] actual_fall_transition_max]
-						set trans [expr [expr $tr + $tf]/2 ]
-						set outSlew [expr int(( $trans + $slewInter/2)/$slewInter)*$slewInter]
+                        read_spef ./spef_files/spef_${idx}.spef
                         
-                        set totPower $wirePower
-                        for {set k 0} {$k < [string length $curList]} {incr k} {
-                            set curBuf [lindex $bufTypes [string index $curList $k]]
-                            set bufName [lindex $bufNames $k]
-                            set internalPower [get_power $bufName internal]
-			    			set leakagePower [get_power $bufName leakage]
-			    			set swPower [get_power $bufName switching]
-                            set totPower [expr $totPower + $swPower + $internalPower + $leakagePower]
-                            puts "(PDEBUG $bufName $totPower $swPower $internalPower $leakagePower"
-                        }
+                        set path [find_timing_paths -through $outPin]
+                        set end_pin [get_property $path endpoint]
 
+                        set tr [get_property $end_pin actual_rise_transition_max]
+                        set tf [get_property $end_pin actual_fall_transition_max]
+                        set trans [expr ($tr + $tf)/2]
+                        set outSlew [expr int(($trans + $slewInter/2)/$slewInter)*$slewInter]
+
+                        # Skip rest of computation if not needed
                         if {$outSlew > [expr 2*$maxSlew]} { continue }
 
-                        puts "(Debug-0) $cur_sol"
-                        puts "(Debug-1) load: $load inpinCap: $inPinCap inNetCap: $inNetCap inSlew: $slew delay: $delay outSlew: $outSlew totpower: $totPower"
-                        report_checks -fields transition -group_count 2
+                        set load_val [lindex $loadList $idx]
+                        set delay [format "%.3f" [pathDelay $path]]
 
-                        if {[info exists power($load-$delay-$dist-$outSlew-$slew-$inCap)]} {
-                            if {$power($load-$delay-$dist-$outSlew-$slew-$inCap) > $totPower} {
-                                set power($load-$delay-$dist-$outSlew-$slew-$inCap) $totPower
-                                set sol($load-$delay-$dist-$outSlew-$slew-$inCap) $cur_sol
-                            }
-                        } else {
-                            set power($load-$delay-$dist-$outSlew-$slew-$inCap) $totPower
-                            set totList "$totList $load-$delay-$dist-$outSlew-$slew-$inCap"
-                            set sol($load-$delay-$dist-$outSlew-$slew-$inCap) $cur_sol
+                        set totPower $wirePower
+                        foreach bufName $bufNames {
+                            set totPower [expr $totPower + [lindex [get_power $bufName] 3]]
                         }
 
+                        set psLoad [format "%.3f" $load_val]
+                        set inCap [format "%.3f" $inCap]
+                        set psSlew [format "%.3f" $slew]
+                        set psIdx "$psLoad-$delay-$dist-$outSlew-$psSlew-$inCap"
+                        if {[info exists power($psIdx)]} {
+                            if {[lindex $power($psIdx) 0] > $totPower} {
+                                set power($psIdx) {$totPower $cur_sol}
+                            }
+                        } else {
+                            set power($psIdx) {$totPower $cur_sol}
+                        }
                     }
                 }
             }
         } else {
-			puts "pureWire Solution"
+            #puts "pureWire Solution"
             set cur_sol "$dist"
-            set totPower $wirePower   
+            set totPower $wirePower
+            set outPinName [get_property  [get_pins $outPin] full_name]
             for {set slew $inputSlew} {$slew <= $maxSlew} {set slew [expr $slew + $slewInter]} {
-                set_assigned_transition -rise $slew [get_property  [get_pins $outPin] full_name]
-                set_assigned_transition -fall $slew [get_property  [get_pins $outPin] full_name]
+                set_assigned_transition -rise $slew $outPinName
+                set_assigned_transition -fall $slew $outPinName
                 for {set idx 0} {$idx < $outLoadNum} {incr idx} {
-					read_spef ./spef_files/spef_${idx}.spef
-                    puts "read_spef spef_${idx}.spef"
-                    set load [lindex $loadList $idx]
-                    set delay [format "%.3f" [pathDelay $outPin $inPin]]
-	    	        set path [find_timing_paths -through $outPin ]
-                    set points [get_property $path points]
-                    set end [lindex $points [expr [llength $points] - 1]]
-		    		set tr [get_property [get_property $end pin ] actual_rise_transition_max]
-		    		set tf [get_property [get_property $end pin ] actual_fall_transition_max]
-		    		set trans [expr [expr $tr + $tf]/2 ]
-	            	set outSlew [expr int(( $trans + $slewInter/2.0)/$slewInter)*$slewInter]
+                    read_spef ./spef_files/spef_${idx}.spef
+                    
+                    set path [find_timing_paths -through $outPin]
+                    set end_pin [get_property $path endpoint]
+
+                    set tr [get_property $end_pin actual_rise_transition_max]
+                    set tf [get_property $end_pin actual_fall_transition_max]
+                    set trans [expr ($tr + $tf)/2]
+                    set outSlew [expr int(( $trans + $slewInter/2.0)/$slewInter)*$slewInter]
 
                     if {$outSlew > [expr $maxSlew*2]} { continue }
-                    
-                    set pin "${drivenCell}/$D_ffpin"
 
-		    		set inPinCap [lindex $loadList $idx]
-			
-                    set net net_${bin}_0
-		            set inNetCap [expr ([get_netCap $net] / 1000)*$cap_unit]
-                    
-		    		set inCap [expr $inPinCap + $inNetCap]
-                    
-                    puts "(Debug-0) $cur_sol"
-                    puts "(Debug-1) load: $load inpinCap: $inPinCap inNetCap: $inNetCap inSlew: $slew delay: $delay outSlew: $outSlew totpower: $totPower"
-                    report_checks -fields transition -group_count 2
+                    set delay [format "%.3f" [pathDelay $path]]
+
+                    set load_val [lindex $loadList $idx]
+
+                    set inPinCap [lindex $loadList $idx]
+                    set inNetCap [expr ([get_netCap "net_${bin}_0"] / 1000)*$cap_unit]
+
+                    set inCap [expr $inPinCap + $inNetCap]
 
                     if {$inCap <= $baseLoad} {
-						set inCap [expr int(($inCap + ($initial_cap_interval/2)*$cap_unit)/($initial_cap_interval*$cap_unit))*($initial_cap_interval*$cap_unit)]
+                        set inCap [expr int(($inCap + ($initial_cap_interval/2)*$cap_unit)/($initial_cap_interval*$cap_unit))*($initial_cap_interval*$cap_unit)]
                     } else {
                         set inCap [expr int(($inCap + ($final_cap_interval/2)*$cap_unit)/($final_cap_interval*$cap_unit))*($final_cap_interval*$cap_unit)]
                     }
-
-                    if {[info exists power($load-$delay-$dist-$outSlew-$slew-$inCap)]} {
-                        if {$power($load-$delay-$dist-$outSlew-$slew-$inCap) > $totPower} {
-                            set power($load-$delay-$dist-$outSlew-$slew-$inCap) $totPower
-                            set sol($load-$delay-$dist-$outSlew-$slew-$inCap) $cur_sol
+                    
+                    set psLoad [format "%.3f" $load_val]
+                    set inCap [format "%.3f" $inCap]
+                    set psSlew [format "%.3f" $slew]
+                    set psIdx "$psLoad-$delay-$dist-$outSlew-$psSlew-$inCap"
+                    if {[info exists power($psIdx)]} {
+                        if {[lindex $power($psIdx) 0] > $totPower} {
+                            set power($psIdx) {$totPower $cur_sol}
                         }
                     } else {
-                        set power($load-$delay-$dist-$outSlew-$slew-$inCap) $totPower
-                        set totList "$totList $load-$delay-$dist-$outSlew-$slew-$inCap"
-                        set sol($load-$delay-$dist-$outSlew-$slew-$inCap) $cur_sol
+                        set power($psIdx) {$totPower $cur_sol}
                     }
-                }
+               }
             }
         }
     }
 
     set outFp [open ${dist}.lut w]
-    foreach cur $totList {
-       puts $cur
-       regsub -all {\-} $cur " " fSol
-       set fSol "$power($cur) $fSol $sol($cur)"
-       puts $fSol
-       puts $outFp $fSol
+    foreach cur [array names power] {
+        regsub -all {\-} $cur " " fSol
+        set fSol "[lindex $power($cur) 0] $fSol [lindex $power($cur) 1]"
+        puts $outFp $fSol
     }
     close $outFp
 }
-
-
 
